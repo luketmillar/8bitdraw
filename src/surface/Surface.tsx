@@ -1,31 +1,34 @@
-type Size = {
-  h: number
-  w: number
-}
-interface SurfaceViewProps {
-  size: Size
+import React from 'react'
+import FullScreenCanvas from '../canvasScene/FullscreenCanvas'
+import InputHandler from '../canvasScene/InputHandler'
+import SurfaceController from './Controller'
+import SurfaceWorld from './model/World'
+
+interface SurfaceViewProps {}
+
+const useController = (ref: React.RefObject<HTMLCanvasElement>) => {
+  const [controller, setController] = React.useState<SurfaceController | undefined>()
+  React.useEffect(() => {
+    const controller = new SurfaceController(
+      ref.current!,
+      new SurfaceWorld({ width: 40, height: 20 })
+    )
+    setController(controller)
+    controller.start()
+    return () => controller.stop()
+  }, [ref])
+  return controller
 }
 
 const SurfaceView: React.FC<SurfaceViewProps> = (props) => {
+  const ref = React.useRef<HTMLCanvasElement>(null)
+  const controller = useController(ref)
   return (
-    <div>
-      <h1>surface</h1>
-      {Array.from({ length: props.size.h }).map((_, i) => (
-        <SurfaceRow key={i} cells={props.size.w} />
-      ))}
-    </div>
-  )
-}
-
-interface RowProps {
-  cells: number
-}
-const SurfaceRow: React.FC<RowProps> = (props) => {
-  return (
-    <div style={{ display: ' flex' }}>
-      {Array.from({ length: props.cells }).map((_, i) => (
-        <div key={i} style={{ width: 20, height: 20, border: '1px solid grey' }} />
-      ))}
+    <div style={{ position: 'absolute', top: 0, left: 0 }}>
+      <FullScreenCanvas ref={ref} />
+      {controller && (
+        <InputHandler onClick={controller.onClick} onMouseMove={controller.onMouseMove} />
+      )}
     </div>
   )
 }
