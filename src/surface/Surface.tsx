@@ -11,11 +11,10 @@ const useController = (ref: React.RefObject<HTMLCanvasElement>) => {
   React.useEffect(() => {
     const controller = new SurfaceController(
       ref.current!,
-      new SurfaceWorld({ width: 40, height: 20 })
+      new SurfaceWorld({ width: 20, height: 40 })
     )
     setController(controller)
-    controller.start()
-    return () => controller.stop()
+    controller.render()
   }, [ref])
   return controller
 }

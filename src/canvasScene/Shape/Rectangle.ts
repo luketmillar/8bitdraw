@@ -7,6 +7,7 @@ export type RectangleOptions = {
   height: number
   fill?: Color
   stroke?: Stroke
+  opacity?: number
 } & ShapeOptions
 
 export default class Rectangle extends Shape {
@@ -14,12 +15,14 @@ export default class Rectangle extends Shape {
   public height: number
   public fill?: Color
   public stroke?: Stroke
+  public opacity: number
   constructor(options: RectangleOptions) {
     super(options)
     this.width = options.width
     this.height = options.height
     this.fill = options.fill
     this.stroke = options.stroke
+    this.opacity = options.opacity ?? 1
   }
 
   public intersects(position: Position) {

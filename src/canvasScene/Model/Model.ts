@@ -1,6 +1,6 @@
-import { Shape } from '../Shape'
 import { v4 as uuid } from 'uuid'
 import { Position } from '../types'
+import { Shape } from '../Shape'
 
 export default abstract class Model {
   public readonly id = uuid()

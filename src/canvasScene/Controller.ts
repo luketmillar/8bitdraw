@@ -23,19 +23,22 @@ export default class Controller<W extends Model.World> {
     this.running = false
   }
 
+  public render() {
+    this.view.render(this.world)
+  }
+
   private loop = (frameTime: number) => {
     if (!this.running) {
       return
     }
     this.queueFrame()
-    const time = frameTime - this.startTime
     const delta = frameTime - this.lastFrameTime
     if (delta > 500) {
       this.startTime += delta
       this.lastFrameTime = frameTime
       return
     }
-    this.view.render(this.world)
+    this.render()
     this.lastFrameTime = frameTime
   }
 

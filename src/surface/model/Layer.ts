@@ -11,4 +11,13 @@ export default class Layer extends Model {
   public getShapes(): Shape[] {
     return this.pixels.flat().flatMap((pixel) => pixel.getShapes())
   }
+  public getPixel(x: number, y: number) {
+    return this.pixels[x][y]
+  }
+  public getRowCount() {
+    return this.pixels.length
+  }
+  public getColumnCount() {
+    return this.pixels[0].length
+  }
 }

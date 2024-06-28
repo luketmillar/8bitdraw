@@ -1,9 +1,9 @@
 import { Position } from '../types'
 import Model from './Model'
 
-export default abstract class World {
-  public models: Model[] = []
-  constructor(models: Model[]) {
+export default abstract class World<T extends Model = Model> {
+  public models: T[] = []
+  constructor(models: T[]) {
     this.models = models
   }
 
@@ -14,11 +14,11 @@ export default abstract class World {
       .find((model) => model.intersects(position))
   }
 
-  public addModel(m: Model) {
+  public addChild(m: T) {
     this.models.push(m)
   }
 
-  public removeModel(id: string) {
+  public removeChild(id: string) {
     this.models = this.models.filter((m) => m.id !== id)
   }
 
