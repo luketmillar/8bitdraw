@@ -1,8 +1,7 @@
 import Model from '../../canvasScene/Model/Model'
 import { Rectangle, Shape } from '../../canvasScene/Shape'
 import { Color, Position } from '../../canvasScene/types'
-
-const PIXEL_SIZE = 50
+import { PIXEL_SIZE } from './consts'
 
 export default class Pixel extends Model {
   public position: Position
