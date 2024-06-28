@@ -19,7 +19,7 @@ const useController = (ref: React.RefObject<HTMLCanvasElement>) => {
   return controller
 }
 
-const SurfaceView: React.FC<SurfaceViewProps> = (props) => {
+const SurfaceView: React.FC<SurfaceViewProps> = () => {
   const ref = React.useRef<HTMLCanvasElement>(null)
   const controller = useController(ref)
   return (

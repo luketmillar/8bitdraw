@@ -5,7 +5,7 @@ import { createBounds } from '../Bounds'
 export type RectangleOptions = {
   width: number
   height: number
-  fill?: Color
+  fill: Color | null
   stroke?: Stroke
   opacity?: number
 } & ShapeOptions
@@ -13,7 +13,7 @@ export type RectangleOptions = {
 export default class Rectangle extends Shape {
   public width: number
   public height: number
-  public fill?: Color
+  public fill: Color | null
   public stroke?: Stroke
   public opacity: number
   constructor(options: RectangleOptions) {

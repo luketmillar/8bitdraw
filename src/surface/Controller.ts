@@ -14,7 +14,7 @@ export default class SurfaceController extends Controller<SurfaceWorld> {
     this.render()
   }
 
-  public onMouseMove = (position: Position) => {}
+  public onMouseMove = () => {}
 
   public drop = () => {}
 }

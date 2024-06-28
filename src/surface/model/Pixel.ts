@@ -6,7 +6,7 @@ import { PIXEL_SIZE } from './consts'
 export default class Pixel extends Model {
   public position: Position
   private rect: Rectangle
-  constructor(position: Position, color: Color, opacity?: number) {
+  constructor(position: Position, color: Color | null, opacity?: number) {
     super()
     this.position = position
     this.rect = new Rectangle({
@@ -22,11 +22,11 @@ export default class Pixel extends Model {
     })
   }
 
-  public get color(): Color | undefined {
+  public get color(): Color | null {
     return this.rect.fill
   }
 
-  public set color(color: Color | undefined) {
+  public set color(color: Color | null) {
     this.rect.fill = color
   }
 

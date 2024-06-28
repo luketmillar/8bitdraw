@@ -24,7 +24,7 @@ export default class Line extends Shape {
     this.thickness = options.thickness
   }
 
-  public intersects(position: Position) {
+  public intersects() {
     return false
   }
 
