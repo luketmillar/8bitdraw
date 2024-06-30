@@ -1,6 +1,11 @@
-import { Color, Position } from '../utils/types'
+import { Color, Position, Size } from '../utils/types'
 import { Rectangle } from '../views/Views'
 import Model from './Base'
+
+const getCenterPoint = (position: Position, size: Size): Position => ({
+  x: position.x + size.width / 2,
+  y: position.y + size.height / 2,
+})
 
 export default class Pixel extends Model {
   public position: Position
@@ -9,7 +14,9 @@ export default class Pixel extends Model {
   constructor(position: Position, fill: Color | null) {
     super()
     this.position = position
-    this.rectangle = new Rectangle({ x: 100, y: 200 }, 100, 150, { fill })
+    this.rectangle = new Rectangle(getCenterPoint(position, { width: 1, height: 1 }), 1, 1, {
+      fill,
+    })
   }
 
   public get fill() {
