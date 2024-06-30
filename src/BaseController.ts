@@ -1,18 +1,31 @@
-import * as Model from './Shape'
-import View from './View'
+import * as Shapes from './models/Shapes'
+import { Size } from './utils/types'
 
-export default class Controller<W extends Model.World> {
-  protected readonly view: View
-  protected readonly world: W
+export interface IWorld {
+  start: () => void
+  update: (delta: number) => void
+  allShapes: () => Shapes.Shape[]
+  size: Size
+}
+
+export interface IView {
+  render: (world: IWorld) => void
+}
+
+export default class BaseController<W extends IWorld> {
+  public readonly world: W
+  public readonly view: IView
   private running: boolean = false
   private startTime: number = 0
   private lastFrameTime: number = 0
-  constructor(canvas: HTMLCanvasElement, world: W) {
+  constructor(world: W, view: IView) {
     this.world = world
-    this.view = new View(canvas)
+    this.view = view
   }
 
   public start() {
+    this.onStart()
+    this.world.start()
     this.running = true
     this.startTime = this.now
     this.lastFrameTime = this.startTime
@@ -23,10 +36,6 @@ export default class Controller<W extends Model.World> {
     this.running = false
   }
 
-  public render() {
-    this.view.render(this.world)
-  }
-
   private loop = (frameTime: number) => {
     if (!this.running) {
       return
@@ -34,11 +43,13 @@ export default class Controller<W extends Model.World> {
     this.queueFrame()
     const delta = frameTime - this.lastFrameTime
     if (delta > 500) {
+      // we missed some frames, instead of skipping them we wait slow down
       this.startTime += delta
       this.lastFrameTime = frameTime
       return
     }
-    this.render()
+    this.world.update(delta)
+    this.view.render(this.world)
     this.lastFrameTime = frameTime
   }
 
@@ -53,4 +64,6 @@ export default class Controller<W extends Model.World> {
   protected get now() {
     return performance.now()
   }
+
+  protected onStart() {}
 }

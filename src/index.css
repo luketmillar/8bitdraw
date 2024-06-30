@@ -1,0 +1,28 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+:root {
+  --app-height: 100%;
+}
+html {
+  height: var(--app-height);
+  position: fixed;
+}
+body {
+  margin: 0;
+  font-family: 'Montserrat', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+    'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: var(--app-height);
+
+  background-color: #000;
+  color: #fff;
+  user-select: none;
+  position: fixed;
+}
+
+h1 {
+  font-size: 4rem;
+}
