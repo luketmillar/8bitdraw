@@ -1,14 +1,14 @@
-import Controller from '../AppController'
+import AppController from '../AppController'
 import BaseObject from '../models/Base'
 import EventEmitter from '../utils/EventEmitter'
-import { Position } from '../utils/types'
+import { Color, Position } from '../utils/types'
 
 export default class Tool extends EventEmitter<{
-  type: 'objects-changed'
-  payload: { previous: BaseObject[]; next: BaseObject[] }
+  type: 'pixels-changed'
+  payload: { pixels: Array<{ index: Position; color: Color | null }> }
 }> {
-  protected readonly controller: Controller
-  constructor(controller: Controller) {
+  protected readonly controller: AppController
+  constructor(controller: AppController) {
     super()
     this.controller = controller
   }

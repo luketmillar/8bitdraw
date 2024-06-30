@@ -10,13 +10,13 @@ export interface IView<W extends IWorld> {
   render: (world: W) => void
 }
 
-export default class BaseController<W extends IWorld> {
+export default class BaseController<W extends IWorld, V extends IView<W>> {
   public readonly world: W
-  public readonly view: IView<W>
+  public readonly view: V
   private running: boolean = false
   private startTime: number = 0
   private lastFrameTime: number = 0
-  constructor(world: W, view: IView<W>) {
+  constructor(world: W, view: V) {
     this.world = world
     this.view = view
   }

@@ -3,15 +3,27 @@ import AppWorld from './AppWorld'
 import ToolStack from './tools/ToolStack'
 import BaseObject from './models/Base'
 import { Position } from './utils/types'
-import ShooterTool from './tools/ShooterTools'
+import ToggleTool from './tools/ToggleTool'
+import * as Coordinates from './utils/Coordinates'
+import AppView from './AppView'
 
-export default class AppController extends BaseController<AppWorld> {
+export default class AppController extends BaseController<AppWorld, AppView> {
   public toolStack = new ToolStack()
-  public onMouseDown = (position: Position) => {
-    this.tool?.onMouseDown(position)
+  public onMouseDown = (canvasPosition: Position) => {
+    const sketchPosition = Coordinates.canvasToSketch(
+      canvasPosition,
+      this.world.sketch.size,
+      this.view.gutter
+    )
+    this.tool?.onMouseDown(sketchPosition)
   }
-  public onMouseMove = (position: Position) => {
-    this.tool?.onMouseMove(position)
+  public onMouseMove = (canvasPosition: Position) => {
+    const sketchPosition = Coordinates.canvasToSketch(
+      canvasPosition,
+      this.world.sketch.size,
+      this.view.gutter
+    )
+    this.tool?.onMouseMove(sketchPosition)
   }
   public onMouseUp = () => {
     this.tool?.onMouseUp()
@@ -19,7 +31,7 @@ export default class AppController extends BaseController<AppWorld> {
 
   protected onStart() {
     this.toolStack.on('objects-changed', this.handleToolObjectsChanged)
-    this.toolStack.push(new ShooterTool(this))
+    this.toolStack.push(new ToggleTool(this))
   }
 
   private get tool() {

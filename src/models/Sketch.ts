@@ -1,4 +1,4 @@
-import { Size } from '../utils/types'
+import { Color, Position, Size } from '../utils/types'
 import Model from './Base'
 import Pixel from './Pixel'
 
@@ -22,10 +22,22 @@ export default class Sketch extends Model {
     this.pixels = createPixels(size)
   }
 
+  public setColor(position: Position, color: Color | null) {
+    this.getPixel(position).fill = color
+  }
+
+  public getColor(position: Position): Color | null {
+    return this.getPixel(position).fill
+  }
+
   public getViews() {
     return this.pixels
       .flat()
       .map((pixel) => pixel.getViews())
       .flat()
+  }
+
+  private getPixel(position: Position): Pixel {
+    return this.pixels[position.x][position.y]
   }
 }

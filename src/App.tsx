@@ -43,18 +43,20 @@ const FullScreenCanvas = React.forwardRef(
     { view, world }: { view: AppView; world: AppWorld },
     ref: React.ForwardedRef<HTMLCanvasElement>
   ) => {
-    const { screenSize } = useSizes()
+    const { screenSize, canvasSize } = useSizes()
     React.useEffect(() => {
-      const screenInCanvasSpace = Coordinates.screenToCanvas({
-        x: screenSize.width,
-        y: screenSize.height,
-      })
-      const screenInSketchSpace = Coordinates.canvasToSketch(screenInCanvasSpace, world.sketch.size)
+      const sketchInCanvasSpace = Coordinates.sketchToCanvas(
+        {
+          x: world.sketch.size.width,
+          y: world.sketch.size.height,
+        },
+        world.sketch.size
+      )
       view.gutter = {
-        left: (screenInSketchSpace.x - world.sketch.size.width) / 2,
-        top: (screenInSketchSpace.y - world.sketch.size.height) / 2,
+        left: (canvasSize.width - sketchInCanvasSpace.x) / 2,
+        top: (canvasSize.height - sketchInCanvasSpace.y) / 2,
       }
-    }, [screenSize.width, screenSize.height])
+    }, [canvasSize.width, canvasSize.height])
     return (
       <canvas
         ref={ref}

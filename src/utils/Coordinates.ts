@@ -44,21 +44,23 @@ export const canvasToSketchScale = (sketchSize: Size) => {
   }
 }
 
-export const canvasToSketch = (position: Position, sketchSize: Size) => {
+export const canvasToSketch = (
+  position: Position,
+  sketchSize: Size,
+  gutter: { left: number; top: number } = { left: 0, top: 0 }
+) => {
   const scale = canvasToSketchScale(sketchSize)
   return {
-    x: Math.round(position.x / scale.x),
-    y: Math.round(position.y / scale.y),
+    x: Math.floor((position.x - gutter.left) / scale.x),
+    y: Math.floor((position.y - gutter.top) / scale.y),
   }
 }
 
 export const sketchToCanvas = (position: Position, sketchSize: Size) => {
-  const canvasSize = getCanvasSize()
-  const xRelative = position.x / sketchSize.width
-  const yRelative = position.y / sketchSize.height
+  const scale = canvasToSketchScale(sketchSize)
   return {
-    x: Math.round(canvasSize.width * xRelative),
-    y: Math.round(canvasSize.height * yRelative),
+    x: position.x * scale.x,
+    y: position.y * scale.y,
   }
 }
 

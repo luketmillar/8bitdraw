@@ -11,21 +11,15 @@ export default class ToolStack extends EventEmitter<{
   public push = (tool: Tool) => {
     this.stack.push(tool)
     tool.initialize()
-    tool.on('objects-changed', this.handleToolObjectsChanged)
   }
 
   public pop = () => {
     const tool = this.stack.pop()
     tool?.teardown()
-    tool?.off('objects-changed', this.handleToolObjectsChanged)
     return tool
   }
 
   public top = () => {
     return this.stack[this.stack.length - 1]
-  }
-
-  private handleToolObjectsChanged = (payload: { previous: BaseObject[]; next: BaseObject[] }) => {
-    this.emit('objects-changed', payload)
   }
 }

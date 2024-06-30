@@ -22,14 +22,11 @@ export default class AppView implements IView<AppWorld> {
     ctx.fillStyle = '#eee'
     ctx.fillRect(0, 0, this.width, this.height)
 
-    // transform canvas to sketch
-    ctx.save()
-    const scale = Coordinates.canvasToSketchScale(world.sketch.size)
-    ctx.scale(scale.x, scale.y)
-
-    // transform gutter
+    // transform to sketch space
     ctx.save()
     ctx.translate(this.gutter.left, this.gutter.top)
+    const scale = Coordinates.canvasToSketchScale(world.sketch.size)
+    ctx.scale(scale.x, scale.y)
 
     // white background
     ctx.fillStyle = '#fff'
@@ -38,10 +35,7 @@ export default class AppView implements IView<AppWorld> {
     // draw everything
     this.renderViews(ctx, world.allViews())
 
-    // restore gutter transform
-    ctx.restore()
-
-    //restore canvas to world transform
+    //restore canvas to canvas space
     ctx.restore()
 
     // restore starting point
