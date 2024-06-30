@@ -5,6 +5,8 @@ import AppView from './AppView'
 import AppController from './AppController'
 import InputLayer from './utils/InputLayer'
 import * as Coordinates from './utils/Coordinates'
+import FillTool from './tools/FillTool'
+import DrawTool from './tools/DrawTool'
 
 const useDisableTouch = () => {
   React.useEffect(() => {
@@ -34,6 +36,19 @@ const SurfaceApp = () => {
         onMouseMove={controller.onMouseMove}
         onMouseUp={controller.onMouseUp}
       />
+      <div
+        style={{
+          position: 'absolute',
+          top: 20,
+          left: 20,
+          zIndex: 1000,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <button onClick={() => controller.toolStack.replace(new FillTool(controller))}>Fill</button>
+        <button onClick={() => controller.toolStack.push(new DrawTool(controller))}>Draw</button>
+      </div>
     </>
   )
 }
