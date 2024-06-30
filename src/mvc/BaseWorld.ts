@@ -1,13 +1,8 @@
 import { IWorld } from './BaseController'
 import BaseObject from '../models/Base'
-import { Size } from '../utils/types'
 
 export default abstract class BaseWorld implements IWorld {
   protected readonly objects: BaseObject[] = []
-  public size: Size
-  constructor(size: Size) {
-    this.size = size
-  }
   public start = () => {
     this.createWorld()
   }

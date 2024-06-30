@@ -1,24 +1,22 @@
-import { Size } from '../utils/types'
-import View from '../View'
+import { View } from '../views/Views'
 
 export interface IWorld {
   start: () => void
   update: (delta: number) => void
   allViews: () => View[]
-  size: Size
 }
 
-export interface IView {
-  render: (world: IWorld) => void
+export interface IView<W extends IWorld> {
+  render: (world: W) => void
 }
 
 export default class BaseController<W extends IWorld> {
   public readonly world: W
-  public readonly view: IView
+  public readonly view: IView<W>
   private running: boolean = false
   private startTime: number = 0
   private lastFrameTime: number = 0
-  constructor(world: W, view: IView) {
+  constructor(world: W, view: IView<W>) {
     this.world = world
     this.view = view
   }

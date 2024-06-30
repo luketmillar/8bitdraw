@@ -1,7 +1,7 @@
 import { Color, Position, Stroke } from '../utils/types'
 
 type IViewRenderOptions = {
-  fill?: Color
+  fill?: Color | null
   stroke?: Stroke
 }
 export abstract class View {

@@ -1,11 +1,11 @@
 import BaseController from './mvc/BaseController'
-import World from './World'
+import AppWorld from './AppWorld'
 import ToolStack from './tools/ToolStack'
 import BaseObject from './models/Base'
 import { Position } from './utils/types'
 import ShooterTool from './tools/ShooterTools'
 
-export default class Controller extends BaseController<World> {
+export default class AppController extends BaseController<AppWorld> {
   public toolStack = new ToolStack()
   public onMouseDown = (position: Position) => {
     this.tool?.onMouseDown(position)

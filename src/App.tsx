@@ -1,9 +1,10 @@
 import React from 'react'
 import { useSizes } from './utils/Coordinates'
-import World from './World'
-import View from './View'
-import Controller from './Controller'
+import AppWorld from './AppWorld'
+import AppView from './AppView'
+import AppController from './AppController'
 import InputHandler from './utils/InputHandler'
+import * as Coordinates from './utils/Coordinates'
 
 const useDisableTouch = () => {
   React.useEffect(() => {
@@ -15,9 +16,9 @@ const useDisableTouch = () => {
 
 const SurfaceApp = () => {
   useDisableTouch()
-  const world = React.useMemo(() => new World(), [])
-  const view = React.useMemo(() => new View(), [])
-  const controller = React.useMemo(() => new Controller(world, view), [world, view])
+  const world = React.useMemo(() => new AppWorld({ width: 400, height: 300 }), [])
+  const view = React.useMemo(() => new AppView(), [])
+  const controller = React.useMemo(() => new AppController(world, view), [world, view])
   const ref = React.useRef<HTMLCanvasElement>(null)
   React.useEffect(() => {
     view.canvas = ref.current!
@@ -38,20 +39,27 @@ const SurfaceApp = () => {
 }
 
 const FullScreenCanvas = React.forwardRef(
-  ({ view, world }: { view: View; world: World }, ref: React.ForwardedRef<HTMLCanvasElement>) => {
+  (
+    { view, world }: { view: AppView; world: AppWorld },
+    ref: React.ForwardedRef<HTMLCanvasElement>
+  ) => {
     const { screenSize } = useSizes()
-    const canvasSize = view.getCanvasSize(world, screenSize)
     React.useEffect(() => {
+      const screenInCanvasSpace = Coordinates.screenToCanvas({
+        x: screenSize.width,
+        y: screenSize.height,
+      })
+      const screenInSketchSpace = Coordinates.canvasToSketch(screenInCanvasSpace, world.sketch.size)
       view.gutter = {
-        left: (canvasSize.width - world.size.width) / 2,
-        top: (canvasSize.height - world.size.height) / 2,
+        left: (screenInSketchSpace.x - world.sketch.size.width) / 2,
+        top: (screenInSketchSpace.y - world.sketch.size.height) / 2,
       }
-    }, [canvasSize.width, canvasSize.height, world.size.width, world.size.height])
+    }, [screenSize.width, screenSize.height])
     return (
       <canvas
         ref={ref}
-        width={canvasSize.width}
-        height={canvasSize.height}
+        width={screenSize.width * window.devicePixelRatio}
+        height={screenSize.height * window.devicePixelRatio}
         style={{ width: screenSize.width, height: screenSize.height }}
       />
     )

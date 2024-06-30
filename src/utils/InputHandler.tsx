@@ -20,7 +20,7 @@ interface IProps {
 const InputHandler = ({ onClick, onMouseMove, onMouseUp, onMouseDown }: IProps) => {
   const handleClick = React.useCallback(
     (e: React.MouseEvent) => {
-      const position = Coordinates.screenToWorld({ x: e.clientX, y: e.clientY })
+      const position = Coordinates.screenToCanvas({ x: e.clientX, y: e.clientY })
       onClick?.(position)
     },
     [onClick]
@@ -28,7 +28,7 @@ const InputHandler = ({ onClick, onMouseMove, onMouseUp, onMouseDown }: IProps) 
   const handleTouchStart = React.useCallback(
     (e: React.TouchEvent) => {
       e.preventDefault()
-      const position = Coordinates.screenToWorld({
+      const position = Coordinates.screenToCanvas({
         x: e.touches[0].clientX,
         y: e.touches[0].clientY,
       })
@@ -41,14 +41,14 @@ const InputHandler = ({ onClick, onMouseMove, onMouseUp, onMouseDown }: IProps) 
       if (e.detail !== 1 || e.button !== 0) {
         return
       }
-      const position = Coordinates.screenToWorld({ x: e.clientX, y: e.clientY })
+      const position = Coordinates.screenToCanvas({ x: e.clientX, y: e.clientY })
       onMouseDown?.(position)
     },
     [onMouseDown]
   )
   React.useEffect(() => {
     const handleUp = (e: MouseEvent) => {
-      const position = Coordinates.screenToWorld({ x: e.clientX, y: e.clientY })
+      const position = Coordinates.screenToCanvas({ x: e.clientX, y: e.clientY })
       onMouseUp?.(position)
     }
     window.addEventListener('mouseup', handleUp)
@@ -56,7 +56,7 @@ const InputHandler = ({ onClick, onMouseMove, onMouseUp, onMouseDown }: IProps) 
   }, [onMouseUp])
   React.useEffect(() => {
     const handleMove = (e: MouseEvent) => {
-      const position = Coordinates.screenToWorld({ x: e.clientX, y: e.clientY })
+      const position = Coordinates.screenToCanvas({ x: e.clientX, y: e.clientY })
       onMouseMove?.(position)
     }
     window.addEventListener('mousemove', handleMove)
@@ -65,7 +65,7 @@ const InputHandler = ({ onClick, onMouseMove, onMouseUp, onMouseDown }: IProps) 
   React.useEffect(() => {
     const handleMove = (e: TouchEvent) => {
       e.preventDefault()
-      const position = Coordinates.screenToWorld({
+      const position = Coordinates.screenToCanvas({
         x: e.touches[0].clientX,
         y: e.touches[0].clientY,
       })
