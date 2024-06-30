@@ -2,34 +2,33 @@ import BaseController from './mvc/BaseController'
 import AppWorld from './AppWorld'
 import ToolStack from './tools/ToolStack'
 import { Position } from './utils/types'
-import ToggleTool from './tools/ToggleTool'
-import * as Coordinates from './utils/Coordinates'
+import DrawTool from './tools/DrawTool'
 import AppView from './AppView'
+import InputHandler, { InputEvent } from './utils/InputHandler'
 
 export default class AppController extends BaseController<AppWorld, AppView> {
   public toolStack = new ToolStack()
-  public onMouseDown = (canvasPosition: Position) => {
-    const sketchPosition = Coordinates.canvasToSketch(
-      canvasPosition,
-      this.world.sketch.size,
-      this.view.gutter
-    )
-    this.tool?.onMouseDown(sketchPosition)
+  public inputHandler = new InputHandler(this.world, this.view)
+
+  constructor(world: AppWorld, view: AppView) {
+    super(world, view)
+    this.inputHandler.on(InputEvent.Start, ({ position }) => this.tool?.onStart(position))
+    this.inputHandler.on(InputEvent.Move, ({ position }) => this.tool?.onMove(position))
+    this.inputHandler.on(InputEvent.End, () => this.tool?.onEnd())
   }
-  public onMouseMove = (canvasPosition: Position) => {
-    const sketchPosition = Coordinates.canvasToSketch(
-      canvasPosition,
-      this.world.sketch.size,
-      this.view.gutter
-    )
-    this.tool?.onMouseMove(sketchPosition)
+
+  public onMouseDown = (canvasPosition: Position, metaKey?: boolean) => {
+    this.inputHandler.onMouseDown(canvasPosition, { metaKey })
   }
-  public onMouseUp = () => {
-    this.tool?.onMouseUp()
+  public onMouseUp = (canvasPosition: Position, metaKey?: boolean) => {
+    this.inputHandler.onMouseUp(canvasPosition, { metaKey })
+  }
+  public onMouseMove = (canvasPosition: Position, metaKey?: boolean) => {
+    this.inputHandler.onMouseMove(canvasPosition, { metaKey })
   }
 
   protected onStart() {
-    this.toolStack.push(new ToggleTool(this))
+    this.toolStack.push(new DrawTool(this))
   }
 
   private get tool() {

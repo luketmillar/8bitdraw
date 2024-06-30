@@ -42,6 +42,6 @@ export default class Grid extends Model {
   }
 
   public getViews() {
-    return this.verticalGridLines.concat(this.horizontalGridLines)
+    return [...this.verticalGridLines, ...this.horizontalGridLines]
   }
 }

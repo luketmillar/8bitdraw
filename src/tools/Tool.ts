@@ -10,9 +10,9 @@ export default class Tool {
   public initialize() {}
   public teardown() {}
 
-  public onMouseDown(_position: Position) {}
-  public onMouseUp() {}
-  public onMouseMove(_position: Position) {}
+  public onStart(_position: Position) {}
+  public onMove(_position: Position) {}
+  public onEnd() {}
 
   public getObjects(): BaseObject[] {
     return []

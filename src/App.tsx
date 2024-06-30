@@ -3,7 +3,7 @@ import { useSizes } from './utils/Coordinates'
 import AppWorld from './AppWorld'
 import AppView from './AppView'
 import AppController from './AppController'
-import InputHandler from './utils/InputHandler'
+import InputLayer from './utils/InputLayer'
 import * as Coordinates from './utils/Coordinates'
 
 const useDisableTouch = () => {
@@ -29,7 +29,7 @@ const SurfaceApp = () => {
   return (
     <>
       <FullScreenCanvas view={view} world={world} ref={ref} />
-      <InputHandler
+      <InputLayer
         onMouseDown={controller.onMouseDown}
         onMouseMove={controller.onMouseMove}
         onMouseUp={controller.onMouseUp}

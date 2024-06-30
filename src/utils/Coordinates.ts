@@ -85,3 +85,5 @@ export const useSizes = () => {
 
 export const distance = (a: Position, b: Position) =>
   Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2))
+
+export const positionsAreEqual = (a: Position, b: Position) => a.x === b.x && a.y === b.y
