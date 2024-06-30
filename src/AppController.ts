@@ -1,7 +1,7 @@
 import BaseController from './mvc/BaseController'
 import AppWorld from './AppWorld'
 import ToolStack from './tools/ToolStack'
-import { Position } from './utils/types'
+import { Color, Position } from './utils/types'
 import DrawTool from './tools/DrawTool'
 import AppView from './AppView'
 import InputHandler, { InputEvent } from './utils/InputHandler'
@@ -25,6 +25,22 @@ export default class AppController extends BaseController<AppWorld, AppView> {
   }
   public onMouseMove = (canvasPosition: Position, metaKey?: boolean) => {
     this.inputHandler.onMouseMove(canvasPosition, { metaKey })
+  }
+
+  public getColor(position: Position) {
+    return this.world.sketch.getColor(position)
+  }
+  public setColor(position: Position, color: Color) {
+    this.world.sketch.setColor(position, color)
+  }
+
+  public isInSketch(position: Position) {
+    return (
+      position.x >= 0 &&
+      position.x < this.world.sketch.size.width &&
+      position.y >= 0 &&
+      position.y < this.world.sketch.size.height
+    )
   }
 
   protected onStart() {

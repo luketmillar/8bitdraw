@@ -28,16 +28,7 @@ export default class DrawTool extends Tool {
   public onUpdate() {}
 
   private drawPixel(position: Position) {
-    if (!this.isWithinBounds(position)) return
-    this.controller.world.sketch.setColor(position, '#0ff')
-  }
-
-  private isWithinBounds(position: Position) {
-    return (
-      position.x >= 0 &&
-      position.x < this.controller.world.sketch.size.width &&
-      position.y >= 0 &&
-      position.y < this.controller.world.sketch.size.height
-    )
+    if (!this.controller.isInSketch(position)) return
+    this.controller.setColor(position, '#0ff')
   }
 }
