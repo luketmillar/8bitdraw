@@ -33,6 +33,9 @@ export default class AppController extends BaseController<AppWorld, AppView> {
   public setColor(position: Position, color: Color) {
     this.world.sketch.setColor(position, color)
   }
+  public unsetColor(position: Position) {
+    this.world.sketch.setColor(position, null)
+  }
 
   public isInSketch(position: Position) {
     return (

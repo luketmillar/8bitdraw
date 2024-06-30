@@ -17,6 +17,7 @@ export default class AppView implements IView<AppWorld> {
     const ctx = this.ctx
     ctx.save()
     ctx.clearRect(0, 0, this.width, this.height)
+    console.log('rendering')
 
     // draw gutter backgournd
     ctx.fillStyle = '#eee'
