@@ -1,11 +1,6 @@
-import BaseObject from '../models/Base'
-import EventEmitter from '../utils/EventEmitter'
 import Tool from './Tool'
 
-export default class ToolStack extends EventEmitter<{
-  type: 'objects-changed'
-  payload: { previous: BaseObject[]; next: BaseObject[] }
-}> {
+export default class ToolStack {
   public readonly stack: Tool[] = []
 
   public push = (tool: Tool) => {

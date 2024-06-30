@@ -1,7 +1,6 @@
 import BaseController from './mvc/BaseController'
 import AppWorld from './AppWorld'
 import ToolStack from './tools/ToolStack'
-import BaseObject from './models/Base'
 import { Position } from './utils/types'
 import ToggleTool from './tools/ToggleTool'
 import * as Coordinates from './utils/Coordinates'
@@ -30,22 +29,10 @@ export default class AppController extends BaseController<AppWorld, AppView> {
   }
 
   protected onStart() {
-    this.toolStack.on('objects-changed', this.handleToolObjectsChanged)
     this.toolStack.push(new ToggleTool(this))
   }
 
   private get tool() {
     return this.toolStack.top()
-  }
-
-  private handleToolObjectsChanged = ({
-    previous,
-    next,
-  }: {
-    previous: BaseObject[]
-    next: BaseObject[]
-  }) => {
-    previous.forEach((obj) => this.world.removeObject(obj))
-    next.forEach((obj) => this.world.addObject(obj))
   }
 }
