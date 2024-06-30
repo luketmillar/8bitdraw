@@ -1,4 +1,4 @@
-import Controller from '../Controller'
+import Controller from '../mvc/Controller'
 import BaseObject from '../models/Base'
 import EventEmitter from '../utils/EventEmitter'
 import { Position } from '../utils/types'

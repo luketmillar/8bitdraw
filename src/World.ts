@@ -1,4 +1,4 @@
-import BaseWorld from './BaseWorld'
+import BaseWorld from './mvc/BaseWorld'
 
 export default class World extends BaseWorld {
   constructor() {

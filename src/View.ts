@@ -1,5 +1,4 @@
-import { IView, IWorld } from './BaseController'
-import * as Shapes from './models/Shapes'
+import { IView, IWorld } from './mvc/BaseController'
 import { Size } from './utils/types'
 
 export default class View implements IView {
@@ -37,7 +36,7 @@ export default class View implements IView {
     ctx.transform(1, 0, 0, 1, this.gutter.left, this.gutter.top)
     ctx.fillStyle = '#fff'
     ctx.fillRect(0, 0, world.size.width, world.size.height)
-    this.renderShapes(ctx, world.allShapes())
+    this.renderViews(ctx, world.allViews())
     ctx.restore()
 
     ctx.fillStyle = '#eee'
@@ -49,8 +48,8 @@ export default class View implements IView {
     ctx.restore()
   }
 
-  private renderShapes = (ctx: CanvasRenderingContext2D, shapes: Shapes.Shape[]) =>
-    shapes.forEach((shape) => shape.render(ctx))
+  private renderViews = (ctx: CanvasRenderingContext2D, views: View[]) =>
+    views.forEach((view) => view.render(ctx))
 
   private get ctx() {
     return this.canvas.getContext('2d')!

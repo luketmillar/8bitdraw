@@ -1,9 +1,9 @@
-import BaseController from './BaseController'
+import BaseController from './mvc/BaseController'
 import World from './World'
-import ToolStack from './Tools/ToolStack'
+import ToolStack from './tools/ToolStack'
 import BaseObject from './models/Base'
 import { Position } from './utils/types'
-import ShooterTool from './Tools/ShooterTools'
+import ShooterTool from './tools/ShooterTools'
 
 export default class Controller extends BaseController<World> {
   public toolStack = new ToolStack()

@@ -1,10 +1,10 @@
-import * as Shapes from './models/Shapes'
-import { Size } from './utils/types'
+import { Size } from '../utils/types'
+import View from '../View'
 
 export interface IWorld {
   start: () => void
   update: (delta: number) => void
-  allShapes: () => Shapes.Shape[]
+  allViews: () => View[]
   size: Size
 }
 

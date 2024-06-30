@@ -1,12 +1,12 @@
 import { Color, Position, Stroke } from '../utils/types'
 
-type IShapeRenderOptions = {
+type IViewRenderOptions = {
   fill?: Color
   stroke?: Stroke
 }
-export abstract class Shape {
-  public options: IShapeRenderOptions
-  constructor(options?: IShapeRenderOptions) {
+export abstract class View {
+  public options: IViewRenderOptions
+  constructor(options?: IViewRenderOptions) {
     this.options = options ?? {}
   }
 
@@ -17,11 +17,11 @@ export abstract class Shape {
   }
   protected abstract draw(ctx: CanvasRenderingContext2D): void
 }
-export class Rectangle extends Shape {
+export class Rectangle extends View {
   public position: Position
   public width: number
   public height: number
-  constructor(position: Position, width: number, height: number, options?: IShapeRenderOptions) {
+  constructor(position: Position, width: number, height: number, options?: IViewRenderOptions) {
     super(options)
     this.position = position
     this.width = width
@@ -46,10 +46,10 @@ export class Rectangle extends Shape {
   }
 }
 
-export class Circle extends Shape {
+export class Circle extends View {
   public position: Position
   public radius: number
-  constructor(position: Position, radius: number, options?: IShapeRenderOptions) {
+  constructor(position: Position, radius: number, options?: IViewRenderOptions) {
     super(options)
     this.position = position
     this.radius = radius
@@ -70,10 +70,10 @@ export class Circle extends Shape {
   }
 }
 
-export class Line extends Shape {
+export class Line extends View {
   public a: Position
   public b: Position
-  constructor(a: Position, b: Position, options?: IShapeRenderOptions) {
+  constructor(a: Position, b: Position, options?: IViewRenderOptions) {
     super(options)
     this.a = a
     this.b = b
