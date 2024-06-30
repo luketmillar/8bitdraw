@@ -38,7 +38,11 @@ export class Rectangle extends View {
       ctx.fillRect(left, top, this.width, this.height)
     }
     if (this.options.stroke) {
-      ctx.lineWidth = this.options.stroke.width
+      if (this.options.stroke.canvasSpace) {
+        ctx.lineWidth = this.options.stroke.width / 100
+      } else {
+        ctx.lineWidth = this.options.stroke.width
+      }
       ctx.strokeStyle = this.options.stroke.color
       ctx.strokeRect(left, top, this.width, this.height)
     }
