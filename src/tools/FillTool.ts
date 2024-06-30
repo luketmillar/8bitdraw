@@ -9,7 +9,7 @@ export default class FillTool extends Tool {
     const logic = new FillLogic(this.controller)
     const positions = logic.getFillPositions(position)
     positions.forEach((position) => {
-      this.controller.setColor(position, '#0ff')
+      this.controller.setColor(position, this.toolStack.currentColor)
     })
   }
 

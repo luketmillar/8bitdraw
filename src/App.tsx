@@ -7,6 +7,25 @@ import InputLayer from './utils/InputLayer'
 import * as Coordinates from './utils/Coordinates'
 import FillTool from './tools/FillTool'
 import DrawTool from './tools/DrawTool'
+import styled from 'styled-components'
+
+const ToolBar = styled.div`
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+`
+
+const ColorBar = styled.div`
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+`
 
 const useDisableTouch = () => {
   React.useEffect(() => {
@@ -36,19 +55,16 @@ const SurfaceApp = () => {
         onMouseMove={controller.onMouseMove}
         onMouseUp={controller.onMouseUp}
       />
-      <div
-        style={{
-          position: 'absolute',
-          top: 20,
-          left: 20,
-          zIndex: 1000,
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
+      <ToolBar>
         <button onClick={() => controller.toolStack.replace(new FillTool(controller))}>Fill</button>
         <button onClick={() => controller.toolStack.push(new DrawTool(controller))}>Draw</button>
-      </div>
+      </ToolBar>
+      <ColorBar>
+        <button onClick={() => (controller.toolStack.currentColor = '#000')}>Black</button>
+        <button onClick={() => (controller.toolStack.currentColor = '#0ff')}>Teal</button>
+        <button onClick={() => (controller.toolStack.currentColor = '#f00')}>Red</button>
+        <button onClick={() => (controller.toolStack.currentColor = '#fff')}>White</button>
+      </ColorBar>
     </>
   )
 }

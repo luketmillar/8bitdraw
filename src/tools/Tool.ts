@@ -18,4 +18,8 @@ export default class Tool {
     return []
   }
   public onUpdate() {}
+
+  protected get toolStack() {
+    return this.controller.toolStack
+  }
 }

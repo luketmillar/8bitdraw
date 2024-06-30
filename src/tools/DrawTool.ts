@@ -29,6 +29,6 @@ export default class DrawTool extends Tool {
 
   private drawPixel(position: Position) {
     if (!this.controller.isInSketch(position)) return
-    this.controller.setColor(position, '#0ff')
+    this.controller.setColor(position, this.toolStack.currentColor)
   }
 }
