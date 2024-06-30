@@ -1,5 +1,6 @@
 import { IWorld } from './BaseController'
 import BaseObject from '../models/Base'
+import Model from '../models/Base'
 
 export default abstract class BaseWorld implements IWorld {
   protected readonly objects: BaseObject[] = []
@@ -13,6 +14,7 @@ export default abstract class BaseWorld implements IWorld {
   public allViews = () => this.objects.flatMap((obj) => obj.getViews())
 
   protected abstract createWorld(): void
+  public abstract getModels(): Model[]
 
   protected onUpdate() {}
 

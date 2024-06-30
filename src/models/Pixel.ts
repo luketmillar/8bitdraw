@@ -16,7 +16,6 @@ export default class Pixel extends Model {
     this.position = position
     this.rectangle = new Rectangle(getCenterPoint(position, { width: 1, height: 1 }), 1, 1, {
       fill,
-      stroke: { color: '#eee', width: 1, canvasSpace: true },
     })
   }
 

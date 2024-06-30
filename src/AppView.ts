@@ -1,7 +1,7 @@
 import AppWorld from './AppWorld'
 import { IView } from './mvc/BaseController'
-import { View } from './views/Views'
 import * as Coordinates from './utils/Coordinates'
+import Model from './models/Base'
 
 export default class AppView implements IView<AppWorld> {
   private _canvas: HTMLCanvasElement | undefined
@@ -33,7 +33,7 @@ export default class AppView implements IView<AppWorld> {
     ctx.fillRect(0, 0, world.sketch.size.width, world.sketch.size.height)
 
     // draw everything
-    this.renderViews(ctx, world.allViews())
+    this.renderModels(ctx, world.getModels())
 
     //restore canvas to canvas space
     ctx.restore()
@@ -42,8 +42,8 @@ export default class AppView implements IView<AppWorld> {
     ctx.restore()
   }
 
-  private renderViews = (ctx: CanvasRenderingContext2D, views: View[]) =>
-    views.forEach((view) => view.render(ctx))
+  private renderModels = (ctx: CanvasRenderingContext2D, models: Model[]) =>
+    models.forEach((model) => model.getViews().forEach((view) => view.render(ctx)))
 
   private get ctx() {
     return this.canvas.getContext('2d')!

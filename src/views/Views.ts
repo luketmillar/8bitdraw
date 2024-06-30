@@ -83,9 +83,14 @@ export class Line extends View {
     this.b = b
   }
 
+  private getLineWidth() {
+    const setWidth = this.options.stroke?.width ?? 1
+    return this.options.stroke?.canvasSpace ? setWidth / 100 : setWidth
+  }
+
   public draw(ctx: CanvasRenderingContext2D) {
     ctx.beginPath()
-    ctx.lineWidth = this.options.stroke?.width ?? 1
+    ctx.lineWidth = this.getLineWidth()
     ctx.strokeStyle = this.options.stroke?.color ?? '#000'
     ctx.beginPath()
     ctx.moveTo(this.a.x, this.a.y)
