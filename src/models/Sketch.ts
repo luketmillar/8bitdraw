@@ -13,26 +13,89 @@ const createPixels = (size: Size) => {
   return pixels
 }
 
+class Overrides {
+  public isOverriding = false
+  public overrides: Record<string, Pixel> = {}
+
+  public start() {
+    this.clear()
+    this.isOverriding = true
+  }
+
+  public end() {
+    this.isOverriding = false
+    this.clear()
+  }
+
+  public set(position: Position, color: Color | null) {
+    this.overrides[this.createKey(position)] = new Pixel(position, color)
+  }
+
+  public get(position: Position): Color | null | undefined {
+    const pixel = this.overrides[this.createKey(position)]
+    if (pixel === undefined) return undefined
+    return pixel.fill
+  }
+
+  public getPixel(position: Position): Pixel | undefined {
+    return this.overrides[this.createKey(position)]
+  }
+
+  public unset(position: Position) {
+    delete this.overrides[this.createKey(position)]
+  }
+
+  public clear() {
+    this.overrides = {}
+  }
+
+  public hasOverride(position: Position) {
+    return !!this.overrides[this.createKey(position)]
+  }
+
+  private createKey(position: Position) {
+    return `${position.x}, ${position.y}`
+  }
+}
+
 export default class Sketch extends Model {
   public size: Size
   public pixels: Pixel[][] = []
+
+  public overrides: Overrides
+
   constructor(size: Size) {
     super()
     this.size = size
     this.pixels = createPixels(size)
+    this.overrides = new Overrides()
   }
 
   public setColor(position: Position, color: Color | null) {
-    this.getPixel(position).fill = color
+    if (this.overrides.isOverriding) {
+      this.overrides.set(position, color)
+    } else {
+      this.getPixel(position).fill = color
+    }
   }
 
-  public getColor(position: Position): Color | null {
+  public getColor(position: Position, includeOverride?: boolean): Color | null {
+    if (includeOverride) {
+      const overridePixel = this.overrides.getPixel(position)
+      if (overridePixel !== undefined) return overridePixel.fill
+    }
     return this.getPixel(position).fill
   }
 
   public getViews() {
     return this.pixels
       .flat()
+      .map((pixel) => {
+        if (this.overrides.hasOverride(pixel.position)) {
+          return this.overrides.getPixel(pixel.position)!
+        }
+        return pixel
+      })
       .map((pixel) => pixel.getViews())
       .flat()
   }

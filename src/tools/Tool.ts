@@ -12,7 +12,7 @@ export default class Tool {
 
   public onStart(_position: Position) {}
   public onMove(_position: Position) {}
-  public onEnd() {}
+  public onEnd(_position: Position) {}
 
   public getObjects(): BaseObject[] {
     return []

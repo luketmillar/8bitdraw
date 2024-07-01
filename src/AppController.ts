@@ -14,7 +14,7 @@ export default class AppController extends BaseController<AppWorld, AppView> {
     super(world, view)
     this.inputHandler.on(InputEvent.Start, ({ position }) => this.tool?.onStart(position))
     this.inputHandler.on(InputEvent.Move, ({ position }) => this.tool?.onMove(position))
-    this.inputHandler.on(InputEvent.End, () => this.tool?.onEnd())
+    this.inputHandler.on(InputEvent.End, ({ position }) => this.tool?.onEnd(position))
   }
 
   public onMouseDown = (canvasPosition: Position, metaKey?: boolean) => {
