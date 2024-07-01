@@ -7,20 +7,19 @@ export default class LineTool extends Tool {
 
   public onStart(position: Position) {
     this.startPosition = position
-    this.controller.world.sketch.overrides.start()
+    this.startOverride()
     this.drawLine(this.startPosition, position)
   }
 
   public onMove(position: Position) {
     if (!this.startPosition) return
-    this.controller.world.sketch.overrides.clear()
+    this.resetOverrides()
     this.drawLine(this.startPosition, position)
   }
 
-  public onEnd(position: Position) {
+  public onEnd(_position: Position) {
     if (!this.startPosition) return
-    this.controller.world.sketch.overrides.end()
-    this.drawLine(this.startPosition, position)
+    this.commitOverride()
     this.startPosition = null
   }
 

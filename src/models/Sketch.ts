@@ -22,9 +22,13 @@ class Overrides {
     this.isOverriding = true
   }
 
-  public end() {
+  public end(clear: boolean = true) {
     this.isOverriding = false
-    this.clear()
+    if (clear) this.clear()
+  }
+
+  public getAll() {
+    return this.overrides
   }
 
   public set(position: Position, color: Color | null) {
@@ -98,6 +102,25 @@ export default class Sketch extends Model {
       })
       .map((pixel) => pixel.getViews())
       .flat()
+  }
+
+  public startOverrides() {
+    this.overrides.start()
+  }
+  public cancelOverrides() {
+    this.overrides.clear()
+    this.overrides.end()
+  }
+  public resetOverrides() {
+    this.overrides.clear()
+  }
+  public commitOverrides() {
+    this.overrides.end(false)
+    const overrides = this.overrides.getAll()
+    Object.values(overrides).forEach((pixel) => {
+      this.setColor(pixel.position, pixel.fill)
+    })
+    this.overrides.clear()
   }
 
   private getPixel(position: Position): Pixel {

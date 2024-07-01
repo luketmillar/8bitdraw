@@ -19,21 +19,20 @@ export default class RectangleTool extends Tool {
   private startPosition: Position | null = null
 
   public onStart(position: Position) {
+    this.startOverride()
     this.startPosition = position
-    this.controller.world.sketch.overrides.start()
     this.drawRectangle(this.startPosition, position)
   }
 
   public onMove(position: Position) {
     if (!this.startPosition) return
-    this.controller.world.sketch.overrides.clear()
+    this.resetOverrides()
     this.drawRectangle(this.startPosition, position)
   }
 
-  public onEnd(position: Position) {
+  public onEnd(_position: Position) {
     if (!this.startPosition) return
-    this.controller.world.sketch.overrides.end()
-    this.drawRectangle(this.startPosition, position)
+    this.commitOverride()
     this.startPosition = null
   }
 

@@ -22,4 +22,20 @@ export default class Tool {
   protected get toolStack() {
     return this.controller.toolStack
   }
+
+  protected startOverride() {
+    this.controller.world.sketch.startOverrides()
+  }
+
+  protected commitOverride() {
+    this.controller.world.sketch.commitOverrides()
+  }
+
+  protected resetOverrides() {
+    this.controller.world.sketch.resetOverrides()
+  }
+
+  protected cancelOverrides() {
+    this.controller.world.sketch.cancelOverrides()
+  }
 }
