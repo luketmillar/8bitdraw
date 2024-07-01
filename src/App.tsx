@@ -10,6 +10,7 @@ import DrawTool from './tools/DrawTool'
 import styled from 'styled-components'
 import EraseTool from './tools/EraseTool'
 import LineTool from './tools/LineTool'
+import RectangleTool from './tools/RectangleTool'
 
 const ToolBar = styled.div`
   position: absolute;
@@ -62,6 +63,9 @@ const SurfaceApp = () => {
         <button onClick={() => controller.toolStack.push(new DrawTool(controller))}>Draw</button>
         <button onClick={() => controller.toolStack.push(new LineTool(controller))}>Line</button>
         <button onClick={() => controller.toolStack.push(new EraseTool(controller))}>Erase</button>
+        <button onClick={() => controller.toolStack.push(new RectangleTool(controller))}>
+          Rectangle
+        </button>
       </ToolBar>
       <ColorBar>
         <button onClick={() => (controller.toolStack.currentColor = '#000')}>Black</button>
