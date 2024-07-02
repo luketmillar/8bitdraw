@@ -40,7 +40,7 @@ const useDisableTouch = () => {
 
 const SurfaceApp = () => {
   useDisableTouch()
-  const world = React.useMemo(() => new AppWorld({ width: 30, height: 40 }), [])
+  const world = React.useMemo(() => new AppWorld({ width: 10, height: 15 }), [])
   const view = React.useMemo(() => new AppView(), [])
   const controller = React.useMemo(() => new AppController(world, view), [world, view])
   const ref = React.useRef<HTMLCanvasElement>(null)
