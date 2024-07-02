@@ -19,7 +19,7 @@ export default class AppView implements IView<AppWorld> {
     ctx.clearRect(0, 0, this.width, this.height)
 
     // draw gutter backgournd
-    ctx.fillStyle = '#eee'
+    ctx.fillStyle = '#666'
     ctx.fillRect(0, 0, this.width, this.height)
 
     // transform to sketch space
@@ -37,6 +37,13 @@ export default class AppView implements IView<AppWorld> {
 
     //restore canvas to canvas space
     ctx.restore()
+
+    // draw gutter ghosting
+    ctx.fillStyle = 'rgba(96, 96, 96, 0.9)'
+    ctx.fillRect(0, 0, this.gutter.left, this.height)
+    ctx.fillRect(0, 0, this.width, this.gutter.top)
+    ctx.fillRect(this.width - this.gutter.left, 0, this.gutter.left, this.height)
+    ctx.fillRect(0, this.height - this.gutter.top, this.width, this.gutter.top)
 
     // restore starting point
     ctx.restore()

@@ -30,7 +30,6 @@ export default class EraseTool extends Tool {
   public onUpdate() {}
 
   private erasePixel(position: Position) {
-    if (!this.controller.isInSketch(position)) return
     this.controller.unsetColor(position)
   }
 }
