@@ -1,6 +1,7 @@
 import { Color, Position, Size } from '../utils/types'
 import Model from './Base'
 import Pixel from './Pixel'
+import SketchOverrides from './SketchOverrides'
 
 const createPixels = (size: Size) => {
   const pixels: Pixel[][] = []
@@ -13,82 +14,15 @@ const createPixels = (size: Size) => {
   return pixels
 }
 
-class Overrides {
-  public isOverriding = false
-  public overrides: Record<string, Pixel> = {}
-
-  public start() {
-    this.clear()
-    this.isOverriding = true
-  }
-
-  public end(clear: boolean = true) {
-    this.isOverriding = false
-    if (clear) this.clear()
-  }
-
-  public getAll() {
-    return this.overrides
-  }
-
-  public set(position: Position, color: Color | null) {
-    this.overrides[this.createKey(position)] = new Pixel(position, color)
-  }
-
-  public get(position: Position): Color | null | undefined {
-    const pixel = this.overrides[this.createKey(position)]
-    if (pixel === undefined) return undefined
-    return pixel.fill
-  }
-
-  public getPixel(position: Position): Pixel | undefined {
-    return this.overrides[this.createKey(position)]
-  }
-
-  public unset(position: Position) {
-    delete this.overrides[this.createKey(position)]
-  }
-
-  public clear() {
-    this.overrides = {}
-  }
-
-  public hasOverride(position: Position) {
-    return !!this.overrides[this.createKey(position)]
-  }
-
-  private createKey(position: Position) {
-    return `${position.x}, ${position.y}`
-  }
-}
-
-export default class Sketch extends Model {
-  public size: Size
+class Layer extends Model {
   public pixels: Pixel[][] = []
 
-  public overrides: Overrides
+  public overrides: SketchOverrides
 
   constructor(size: Size) {
     super()
-    this.size = size
     this.pixels = createPixels(size)
-    this.overrides = new Overrides()
-  }
-
-  public setColor(position: Position, color: Color | null) {
-    if (this.overrides.isOverriding) {
-      this.overrides.set(position, color)
-    } else {
-      this.getPixel(position).fill = color
-    }
-  }
-
-  public getColor(position: Position, includeOverride?: boolean): Color | null {
-    if (includeOverride) {
-      const overridePixel = this.overrides.getPixel(position)
-      if (overridePixel !== undefined) return overridePixel.fill
-    }
-    return this.getPixel(position).fill
+    this.overrides = new SketchOverrides()
   }
 
   public getViews() {
@@ -103,27 +37,74 @@ export default class Sketch extends Model {
       .map((pixel) => pixel.getViews())
       .flat()
   }
+}
+
+export default class Sketch extends Model {
+  public size: Size
+  public layers: Layer[] = []
+
+  constructor(size: Size) {
+    super()
+    this.size = size
+    this.layers = [new Layer(size)]
+  }
+
+  public get activeLayer() {
+    return this.layers[0]
+  }
+
+  public setColor(position: Position, color: Color | null) {
+    if (this.activeLayer.overrides.isOverriding) {
+      this.activeLayer.overrides.set(position, color)
+    } else {
+      this.getPixel(position).fill = color
+    }
+  }
+
+  public getColor(position: Position, includeOverride?: boolean): Color | null {
+    if (includeOverride) {
+      const overridePixel = this.activeLayer.overrides.getPixel(position)
+      if (overridePixel !== undefined) return overridePixel.fill
+    }
+    return this.getPixel(position).fill
+  }
+
+  public getViews() {
+    return this.layers
+      .map((layer) =>
+        layer.pixels
+          .flat()
+          .map((pixel) => {
+            if (this.activeLayer.overrides.hasOverride(pixel.position)) {
+              return this.activeLayer.overrides.getPixel(pixel.position)!
+            }
+            return pixel
+          })
+          .map((pixel) => pixel.getViews())
+          .flat()
+      )
+      .flat()
+  }
 
   public startOverrides() {
-    this.overrides.start()
+    this.activeLayer.overrides.start()
   }
   public cancelOverrides() {
-    this.overrides.clear()
-    this.overrides.end()
+    this.activeLayer.overrides.clear()
+    this.activeLayer.overrides.end()
   }
   public resetOverrides() {
-    this.overrides.clear()
+    this.activeLayer.overrides.clear()
   }
   public commitOverrides() {
-    this.overrides.end(false)
-    const overrides = this.overrides.getAll()
+    const overrides = this.activeLayer.overrides.getAll()
+    this.activeLayer.overrides.end()
     Object.values(overrides).forEach((pixel) => {
       this.setColor(pixel.position, pixel.fill)
     })
-    this.overrides.clear()
   }
 
   private getPixel(position: Position): Pixel {
-    return this.pixels[position.x][position.y]
+    return this.activeLayer.pixels[position.x][position.y]
   }
 }
