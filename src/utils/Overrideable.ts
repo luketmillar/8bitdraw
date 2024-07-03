@@ -31,7 +31,6 @@ export default class Overrideable<V> {
 
   public commit() {
     this.values = { ...this.values, ...this.overrides }
-    console.log(this.values)
     this.overrides = {}
     this.isOverriding = false
   }

@@ -86,11 +86,17 @@ export default class Spaces {
   }
 
   public canvasToWorldSpace(position: vec2) {
-    return vec2.transformMat3(vec2.create(), position, this.canvasToWorldMatrix)
+    return vec2.round(
+      vec2.create(),
+      vec2.transformMat3(vec2.create(), position, this.canvasToWorldMatrix)
+    )
   }
 
   public screenToWorldSpace(position: vec2) {
-    return vec2.transformMat3(vec2.create(), position, this.screenToWorldMatrix)
+    return vec2.round(
+      vec2.create(),
+      vec2.transformMat3(vec2.create(), position, this.screenToWorldMatrix)
+    )
   }
 
   public screenToCanvas(position: vec2) {

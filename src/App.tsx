@@ -4,7 +4,6 @@ import AppWorld from './AppWorld'
 import AppView from './AppView'
 import AppController from './AppController'
 import InputLayer from './utils/InputLayer'
-import * as Coordinates from './utils/Coordinates'
 import FillTool from './tools/FillTool'
 import DrawTool from './tools/DrawTool'
 import styled from 'styled-components'
@@ -62,8 +61,9 @@ const SurfaceApp = () => {
 
   return (
     <>
-      <FullScreenCanvas view={view} world={world} ref={ref} />
+      <FullScreenCanvas ref={ref} />
       <InputLayer
+        view={view}
         onMouseDown={controller.onMouseDown}
         onMouseMove={controller.onMouseMove}
         onMouseUp={controller.onMouseUp}
@@ -92,28 +92,16 @@ const SurfaceApp = () => {
   )
 }
 
-const FullScreenCanvas = React.forwardRef(
-  (
-    { view, world }: { view: AppView; world: AppWorld },
-    ref: React.ForwardedRef<HTMLCanvasElement>
-  ) => {
-    const { screenSize, canvasSize } = useSizes()
-    React.useEffect(() => {
-      const sketchInCanvasSpace = Coordinates.sketchToCanvas(world.sketch.size, world.sketch.size)
-      view.gutter = {
-        left: (canvasSize[0] - sketchInCanvasSpace[0]) / 2,
-        top: (canvasSize[1] - sketchInCanvasSpace[1]) / 2,
-      }
-    }, [canvasSize[0], canvasSize[1]])
-    return (
-      <canvas
-        ref={ref}
-        width={screenSize[0] * window.devicePixelRatio}
-        height={screenSize[1] * window.devicePixelRatio}
-        style={{ width: screenSize[0], height: screenSize[1] }}
-      />
-    )
-  }
-)
+const FullScreenCanvas = React.forwardRef((_, ref: React.ForwardedRef<HTMLCanvasElement>) => {
+  const { screenSize, canvasSize } = useSizes()
+  return (
+    <canvas
+      ref={ref}
+      width={canvasSize[0]}
+      height={canvasSize[1]}
+      style={{ width: screenSize[0], height: screenSize[1] }}
+    />
+  )
+})
 
 export default SurfaceApp

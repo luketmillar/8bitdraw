@@ -8,7 +8,7 @@ import InputHandler, { InputEvent } from './utils/InputHandler'
 
 export default class AppController extends BaseController<AppWorld, AppView> {
   public toolStack = new ToolStack()
-  public inputHandler = new InputHandler(this.world, this.view)
+  public inputHandler = new InputHandler(this.view)
 
   constructor(world: AppWorld, view: AppView) {
     super(world, view)

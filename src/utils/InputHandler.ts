@@ -1,7 +1,6 @@
 import EventEmitter from './EventEmitter'
 import { Position } from './types'
 import * as Coordinates from './Coordinates'
-import AppWorld from '../AppWorld'
 import AppView from '../AppView'
 
 interface DownOptions {
@@ -22,7 +21,6 @@ export default class InputHandler extends EventEmitter<
   | { type: InputEvent.Move; payload: EventPayload }
   | { type: InputEvent.End; payload: EventPayload }
 > {
-  private readonly world: AppWorld
   private readonly view: AppView
 
   private downOptions: DownOptions | null = null
@@ -31,9 +29,8 @@ export default class InputHandler extends EventEmitter<
     return this.downOptions !== null
   }
 
-  constructor(world: AppWorld, view: AppView) {
+  constructor(view: AppView) {
     super()
-    this.world = world
     this.view = view
   }
 
@@ -60,6 +57,5 @@ export default class InputHandler extends EventEmitter<
     this.emit(InputEvent.End, { position: sketchPosition, options })
   }
 
-  private toSketchSpace = (position: Position) =>
-    Coordinates.canvasToSketch(position, this.world.sketch.size, this.view.gutter)
+  private toSketchSpace = (position: Position) => this.view.spaces.canvasToWorldSpace(position)
 }

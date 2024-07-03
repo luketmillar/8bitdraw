@@ -1,10 +1,14 @@
 import AppWorld from './AppWorld'
 import { IView } from './mvc/BaseController'
-import * as Coordinates from './utils/Coordinates'
 import Model from './models/Base'
+import Spaces from './utils/Spaces'
+import { vec2 } from 'gl-matrix'
+import Transform from './utils/Transform'
 
 export default class AppView implements IView<AppWorld> {
   private _canvas: HTMLCanvasElement | undefined
+  public spaces = new Spaces()
+
   public get canvas() {
     return this._canvas!
   }
@@ -14,39 +18,39 @@ export default class AppView implements IView<AppWorld> {
   public gutter: { left: number; top: number } = { left: 0, top: 0 }
 
   public render = (world: AppWorld) => {
+    this.spaces.canvasSize = vec2.fromValues(this.canvas.width, this.canvas.height)
+    this.spaces.screenSize = vec2.fromValues(this.canvas.clientWidth, this.canvas.clientHeight)
+    this.spaces.worldSize = world.sketch.size
+
     const ctx = this.ctx
     ctx.save()
-    ctx.clearRect(0, 0, this.width, this.height)
+    this.clear()
 
     // draw gutter backgournd
-    ctx.fillStyle = '#666'
+    ctx.fillStyle = '#eee'
     ctx.fillRect(0, 0, this.width, this.height)
 
-    // transform to sketch space
-    ctx.save()
-    ctx.translate(this.gutter.left, this.gutter.top)
-    const scale = Coordinates.canvasToSketchScale(world.sketch.size)
-    ctx.scale(scale[0], scale[1])
+    // transform to world space
+    const matrix = this.spaces.worldToCanvasMatrix
+    const transform = Transform.fromMatrix(matrix)
+    this.ctx.translate(transform.translation[0], transform.translation[1])
+    this.ctx.scale(transform.scale[0], transform.scale[1])
 
-    // white background
+    // // white background
     ctx.fillStyle = '#fff'
     ctx.fillRect(0, 0, world.sketch.size[0], world.sketch.size[1])
 
-    // draw everything
+    // // draw everything
     this.renderModels(ctx, world.getModels())
 
-    //restore canvas to canvas space
+    // transform into canvas space
     ctx.restore()
 
     // draw gutter ghosting
-    ctx.fillStyle = 'rgba(96, 96, 96, 0.9)'
-    ctx.fillRect(0, 0, this.gutter.left, this.height)
-    ctx.fillRect(0, 0, this.width, this.gutter.top)
-    ctx.fillRect(this.width - this.gutter.left, 0, this.gutter.left, this.height)
-    ctx.fillRect(0, this.height - this.gutter.top, this.width, this.gutter.top)
+  }
 
-    // restore starting point
-    ctx.restore()
+  private clear() {
+    this.ctx.clearRect(0, 0, this.canvas!.width, this.canvas!.height)
   }
 
   private renderModels = (ctx: CanvasRenderingContext2D, models: Model[]) =>
