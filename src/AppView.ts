@@ -47,6 +47,12 @@ export default class AppView implements IView<AppWorld> {
     ctx.restore()
 
     // draw gutter ghosting
+    const gutter = this.spaces.fittedGutter
+    ctx.fillStyle = `rgba(240,240,240,.9)`
+    ctx.fillRect(0, 0, gutter.left, this.height)
+    ctx.fillRect(this.width - gutter.right, 0, gutter.right, this.height)
+    ctx.fillRect(0, 0, this.width, gutter.top)
+    ctx.fillRect(0, this.height - gutter.bottom, this.width, gutter.bottom)
   }
 
   private clear() {

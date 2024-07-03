@@ -4,10 +4,10 @@ import Transform from './Transform'
 
 export type Gutter = { left: number; top: number; bottom: number; right: number }
 const DefaultGutter: Gutter = {
-  left: 0,
-  top: 0,
-  bottom: 0,
-  right: 0,
+  left: 50,
+  top: 50,
+  bottom: 50,
+  right: 50,
 }
 
 export default class Spaces {
@@ -28,17 +28,7 @@ export default class Spaces {
     }
   }
 
-  public get screenToCanvasVec() {
-    if (this.screenSize[0] === 0 || this.screenSize[1] === 0) {
-      return vec2.fromValues(1, 1)
-    }
-    return vec2.div(vec2.create(), this.canvasSize, this.screenSize)
-  }
-  public get canvasToScreenVec() {
-    return vec2.inverse(vec2.create(), this.screenToCanvasVec)!
-  }
-
-  public get worldToCanvasMatrix() {
+  public fitWorldInCanvas() {
     const canvasSize = this.canvasSize
     const worldSize = this.worldSize
     const gutter = this.gutterInCanvasSpace
@@ -54,12 +44,40 @@ export default class Spaces {
       worldInCanvas.height = height
       worldInCanvas.width = height * worldAspectRatio
     }
-    const fitGutter = {
-      left: (width - worldInCanvas.width) / 2,
-      top: (height - worldInCanvas.height) / 2,
+    const fitGutter = vec2.fromValues(
+      (width - worldInCanvas.width) / 2,
+      (height - worldInCanvas.height) / 2
+    )
+    return { fitGutter, worldInCanvas }
+  }
+
+  public get fittedGutter() {
+    const gutter = this.gutterInCanvasSpace
+    const { fitGutter } = this.fitWorldInCanvas()
+    return {
+      left: gutter.left + fitGutter[0],
+      top: gutter.top + fitGutter[1],
+      right: gutter.right + fitGutter[0],
+      bottom: gutter.bottom + fitGutter[1],
     }
+  }
+
+  public get screenToCanvasVec() {
+    if (this.screenSize[0] === 0 || this.screenSize[1] === 0) {
+      return vec2.fromValues(1, 1)
+    }
+    return vec2.div(vec2.create(), this.canvasSize, this.screenSize)
+  }
+  public get canvasToScreenVec() {
+    return vec2.inverse(vec2.create(), this.screenToCanvasVec)!
+  }
+
+  public get worldToCanvasMatrix() {
+    const worldSize = this.worldSize
+    const gutter = this.gutterInCanvasSpace
+    const { fitGutter, worldInCanvas } = this.fitWorldInCanvas()
     return Transform.Build()
-      .translate(gutter.left + fitGutter.left, gutter.top + fitGutter.top)
+      .translate(gutter.left + fitGutter[0], gutter.top + fitGutter[1])
       .scale(worldInCanvas.width / worldSize[0], worldInCanvas.height / worldSize[1])
       .create().matrix
   }
@@ -86,14 +104,14 @@ export default class Spaces {
   }
 
   public canvasToWorldSpace(position: vec2) {
-    return vec2.round(
+    return vec2.floor(
       vec2.create(),
       vec2.transformMat3(vec2.create(), position, this.canvasToWorldMatrix)
     )
   }
 
   public screenToWorldSpace(position: vec2) {
-    return vec2.round(
+    return vec2.floor(
       vec2.create(),
       vec2.transformMat3(vec2.create(), position, this.screenToWorldMatrix)
     )
