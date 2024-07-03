@@ -36,17 +36,15 @@ export default class Spaces {
     const height = canvasSize[1] - (gutter.top + gutter.bottom)
     const aspectRatio = width / height
     const worldAspectRatio = worldSize[0] / worldSize[1]
-    const worldInCanvas = { width: 0, height: 0 }
+    let worldInCanvas = vec2.fromValues(0, 0)
     if (aspectRatio < worldAspectRatio) {
-      worldInCanvas.width = width
-      worldInCanvas.height = width / worldAspectRatio
+      worldInCanvas = vec2.fromValues(width, width / worldAspectRatio)
     } else {
-      worldInCanvas.height = height
-      worldInCanvas.width = height * worldAspectRatio
+      worldInCanvas = vec2.fromValues(height * worldAspectRatio, height)
     }
     const fitGutter = vec2.fromValues(
-      (width - worldInCanvas.width) / 2,
-      (height - worldInCanvas.height) / 2
+      (width - worldInCanvas[0]) / 2,
+      (height - worldInCanvas[1]) / 2
     )
     return { fitGutter, worldInCanvas }
   }
@@ -78,7 +76,7 @@ export default class Spaces {
     const { fitGutter, worldInCanvas } = this.fitWorldInCanvas()
     return Transform.Build()
       .translate(gutter.left + fitGutter[0], gutter.top + fitGutter[1])
-      .scale(worldInCanvas.width / worldSize[0], worldInCanvas.height / worldSize[1])
+      .scale(worldInCanvas[0] / worldSize[0], worldInCanvas[1] / worldSize[1])
       .create().matrix
   }
 
