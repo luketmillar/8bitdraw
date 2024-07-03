@@ -2,6 +2,7 @@ import React from 'react'
 import { Position } from './types'
 import * as Coordinates from './Coordinates'
 import styled from 'styled-components'
+import { vec2 } from 'gl-matrix'
 
 const FullScreen = styled.div`
   position: absolute;
@@ -20,7 +21,7 @@ interface IProps {
 const InputLayer = ({ onClick, onMouseMove, onMouseUp, onMouseDown }: IProps) => {
   const handleClick = React.useCallback(
     (e: React.MouseEvent) => {
-      const position = Coordinates.screenToCanvas({ x: e.clientX, y: e.clientY })
+      const position = Coordinates.screenToCanvas(vec2.fromValues(e.clientX, e.clientY))
       onClick?.(position, e.metaKey)
     },
     [onClick]
@@ -28,10 +29,9 @@ const InputLayer = ({ onClick, onMouseMove, onMouseUp, onMouseDown }: IProps) =>
   const handleTouchStart = React.useCallback(
     (e: React.TouchEvent) => {
       e.preventDefault()
-      const position = Coordinates.screenToCanvas({
-        x: e.touches[0].clientX,
-        y: e.touches[0].clientY,
-      })
+      const position = Coordinates.screenToCanvas(
+        vec2.fromValues(e.touches[0].clientX, e.touches[0].clientY)
+      )
       onMouseDown?.(position, e.metaKey)
     },
     [onMouseDown]
@@ -41,14 +41,14 @@ const InputLayer = ({ onClick, onMouseMove, onMouseUp, onMouseDown }: IProps) =>
       if (e.detail !== 1 || e.button !== 0) {
         return
       }
-      const position = Coordinates.screenToCanvas({ x: e.clientX, y: e.clientY })
+      const position = Coordinates.screenToCanvas(vec2.fromValues(e.clientX, e.clientY))
       onMouseDown?.(position, e.metaKey)
     },
     [onMouseDown]
   )
   React.useEffect(() => {
     const handleUp = (e: MouseEvent) => {
-      const position = Coordinates.screenToCanvas({ x: e.clientX, y: e.clientY })
+      const position = Coordinates.screenToCanvas(vec2.fromValues(e.clientX, e.clientY))
       onMouseUp?.(position, e.metaKey)
     }
     window.addEventListener('mouseup', handleUp)
@@ -56,7 +56,7 @@ const InputLayer = ({ onClick, onMouseMove, onMouseUp, onMouseDown }: IProps) =>
   }, [onMouseUp])
   React.useEffect(() => {
     const handleMove = (e: MouseEvent) => {
-      const position = Coordinates.screenToCanvas({ x: e.clientX, y: e.clientY })
+      const position = Coordinates.screenToCanvas(vec2.fromValues(e.clientX, e.clientY))
       onMouseMove?.(position, e.metaKey)
     }
     window.addEventListener('mousemove', handleMove)
@@ -65,10 +65,9 @@ const InputLayer = ({ onClick, onMouseMove, onMouseUp, onMouseDown }: IProps) =>
   React.useEffect(() => {
     const handleMove = (e: TouchEvent) => {
       e.preventDefault()
-      const position = Coordinates.screenToCanvas({
-        x: e.touches[0].clientX,
-        y: e.touches[0].clientY,
-      })
+      const position = Coordinates.screenToCanvas(
+        vec2.fromValues(e.touches[0].clientX, e.touches[0].clientY)
+      )
       onMouseMove?.(position, e.metaKey)
     }
     window.addEventListener('touchmove', handleMove)
@@ -77,7 +76,7 @@ const InputLayer = ({ onClick, onMouseMove, onMouseUp, onMouseDown }: IProps) =>
   React.useEffect(() => {
     const handleEnd = (e: TouchEvent) => {
       e.preventDefault()
-      onMouseUp?.({ x: 0, y: 0 }, e.metaKey)
+      onMouseUp?.(vec2.fromValues(0, 0), e.metaKey)
     }
     window.addEventListener('touchend', handleEnd)
     return () => window.removeEventListener('touchend', handleEnd)

@@ -11,6 +11,7 @@ import styled from 'styled-components'
 import EraseTool from './tools/EraseTool'
 import LineTool from './tools/LineTool'
 import RectangleTool from './tools/RectangleTool'
+import { vec2 } from 'gl-matrix'
 
 const ToolBar = styled.div`
   position: absolute;
@@ -49,7 +50,7 @@ const useDisableTouch = () => {
 
 const SurfaceApp = () => {
   useDisableTouch()
-  const world = React.useMemo(() => new AppWorld({ width: 10, height: 15 }), [])
+  const world = React.useMemo(() => new AppWorld(vec2.fromValues(10, 15)), [])
   const view = React.useMemo(() => new AppView(), [])
   const controller = React.useMemo(() => new AppController(world, view), [world, view])
   const ref = React.useRef<HTMLCanvasElement>(null)
@@ -98,24 +99,18 @@ const FullScreenCanvas = React.forwardRef(
   ) => {
     const { screenSize, canvasSize } = useSizes()
     React.useEffect(() => {
-      const sketchInCanvasSpace = Coordinates.sketchToCanvas(
-        {
-          x: world.sketch.size.width,
-          y: world.sketch.size.height,
-        },
-        world.sketch.size
-      )
+      const sketchInCanvasSpace = Coordinates.sketchToCanvas(world.sketch.size, world.sketch.size)
       view.gutter = {
-        left: (canvasSize.width - sketchInCanvasSpace.x) / 2,
-        top: (canvasSize.height - sketchInCanvasSpace.y) / 2,
+        left: (canvasSize[0] - sketchInCanvasSpace[0]) / 2,
+        top: (canvasSize[1] - sketchInCanvasSpace[1]) / 2,
       }
-    }, [canvasSize.width, canvasSize.height])
+    }, [canvasSize[0], canvasSize[1]])
     return (
       <canvas
         ref={ref}
-        width={screenSize.width * window.devicePixelRatio}
-        height={screenSize.height * window.devicePixelRatio}
-        style={{ width: screenSize.width, height: screenSize.height }}
+        width={screenSize[0] * window.devicePixelRatio}
+        height={screenSize[1] * window.devicePixelRatio}
+        style={{ width: screenSize[0], height: screenSize[1] }}
       />
     )
   }

@@ -1,11 +1,10 @@
+import { vec2 } from 'gl-matrix'
 import { Color, Position, Size } from '../utils/types'
 import { Rectangle } from '../views/Views'
 import Model from './Base'
 
-const getCenterPoint = (position: Position, size: Size): Position => ({
-  x: position.x + size.width / 2,
-  y: position.y + size.height / 2,
-})
+const getCenterPoint = (position: Position, size: Size): Position =>
+  vec2.fromValues(position[0] + size[0] / 2, position[1] + size[1] / 2)
 
 export default class Pixel extends Model {
   public position: Position
@@ -14,7 +13,7 @@ export default class Pixel extends Model {
   constructor(position: Position, fill: Color | null) {
     super()
     this.position = position
-    this.rectangle = new Rectangle(getCenterPoint(position, { width: 1, height: 1 }), 1, 1, {
+    this.rectangle = new Rectangle(getCenterPoint(position, vec2.fromValues(1, 1)), 1, 1, {
       fill,
     })
   }

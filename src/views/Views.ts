@@ -31,8 +31,8 @@ export class Rectangle extends View {
   public draw(ctx: CanvasRenderingContext2D) {
     ctx.save()
 
-    const left = this.position.x - this.width / 2
-    const top = this.position.y - this.height / 2
+    const left = this.position[0] - this.width / 2
+    const top = this.position[1] - this.height / 2
     if (this.options.fill) {
       ctx.fillStyle = this.options.fill
       ctx.fillRect(left, top, this.width, this.height)
@@ -61,7 +61,7 @@ export class Circle extends View {
 
   public draw(ctx: CanvasRenderingContext2D) {
     ctx.beginPath()
-    ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI)
+    ctx.arc(this.position[0], this.position[1], this.radius, 0, 2 * Math.PI)
     if (this.options.fill) {
       ctx.fillStyle = this.options.fill
       ctx.fill()
@@ -93,8 +93,8 @@ export class Line extends View {
     ctx.lineWidth = this.getLineWidth()
     ctx.strokeStyle = this.options.stroke?.color ?? '#000'
     ctx.beginPath()
-    ctx.moveTo(this.a.x, this.a.y)
-    ctx.lineTo(this.b.x, this.b.y)
+    ctx.moveTo(this.a[0], this.a[1])
+    ctx.lineTo(this.b[0], this.b[1])
     ctx.stroke()
   }
 }

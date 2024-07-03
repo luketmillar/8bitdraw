@@ -26,11 +26,11 @@ export default class AppView implements IView<AppWorld> {
     ctx.save()
     ctx.translate(this.gutter.left, this.gutter.top)
     const scale = Coordinates.canvasToSketchScale(world.sketch.size)
-    ctx.scale(scale.x, scale.y)
+    ctx.scale(scale[0], scale[1])
 
     // white background
     ctx.fillStyle = '#fff'
-    ctx.fillRect(0, 0, world.sketch.size.width, world.sketch.size.height)
+    ctx.fillRect(0, 0, world.sketch.size[0], world.sketch.size[1])
 
     // draw everything
     this.renderModels(ctx, world.getModels())

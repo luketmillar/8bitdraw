@@ -1,15 +1,16 @@
+import { vec2 } from 'gl-matrix'
 import { Position } from './types'
 
 export const getLinePositions = (from: Position, to: Position): Position[] => {
   // Iterators, counters required by algorithm
   let x, y, dx, dy, dx1, dy1, px, py, xe, ye, i
-  const x1 = from.x
-  const x2 = to.x
-  const y1 = from.y
-  const y2 = to.y
+  const x1 = from[0]
+  const x2 = to[0]
+  const y1 = from[1]
+  const y2 = to[1]
   // Calculate line deltas
-  dx = to.x - from.x
-  dy = to.y - from.y
+  dx = to[0] - from[0]
+  dy = to[1] - from[1]
   // Create a positive copy of deltas (makes iterating easier)
   dx1 = Math.abs(dx)
   dy1 = Math.abs(dy)
@@ -30,7 +31,7 @@ export const getLinePositions = (from: Position, to: Position): Position[] => {
       y = y2
       xe = x1
     }
-    positions.push({ y: y, x: x })
+    positions.push(vec2.fromValues(x, y))
     // Rasterize the line
     for (i = 0; x < xe; i++) {
       x = x + 1
@@ -47,7 +48,7 @@ export const getLinePositions = (from: Position, to: Position): Position[] => {
       }
       // Draw pixel from line span at
       // currently rasterized position
-      positions.push({ y: y, x: x })
+      positions.push(vec2.fromValues(x, y))
     }
   } else {
     // The line is Y-axis dominant
@@ -62,7 +63,7 @@ export const getLinePositions = (from: Position, to: Position): Position[] => {
       y = y2
       ye = y1
     }
-    positions.push({ y: y, x: x })
+    positions.push(vec2.fromValues(x, y))
     // Rasterize the line
     for (i = 0; y < ye; i++) {
       y = y + 1
@@ -79,7 +80,7 @@ export const getLinePositions = (from: Position, to: Position): Position[] => {
       }
       // Draw pixel from line span at
       // currently rasterized position
-      positions.push({ y: y, x: x })
+      positions.push(vec2.fromValues(x, y))
     }
   }
   return positions

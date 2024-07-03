@@ -1,3 +1,4 @@
+import { vec2 } from 'gl-matrix'
 import AppController from '../AppController'
 import { Color, Position } from '../utils/types'
 import Tool from './Tool'
@@ -68,18 +69,18 @@ class FillLogic {
   }
 
   private getNeighbors = (position: Position): Position[] => {
-    const previousY = position.y - 1
-    const nextY = position.y + 1
-    const previousX = position.x - 1
-    const nextX = position.x + 1
+    const previousY = position[1] - 1
+    const nextY = position[1] + 1
+    const previousX = position[0] - 1
+    const nextX = position[0] + 1
 
-    const top = { y: previousY, x: position.x }
-    const left = { y: position.y, x: previousX }
-    const right = { y: position.y, x: nextX }
-    const bottom = { y: nextY, x: position.x }
+    const top = vec2.fromValues(position[0], previousY)
+    const left = vec2.fromValues(previousX, position[1])
+    const right = vec2.fromValues(nextX, position[1])
+    const bottom = vec2.fromValues(position[0], nextY)
 
     return [top, left, right, bottom].filter((position) => this.contoller.isInSketch(position))
   }
 }
 
-const getPositionKey = (position: Position) => `${position.x},${position.y}`
+const getPositionKey = (position: Position) => `${position[0]},${position[1]}`

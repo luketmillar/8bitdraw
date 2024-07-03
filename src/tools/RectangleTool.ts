@@ -1,15 +1,16 @@
+import { vec2 } from 'gl-matrix'
 import { Position } from '../utils/types'
 import Tool from './Tool'
 
-const getRectanglePositions = (from: Position, to: Position) => {
-  const positions = []
-  const minX = Math.min(from.x, to.x)
-  const maxX = Math.max(from.x, to.x)
-  const minY = Math.min(from.y, to.y)
-  const maxY = Math.max(from.y, to.y)
+const getRectanglePositions = (from: Position, to: Position): vec2[] => {
+  const positions: vec2[] = []
+  const minX = Math.min(from[0], to[0])
+  const maxX = Math.max(from[0], to[0])
+  const minY = Math.min(from[1], to[1])
+  const maxY = Math.max(from[1], to[1])
   for (let x = minX; x <= maxX; x++) {
     for (let y = minY; y <= maxY; y++) {
-      positions.push({ x, y })
+      positions.push(vec2.fromValues(x, y))
     }
   }
   return positions

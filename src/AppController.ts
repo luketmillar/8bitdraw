@@ -39,10 +39,10 @@ export default class AppController extends BaseController<AppWorld, AppView> {
 
   public isInSketch(position: Position) {
     return (
-      position.x >= 0 &&
-      position.x < this.world.sketch.size.width &&
-      position.y >= 0 &&
-      position.y < this.world.sketch.size.height
+      position[0] >= 0 &&
+      position[0] < this.world.sketch.size[0] &&
+      position[1] >= 0 &&
+      position[1] < this.world.sketch.size[1]
     )
   }
 

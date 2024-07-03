@@ -1,16 +1,17 @@
+import { vec2 } from 'gl-matrix'
 import Overrideable from '../utils/Overrideable'
 import { Color, Position, Size } from '../utils/types'
 import Model from './Base'
 import Pixel from './Pixel'
 import { v4 as uuid } from 'uuid'
 
-const pixelKey = (position: Position) => `${position.x},${position.y}`
+const pixelKey = (position: Position) => `${position[0]},${position[1]}`
 
 const createPixels = (pixels: Overrideable<Pixel>, size: Size) => {
   pixels.clear()
-  for (let x = 0; x < size.width; x++) {
-    for (let y = 0; y < size.height; y++) {
-      pixels.set(pixelKey({ x, y }), new Pixel({ x, y }, null))
+  for (let x = 0; x < size[0]; x++) {
+    for (let y = 0; y < size[1]; y++) {
+      pixels.set(pixelKey(vec2.fromValues(x, y)), new Pixel(vec2.fromValues(x, y), null))
     }
   }
 }
