@@ -4,10 +4,10 @@ import Transform from './Transform'
 
 export type Gutter = { left: number; top: number; bottom: number; right: number }
 const DefaultGutter: Gutter = {
-  left: 50,
-  top: 50,
-  bottom: 50,
-  right: 50,
+  left: 100,
+  top: 100,
+  bottom: 100,
+  right: 100,
 }
 
 export default class Spaces {
@@ -15,6 +15,8 @@ export default class Spaces {
   public canvasSize: vec2 = vec2.create()
   public worldSize: vec2 = vec2.create()
   public camera: mat3 = mat3.create()
+
+  public zoom: number = 1
   // screenspace gutter
   public gutter: Gutter = DefaultGutter
 
@@ -76,7 +78,10 @@ export default class Spaces {
     const { fitGutter, worldInCanvas } = this.fitWorldInCanvas()
     return Transform.Build()
       .translate(gutter.left + fitGutter[0], gutter.top + fitGutter[1])
-      .scale(worldInCanvas[0] / worldSize[0], worldInCanvas[1] / worldSize[1])
+      .scale(
+        (this.zoom * worldInCanvas[0]) / worldSize[0],
+        (this.zoom * worldInCanvas[1]) / worldSize[1]
+      )
       .create().matrix
   }
 
