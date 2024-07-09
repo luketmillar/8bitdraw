@@ -1,7 +1,5 @@
 import React from 'react'
 import { useSizes } from './utils/Coordinates'
-import AppWorld from './AppWorld'
-import AppView from './AppView'
 import AppController from './AppController'
 import InputLayer from './utils/InputLayer'
 import FillTool from './tools/FillTool'
@@ -10,7 +8,6 @@ import styled from 'styled-components'
 import EraseTool from './tools/EraseTool'
 import LineTool from './tools/LineTool'
 import RectangleTool from './tools/RectangleTool'
-import { vec2 } from 'gl-matrix'
 
 const ToolBar = styled.div`
   position: absolute;
@@ -49,21 +46,19 @@ const useDisableTouch = () => {
 
 const SurfaceApp = () => {
   useDisableTouch()
-  const world = React.useMemo(() => new AppWorld(vec2.fromValues(40, 30)), [])
-  const view = React.useMemo(() => new AppView(), [])
-  const controller = React.useMemo(() => new AppController(world, view), [world, view])
+  const controller = React.useMemo(() => new AppController(), [])
   const ref = React.useRef<HTMLCanvasElement>(null)
   React.useEffect(() => {
-    view.canvas = ref.current!
+    controller.view.canvas = ref.current!
     controller.start()
     return () => controller.stop()
-  }, [view, ref.current, controller])
+  }, [controller.view, ref.current, controller])
 
   return (
     <>
       <FullScreenCanvas ref={ref} />
       <InputLayer
-        view={view}
+        view={controller.view}
         onMouseDown={controller.onMouseDown}
         onMouseMove={controller.onMouseMove}
         onMouseUp={controller.onMouseUp}

@@ -1,3 +1,4 @@
+import TransactionManager from './commands/TransactionManager'
 import Model from './models/Base'
 import Grid from './models/Grid'
 import Sketch from './models/Sketch'
@@ -10,15 +11,17 @@ export default class AppWorld extends BaseWorld {
 
   public sketchSize: Size
   public showGrid = true
+  private readonly transaction: TransactionManager
 
-  constructor(sketchSize: Size) {
+  constructor(sketchSize: Size, transaction: TransactionManager) {
     super()
+    this.transaction = transaction
     this.sketchSize = sketchSize
     this.grid = new Grid(sketchSize)
-    this.sketch = new Sketch(sketchSize)
+    this.sketch = new Sketch(sketchSize, transaction)
   }
   protected createWorld(): void {
-    this.sketch = new Sketch(this.sketch.size)
+    this.sketch = new Sketch(this.sketch.size, this.transaction)
     this.grid = new Grid(this.sketch.size)
   }
 

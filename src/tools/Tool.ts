@@ -23,19 +23,20 @@ export default class Tool {
     return this.controller.toolStack
   }
 
-  protected startOverride() {
-    this.controller.startOverride()
+  protected startTransaction() {
+    this.controller.transaction.start()
   }
 
-  protected commitOverride() {
-    this.controller.commitOverride()
+  protected commitTransaction() {
+    this.controller.transaction.commit()
   }
 
-  protected resetOverride() {
-    this.controller.resetOverride()
+  protected resetTransaction() {
+    this.controller.transaction.cancel()
+    this.controller.transaction.start()
   }
 
-  protected cancelOverride() {
-    this.controller.cancelOverride()
+  protected cancelTransaction() {
+    this.controller.transaction.cancel()
   }
 }

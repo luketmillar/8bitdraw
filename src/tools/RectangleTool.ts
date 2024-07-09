@@ -20,20 +20,20 @@ export default class RectangleTool extends Tool {
   private startPosition: Position | null = null
 
   public onStart(position: Position) {
-    this.startOverride()
+    this.startTransaction()
     this.startPosition = position
     this.drawRectangle(this.startPosition, position)
   }
 
   public onMove(position: Position) {
     if (!this.startPosition) return
-    this.resetOverride()
+    this.resetTransaction()
     this.drawRectangle(this.startPosition, position)
   }
 
   public onEnd(_position: Position) {
     if (!this.startPosition) return
-    this.commitOverride()
+    this.commitTransaction()
     this.startPosition = null
   }
 

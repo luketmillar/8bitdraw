@@ -4,6 +4,7 @@ import { Color, Position, Size } from '../utils/types'
 import Model from './Base'
 import Pixel from './Pixel'
 import { v4 as uuid } from 'uuid'
+import TransactionManager from '../commands/TransactionManager'
 
 const pixelKey = (position: Position) => `${position[0]},${position[1]}`
 
@@ -18,10 +19,11 @@ const createPixels = (pixels: Overrideable<Pixel>, size: Size) => {
 
 class Layer extends Model {
   public id = uuid()
-  public pixels = new Overrideable<Pixel>()
+  public pixels: Overrideable<Pixel>
 
-  constructor(size: Size) {
+  constructor(size: Size, transaction: TransactionManager) {
     super()
+    this.pixels = new Overrideable<Pixel>(transaction)
     createPixels(this.pixels, size)
   }
 
@@ -35,11 +37,13 @@ class Layer extends Model {
 
 export default class Sketch extends Model {
   public size: Size
+  private readonly transaction: TransactionManager
 
-  constructor(size: Size) {
+  constructor(size: Size, transaction: TransactionManager) {
     super()
     this.size = size
-    this.layers = [new Layer(size)]
+    this.transaction = transaction
+    this.layers = [new Layer(size, transaction)]
     this.activeLayerId = this.layers[0].id
   }
 
@@ -53,7 +57,7 @@ export default class Sketch extends Model {
     return this.layers.findIndex((layer) => layer.id === this.activeLayerId)
   }
   public newLayer() {
-    const layer = new Layer(this.size)
+    const layer = new Layer(this.size, this.transaction)
     this.layers.push(layer)
     this.activeLayerId = layer.id
   }
@@ -81,20 +85,6 @@ export default class Sketch extends Model {
   }
   public getColor(position: Position): Color | null {
     return this.activeLayer.pixels.get(pixelKey(position))?.fill ?? null
-  }
-
-  // overrides
-  public startOverride() {
-    this.activeLayer.pixels.start()
-  }
-  public cancelOverride() {
-    this.activeLayer.pixels.cancel()
-  }
-  public resetOverride() {
-    this.activeLayer.pixels.clearOverride()
-  }
-  public commitOverride() {
-    this.activeLayer.pixels.commit()
   }
 
   // model to views

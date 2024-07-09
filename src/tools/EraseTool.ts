@@ -6,7 +6,7 @@ export default class EraseTool extends Tool {
   private startPosition: Position | null = null
   private lastPosition: Position | null = null
   public onStart(position: Position) {
-    this.startOverride()
+    this.startTransaction()
     this.erasePixel(position)
     this.startPosition = position
     this.lastPosition = position
@@ -22,7 +22,7 @@ export default class EraseTool extends Tool {
   }
 
   public onEnd() {
-    this.commitOverride()
+    this.commitTransaction()
     this.startPosition = null
     this.lastPosition = null
   }

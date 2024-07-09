@@ -5,15 +5,21 @@ import { Color, Position } from './utils/types'
 import DrawTool from './tools/DrawTool'
 import AppView from './AppView'
 import InputHandler, { InputEvent } from './utils/InputHandler'
-import UndoStack from './undo/undo'
+import UndoStack from './commands/undo'
+import TransactionManager from './commands/TransactionManager'
 
 export default class AppController extends BaseController<AppWorld, AppView> {
-  public toolStack = new ToolStack()
-  public inputHandler = new InputHandler(this.view)
-  public undoStack = new UndoStack(this)
+  public readonly toolStack = new ToolStack()
+  public readonly inputHandler = new InputHandler(this.view)
+  public readonly undoStack = new UndoStack(this)
+  public readonly transaction: TransactionManager
 
-  constructor(world: AppWorld, view: AppView) {
+  constructor() {
+    const transaction = new TransactionManager()
+    const world = new AppWorld([40, 30], transaction)
+    const view = new AppView()
     super(world, view)
+    this.transaction = transaction
     this.inputHandler.on(InputEvent.Start, ({ position }) => this.tool?.onStart(position))
     this.inputHandler.on(InputEvent.Move, ({ position }) => this.tool?.onMove(position))
     this.inputHandler.on(InputEvent.End, ({ position }) => this.tool?.onEnd(position))
@@ -43,20 +49,6 @@ export default class AppController extends BaseController<AppWorld, AppView> {
   }
   public unsetColor(position: Position) {
     this.world.sketch.setColor(position, null)
-  }
-
-  // overrides
-  public startOverride() {
-    this.world.sketch.startOverride()
-  }
-  public commitOverride() {
-    this.world.sketch.commitOverride()
-  }
-  public resetOverride() {
-    this.world.sketch.resetOverride()
-  }
-  public cancelOverride() {
-    this.world.sketch.cancelOverride()
   }
 
   public isInSketch(position: Position) {

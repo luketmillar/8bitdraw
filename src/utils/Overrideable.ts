@@ -1,8 +1,20 @@
+import TransactionManager from '../commands/TransactionManager'
+
 export default class Overrideable<V> {
+  public readonly transaction: TransactionManager
   public values: Record<string, V> = {}
   public overrides: Record<string, V> = {}
 
-  public isOverriding = false
+  private get isOverriding() {
+    return this.transaction.isRunning
+  }
+
+  constructor(transaction: TransactionManager) {
+    this.transaction = transaction
+    this.transaction.on('start', this.start)
+    this.transaction.on('end', this.commit)
+    this.transaction.on('cancel', this.cancel)
+  }
 
   public set(key: string, value: V) {
     if (this.isOverriding) {
@@ -25,22 +37,16 @@ export default class Overrideable<V> {
     this.overrides = {}
   }
 
-  public start() {
-    this.isOverriding = true
+  public start = () => {
+    this.overrides = {}
   }
 
-  public commit() {
+  public commit = () => {
     this.values = { ...this.values, ...this.overrides }
     this.overrides = {}
-    this.isOverriding = false
   }
 
-  public clearOverride() {
+  public cancel = () => {
     this.overrides = {}
-  }
-
-  public cancel() {
-    this.clearOverride()
-    this.isOverriding = false
   }
 }

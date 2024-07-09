@@ -7,19 +7,19 @@ export default class LineTool extends Tool {
 
   public onStart(position: Position) {
     this.startPosition = position
-    this.startOverride()
+    this.startTransaction()
     this.drawLine(this.startPosition, position)
   }
 
   public onMove(position: Position) {
     if (!this.startPosition) return
-    this.resetOverride()
+    this.resetTransaction()
     this.drawLine(this.startPosition, position)
   }
 
   public onEnd(_position: Position) {
     if (!this.startPosition) return
-    this.commitOverride()
+    this.commitTransaction()
     this.startPosition = null
   }
 
