@@ -13,7 +13,7 @@ export default class LineTool extends Tool {
 
   public onMove(position: Position) {
     if (!this.startPosition) return
-    this.resetOverrides()
+    this.resetOverride()
     this.drawLine(this.startPosition, position)
   }
 

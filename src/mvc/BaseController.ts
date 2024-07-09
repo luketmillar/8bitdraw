@@ -11,7 +11,7 @@ export interface IView<W extends IWorld> {
 }
 
 export default class BaseController<W extends IWorld, V extends IView<W>> {
-  public readonly world: W
+  protected readonly world: W
   public readonly view: V
   private running: boolean = false
   private startTime: number = 0

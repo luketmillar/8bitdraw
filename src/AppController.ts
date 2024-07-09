@@ -5,10 +5,12 @@ import { Color, Position } from './utils/types'
 import DrawTool from './tools/DrawTool'
 import AppView from './AppView'
 import InputHandler, { InputEvent } from './utils/InputHandler'
+import UndoStack from './undo/undo'
 
 export default class AppController extends BaseController<AppWorld, AppView> {
   public toolStack = new ToolStack()
   public inputHandler = new InputHandler(this.view)
+  public undoStack = new UndoStack(this)
 
   constructor(world: AppWorld, view: AppView) {
     super(world, view)
@@ -17,6 +19,7 @@ export default class AppController extends BaseController<AppWorld, AppView> {
     this.inputHandler.on(InputEvent.End, ({ position }) => this.tool?.onEnd(position))
   }
 
+  // event handlers
   public onMouseDown = (canvasPosition: Position, metaKey?: boolean) => {
     this.inputHandler.onMouseDown(canvasPosition, { metaKey })
   }
@@ -27,14 +30,33 @@ export default class AppController extends BaseController<AppWorld, AppView> {
     this.inputHandler.onMouseMove(canvasPosition, { metaKey })
   }
 
+  // draw
   public getColor(position: Position) {
     return this.world.sketch.getColor(position)
   }
-  public setColor(position: Position, color: Color) {
-    this.world.sketch.setColor(position, color)
+  public setColor(position: Position, color: Color | undefined) {
+    if (color === undefined) {
+      this.unsetColor(position)
+    } else {
+      this.world.sketch.setColor(position, color)
+    }
   }
   public unsetColor(position: Position) {
     this.world.sketch.setColor(position, null)
+  }
+
+  // overrides
+  public startOverride() {
+    this.world.sketch.startOverride()
+  }
+  public commitOverride() {
+    this.world.sketch.commitOverride()
+  }
+  public resetOverride() {
+    this.world.sketch.resetOverride()
+  }
+  public cancelOverride() {
+    this.world.sketch.cancelOverride()
   }
 
   public isInSketch(position: Position) {

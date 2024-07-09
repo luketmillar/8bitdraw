@@ -24,18 +24,18 @@ export default class Tool {
   }
 
   protected startOverride() {
-    this.controller.world.sketch.startOverrides()
+    this.controller.startOverride()
   }
 
   protected commitOverride() {
-    this.controller.world.sketch.commitOverrides()
+    this.controller.commitOverride()
   }
 
-  protected resetOverrides() {
-    this.controller.world.sketch.resetOverrides()
+  protected resetOverride() {
+    this.controller.resetOverride()
   }
 
-  protected cancelOverrides() {
-    this.controller.world.sketch.cancelOverrides()
+  protected cancelOverride() {
+    this.controller.cancelOverride()
   }
 }

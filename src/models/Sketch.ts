@@ -84,16 +84,16 @@ export default class Sketch extends Model {
   }
 
   // overrides
-  public startOverrides() {
+  public startOverride() {
     this.activeLayer.pixels.start()
   }
-  public cancelOverrides() {
+  public cancelOverride() {
     this.activeLayer.pixels.cancel()
   }
-  public resetOverrides() {
-    this.activeLayer.pixels.clearOverrides()
+  public resetOverride() {
+    this.activeLayer.pixels.clearOverride()
   }
-  public commitOverrides() {
+  public commitOverride() {
     this.activeLayer.pixels.commit()
   }
 

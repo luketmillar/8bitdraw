@@ -27,7 +27,7 @@ export default class RectangleTool extends Tool {
 
   public onMove(position: Position) {
     if (!this.startPosition) return
-    this.resetOverrides()
+    this.resetOverride()
     this.drawRectangle(this.startPosition, position)
   }
 

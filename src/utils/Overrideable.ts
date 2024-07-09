@@ -35,12 +35,12 @@ export default class Overrideable<V> {
     this.isOverriding = false
   }
 
-  public clearOverrides() {
+  public clearOverride() {
     this.overrides = {}
   }
 
   public cancel() {
-    this.clearOverrides()
+    this.clearOverride()
     this.isOverriding = false
   }
 }

@@ -30,14 +30,14 @@ const ColorBar = styled.div`
   flex-direction: column;
 `
 
-const LayerBar = styled.div`
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-`
+// const LayerBar = styled.div`
+//   position: absolute;
+//   bottom: 20px;
+//   right: 20px;
+//   z-index: 1000;
+//   display: flex;
+//   flex-direction: column;
+// `
 
 const useDisableTouch = () => {
   React.useEffect(() => {
@@ -83,11 +83,11 @@ const SurfaceApp = () => {
         <button onClick={() => (controller.toolStack.currentColor = '#f00')}>Red</button>
         <button onClick={() => (controller.toolStack.currentColor = '#fff')}>White</button>
       </ColorBar>
-      <LayerBar>
+      {/* <LayerBar>
         <button onClick={() => controller.world.sketch.newLayer()}>New</button>
         <button onClick={() => controller.world.sketch.deleteLayer()}>Delete</button>
         <button onClick={() => controller.world.sketch.flipLayers()}>Flip</button>
-      </LayerBar>
+      </LayerBar> */}
     </>
   )
 }
