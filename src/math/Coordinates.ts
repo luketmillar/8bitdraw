@@ -1,5 +1,5 @@
 import React from 'react'
-import { Position, Size } from './types'
+import { Position, Size } from '../utils/types'
 import { vec2 } from 'gl-matrix'
 
 export const getScreenSize = () => vec2.fromValues(window.innerWidth, window.innerHeight)

@@ -1,4 +1,4 @@
-import TransactionManager from './commands/TransactionManager'
+import TransactionManager from './transactions/TransactionManager'
 import Model from './models/Base'
 import Grid from './models/Grid'
 import Sketch from './models/Sketch'

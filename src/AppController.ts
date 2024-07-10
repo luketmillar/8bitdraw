@@ -5,13 +5,13 @@ import { Color, Position } from './utils/types'
 import DrawTool from './tools/DrawTool'
 import AppView from './AppView'
 import InputHandler, { InputEvent } from './utils/InputHandler'
-import UndoStack from './commands/undo'
-import TransactionManager from './commands/TransactionManager'
+import TransactionManager from './transactions/TransactionManager'
+import UndoManager from './undo/UndoManager'
 
 export default class AppController extends BaseController<AppWorld, AppView> {
   public readonly toolStack = new ToolStack()
   public readonly inputHandler = new InputHandler(this.view)
-  public readonly undoStack = new UndoStack(this)
+  public readonly undoStack = new UndoManager(this)
   public readonly transaction: TransactionManager
 
   constructor() {

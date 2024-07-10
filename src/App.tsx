@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSizes } from './utils/Coordinates'
+import { useSizes } from './math/Coordinates'
 import AppController from './AppController'
 import InputLayer from './utils/InputLayer'
 import FillTool from './tools/FillTool'

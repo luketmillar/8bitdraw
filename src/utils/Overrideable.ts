@@ -1,4 +1,4 @@
-import TransactionManager from '../commands/TransactionManager'
+import TransactionManager from '../transactions/TransactionManager'
 
 export default class Overrideable<V> {
   public readonly transaction: TransactionManager

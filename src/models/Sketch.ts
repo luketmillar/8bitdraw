@@ -4,7 +4,7 @@ import { Color, Position, Size } from '../utils/types'
 import Model from './Base'
 import Pixel from './Pixel'
 import { v4 as uuid } from 'uuid'
-import TransactionManager from '../commands/TransactionManager'
+import TransactionManager from '../transactions/TransactionManager'
 
 const pixelKey = (position: Position) => `${position[0]},${position[1]}`
 

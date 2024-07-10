@@ -1,6 +1,6 @@
 import EventEmitter from './EventEmitter'
 import { Position } from './types'
-import * as Coordinates from './Coordinates'
+import * as Coordinates from '../math/Coordinates'
 import AppView from '../AppView'
 
 interface DownOptions {

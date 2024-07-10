@@ -1,9 +1,9 @@
 import AppWorld from './AppWorld'
 import { IView } from './mvc/BaseController'
 import Model from './models/Base'
-import Spaces from './utils/Spaces'
+import Spaces from './math/Spaces'
+import Transform from './math/Transform'
 import { vec2 } from 'gl-matrix'
-import Transform from './utils/Transform'
 
 export default class AppView implements IView<AppWorld> {
   private _canvas: HTMLCanvasElement | undefined
