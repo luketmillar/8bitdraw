@@ -4,9 +4,8 @@ import { Color, Position, Size } from '../utils/types'
 import Model from './Base'
 import Pixel from './Pixel'
 import { v4 as uuid } from 'uuid'
-import TransactionManager from '../transactions/TransactionManager'
 
-const pixelKey = (position: Position) => `${position[0]},${position[1]}`
+const pixelKey = (position: Position) => `${position[0]}:${position[1]}`
 
 const createPixels = (pixels: Overrideable<Pixel>, size: Size) => {
   pixels.clear()
@@ -21,9 +20,9 @@ class Layer extends Model {
   public id = uuid()
   public pixels: Overrideable<Pixel>
 
-  constructor(size: Size, transaction: TransactionManager) {
+  constructor(size: Size) {
     super()
-    this.pixels = new Overrideable<Pixel>(transaction)
+    this.pixels = new Overrideable<Pixel>()
     createPixels(this.pixels, size)
   }
 
@@ -37,13 +36,11 @@ class Layer extends Model {
 
 export default class Sketch extends Model {
   public size: Size
-  private readonly transaction: TransactionManager
 
-  constructor(size: Size, transaction: TransactionManager) {
+  constructor(size: Size) {
     super()
     this.size = size
-    this.transaction = transaction
-    this.layers = [new Layer(size, transaction)]
+    this.layers = [new Layer(size)]
     this.activeLayerId = this.layers[0].id
   }
 
@@ -57,7 +54,7 @@ export default class Sketch extends Model {
     return this.layers.findIndex((layer) => layer.id === this.activeLayerId)
   }
   public newLayer() {
-    const layer = new Layer(this.size, this.transaction)
+    const layer = new Layer(this.size)
     this.layers.push(layer)
     this.activeLayerId = layer.id
   }

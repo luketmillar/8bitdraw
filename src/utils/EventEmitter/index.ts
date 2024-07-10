@@ -5,9 +5,7 @@ class Handlers {
 
   public add(scope: string, name: string, handler: Handler) {
     const key = this.getKey(scope, name)
-    if (this.handlersByKey[key] === undefined) {
-      this.handlersByKey[key] = []
-    }
+    this.handlersByKey[key] = this.handlersByKey[key] ?? []
     this.handlersByKey[key].push(handler)
   }
 
@@ -33,6 +31,10 @@ class Handlers {
 export default class EventEmitter<Events extends Event<any, any, any>> {
   private handlers = new Handlers()
   private allHandlers: Handler[] = []
+
+  public reset() {
+    this.removeAllListeners()
+  }
 
   public on<S extends EventScope<Events>, T extends EventName<Events>>(
     scope: S,
@@ -65,7 +67,7 @@ export default class EventEmitter<Events extends Event<any, any, any>> {
     this.allHandlers = this.allHandlers.filter((h) => h !== handler)
   }
 
-  protected emit<S extends EventScope<Events>, T extends EventName<Events>>(
+  public emit<S extends EventScope<Events>, T extends EventName<Events>>(
     scope: S,
     eventName: T,
     state: EventPayload<Events, S, T>

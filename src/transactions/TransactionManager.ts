@@ -1,12 +1,6 @@
-import EventEmitter from '../utils/EventEmitter'
+import EventBus from '../eventbus/EventBus'
 
-export default class TransactionManager extends EventEmitter<
-  | { scope: 'transaction'; type: 'start'; payload: void }
-  | { scope: 'transaction'; type: 'end'; payload: void }
-  | { scope: 'transaction'; type: 'cancel'; payload: void }
-> {
-  public isRunning: boolean = false
-
+export default class TransactionManager {
   public transact(fn: () => boolean | void) {
     this.start()
     const cancel = fn()
@@ -18,19 +12,12 @@ export default class TransactionManager extends EventEmitter<
   }
 
   public start() {
-    this.isRunning = true
-    this.event('start')
+    EventBus.emit('transaction', 'start', '')
   }
   public commit() {
-    this.isRunning = false
-    this.event('end')
+    EventBus.emit('transaction', 'end', '')
   }
   public cancel() {
-    this.isRunning = false
-    this.event('cancel')
-  }
-
-  private event(type: any) {
-    this.emit('transaction', type, undefined)
+    EventBus.emit('transaction', 'cancel', '')
   }
 }

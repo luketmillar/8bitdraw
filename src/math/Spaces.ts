@@ -19,7 +19,6 @@ export default class Spaces {
   public zoom: number = 1
   // screenspace gutter
   public gutter: Gutter = DefaultGutter
-
   public get gutterInCanvasSpace() {
     const scale = this.screenToCanvasVec
     return {

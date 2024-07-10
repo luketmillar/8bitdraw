@@ -1,9 +1,16 @@
+import EventBus, { ToolPayload } from '../eventbus/EventBus'
 import { Color } from '../utils/types'
 import Tool from './Tool'
 
 export default class ToolStack {
   public readonly stack: Tool[] = []
   public currentColor: Color = '#000'
+
+  constructor() {
+    EventBus.on('tool', 'start', this.onStart)
+    EventBus.on('tool', 'move', this.onMove)
+    EventBus.on('tool', 'end', this.onEnd)
+  }
 
   public replace = (tool: Tool) => {
     this.clearStack()
@@ -24,8 +31,22 @@ export default class ToolStack {
     return this.stack[this.stack.length - 1]
   }
 
+  public teardown() {
+    EventBus.off('tool', 'start', this.onStart)
+    EventBus.off('tool', 'move', this.onMove)
+    EventBus.off('tool', 'end', this.onEnd)
+  }
+
+  private onStart = ({ position }: ToolPayload) => this.tool?.onStart(position)
+  private onMove = ({ position }: ToolPayload) => this.tool?.onMove(position)
+  private onEnd = ({ position }: ToolPayload) => this.tool?.onEnd(position)
+
   private clearStack = () => {
     this.stack.forEach((tool) => tool.teardown())
     this.stack.length = 0
+  }
+
+  private get tool() {
+    return this.top()
   }
 }

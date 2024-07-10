@@ -8,6 +8,7 @@ import styled from 'styled-components'
 import EraseTool from '../tools/EraseTool'
 import LineTool from '../tools/LineTool'
 import RectangleTool from '../tools/RectangleTool'
+import EventBus from '../eventbus/EventBus'
 
 const ToolBar = styled.div`
   position: absolute;
@@ -47,6 +48,11 @@ const useDisableTouch = () => {
 const SurfaceApp = () => {
   useDisableTouch()
   const controller = React.useMemo(() => new AppController(), [])
+  React.useEffect(() => {
+    return () => {
+      controller.teardown()
+    }
+  }, [controller])
   const ref = React.useRef<HTMLCanvasElement>(null)
   React.useEffect(() => {
     controller.view.canvas = ref.current!
@@ -59,9 +65,13 @@ const SurfaceApp = () => {
       <FullScreenCanvas ref={ref} />
       <InputLayer
         view={controller.view}
-        onMouseDown={controller.onMouseDown}
-        onMouseMove={controller.onMouseMove}
-        onMouseUp={controller.onMouseUp}
+        onMouseDown={(position, metaKey) =>
+          EventBus.emit('mouse-input', 'down', { position, metaKey })
+        }
+        onMouseMove={(position, metaKey) =>
+          EventBus.emit('mouse-input', 'move', { position, metaKey })
+        }
+        onMouseUp={(position, metaKey) => EventBus.emit('mouse-input', 'up', { position, metaKey })}
       />
       <ToolBar>
         <button onClick={() => controller.toolStack.replace(new FillTool(controller))}>Fill</button>

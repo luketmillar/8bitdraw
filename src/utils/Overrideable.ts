@@ -1,19 +1,15 @@
-import TransactionManager from '../transactions/TransactionManager'
+import EventBus from '../eventbus/EventBus'
 
 export default class Overrideable<V> {
-  public readonly transaction: TransactionManager
   public values: Record<string, V> = {}
   public overrides: Record<string, V> = {}
 
-  private get isOverriding() {
-    return this.transaction.isRunning
-  }
+  private isOverriding: boolean = false
 
-  constructor(transaction: TransactionManager) {
-    this.transaction = transaction
-    this.transaction.on('transaction', 'start', this.start)
-    this.transaction.on('transaction', 'end', this.commit)
-    this.transaction.on('transaction', 'cancel', this.cancel)
+  constructor() {
+    EventBus.on('transaction', 'start', this.start)
+    EventBus.on('transaction', 'end', this.commit)
+    EventBus.on('transaction', 'cancel', this.cancel)
   }
 
   public set(key: string, value: V) {
@@ -38,15 +34,18 @@ export default class Overrideable<V> {
   }
 
   public start = () => {
+    this.isOverriding = true
     this.overrides = {}
   }
 
   public commit = () => {
     this.values = { ...this.values, ...this.overrides }
     this.overrides = {}
+    this.isOverriding = false
   }
 
   public cancel = () => {
     this.overrides = {}
+    this.isOverriding = false
   }
 }

@@ -3,7 +3,7 @@ import ToolStack from '../tools/ToolStack'
 import { Color, Position } from '../utils/types'
 import DrawTool from '../tools/DrawTool'
 import AppView from './AppView'
-import InputHandler, { InputEvent } from '../utils/InputHandler'
+import InputHandler from '../utils/InputHandler'
 import TransactionManager from '../transactions/TransactionManager'
 import UndoManager from '../undo/UndoManager'
 import AppWorld from './AppWorld'
@@ -12,28 +12,12 @@ export default class AppController extends BaseController<AppWorld, AppView> {
   public readonly toolStack = new ToolStack()
   public readonly inputHandler = new InputHandler(this.view)
   public readonly undoStack = new UndoManager(this)
-  public readonly transaction: TransactionManager
+  public readonly transaction = new TransactionManager()
 
   constructor() {
-    const transaction = new TransactionManager()
-    const world = new AppWorld([40, 30], transaction)
+    const world = new AppWorld([40, 30])
     const view = new AppView()
     super(world, view)
-    this.transaction = transaction
-    this.inputHandler.on('input', InputEvent.Start, ({ position }) => this.tool?.onStart(position))
-    this.inputHandler.on('input', InputEvent.Move, ({ position }) => this.tool?.onMove(position))
-    this.inputHandler.on('input', InputEvent.End, ({ position }) => this.tool?.onEnd(position))
-  }
-
-  // event handlers
-  public onMouseDown = (canvasPosition: Position, metaKey?: boolean) => {
-    this.inputHandler.onMouseDown(canvasPosition, { metaKey })
-  }
-  public onMouseUp = (canvasPosition: Position, metaKey?: boolean) => {
-    this.inputHandler.onMouseUp(canvasPosition, { metaKey })
-  }
-  public onMouseMove = (canvasPosition: Position, metaKey?: boolean) => {
-    this.inputHandler.onMouseMove(canvasPosition, { metaKey })
   }
 
   // draw
@@ -60,11 +44,12 @@ export default class AppController extends BaseController<AppWorld, AppView> {
     )
   }
 
-  protected onStart() {
-    this.toolStack.push(new DrawTool(this))
+  public teardown() {
+    this.inputHandler.teardown()
+    this.toolStack.teardown()
   }
 
-  private get tool() {
-    return this.toolStack.top()
+  protected onStart() {
+    this.toolStack.push(new DrawTool(this))
   }
 }
