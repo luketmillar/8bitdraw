@@ -1,9 +1,9 @@
 import EventEmitter from '../utils/EventEmitter'
 
 export default class TransactionManager extends EventEmitter<
-  | { type: 'start'; payload: void }
-  | { type: 'end'; payload: void }
-  | { type: 'cancel'; payload: void }
+  | { scope: 'transaction'; type: 'start'; payload: void }
+  | { scope: 'transaction'; type: 'end'; payload: void }
+  | { scope: 'transaction'; type: 'cancel'; payload: void }
 > {
   public isRunning: boolean = false
 
@@ -31,6 +31,6 @@ export default class TransactionManager extends EventEmitter<
   }
 
   private event(type: any) {
-    this.emit(type, undefined)
+    this.emit('transaction', type, undefined)
   }
 }

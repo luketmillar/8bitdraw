@@ -20,9 +20,9 @@ export default class AppController extends BaseController<AppWorld, AppView> {
     const view = new AppView()
     super(world, view)
     this.transaction = transaction
-    this.inputHandler.on(InputEvent.Start, ({ position }) => this.tool?.onStart(position))
-    this.inputHandler.on(InputEvent.Move, ({ position }) => this.tool?.onMove(position))
-    this.inputHandler.on(InputEvent.End, ({ position }) => this.tool?.onEnd(position))
+    this.inputHandler.on('input', InputEvent.Start, ({ position }) => this.tool?.onStart(position))
+    this.inputHandler.on('input', InputEvent.Move, ({ position }) => this.tool?.onMove(position))
+    this.inputHandler.on('input', InputEvent.End, ({ position }) => this.tool?.onEnd(position))
   }
 
   // event handlers

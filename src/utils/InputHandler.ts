@@ -17,9 +17,9 @@ export enum InputEvent {
 }
 
 export default class InputHandler extends EventEmitter<
-  | { type: InputEvent.Start; payload: EventPayload }
-  | { type: InputEvent.Move; payload: EventPayload }
-  | { type: InputEvent.End; payload: EventPayload }
+  | { scope: 'input'; type: InputEvent.Start; payload: EventPayload }
+  | { scope: 'input'; type: InputEvent.Move; payload: EventPayload }
+  | { scope: 'input'; type: InputEvent.End; payload: EventPayload }
 > {
   private readonly view: AppView
 
@@ -38,7 +38,7 @@ export default class InputHandler extends EventEmitter<
     const sketchPosition = this.toSketchSpace(canvasPosition)
     this.downOptions = { position: sketchPosition }
     this.lastPosition = sketchPosition
-    this.emit(InputEvent.Start, { position: sketchPosition, options })
+    this.emit('input', InputEvent.Start, { position: sketchPosition, options })
   }
 
   public onMouseMove(canvasPosition: Position, options: EventOptions) {
@@ -46,7 +46,7 @@ export default class InputHandler extends EventEmitter<
     const sketchPosition = this.toSketchSpace(canvasPosition)
     if (Coordinates.positionsAreEqual(this.lastPosition!, sketchPosition)) return
     this.lastPosition = sketchPosition
-    this.emit(InputEvent.Move, { position: sketchPosition, options })
+    this.emit('input', InputEvent.Move, { position: sketchPosition, options })
   }
 
   public onMouseUp(canvasPosition: Position, options: EventOptions) {
@@ -54,7 +54,7 @@ export default class InputHandler extends EventEmitter<
     this.downOptions = null
     this.lastPosition = null
     const sketchPosition = this.toSketchSpace(canvasPosition)
-    this.emit(InputEvent.End, { position: sketchPosition, options })
+    this.emit('input', InputEvent.End, { position: sketchPosition, options })
   }
 
   private toSketchSpace = (position: Position) => this.view.spaces.canvasToWorldSpace(position)

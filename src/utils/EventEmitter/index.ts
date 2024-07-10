@@ -1,58 +1,94 @@
-import { Event, EventName, EventPayload, Handler } from './types'
+import { Event, EventName, EventPayload, EventScope, Handler } from './types'
 
-export default class EventEmitter<Events extends Event<any, any>> {
-    private handlersByEventName: Record<string, Handler[]> = {}
-    private allHandlers: Array<(event: Events) => void> = []
+class Handlers {
+  private handlersByKey: Record<string, Handler[]> = {}
 
-    public on<T extends EventName<Events>>(eventName: T, handler: (arg: EventPayload<Events, T>) => void) {
-        if (this.handlersByEventName[eventName] === undefined) {
-            this.handlersByEventName[eventName] = []
-        }
-        this.handlersByEventName[eventName as string].push(handler)
-        return () => {
-            this.off(eventName, handler)
-        }
+  public add(scope: string, name: string, handler: Handler) {
+    const key = this.getKey(scope, name)
+    if (this.handlersByKey[key] === undefined) {
+      this.handlersByKey[key] = []
     }
+    this.handlersByKey[key].push(handler)
+  }
 
-    public off<T extends EventName<Events>>(eventName: T, handler: (arg: EventPayload<Events, T>) => void) {
-        if (this.handlersByEventName[eventName] === undefined) {
-            return
-        }
-        this.handlersByEventName[eventName] = this.handlersByEventName[eventName as string].filter(h => h !== handler)
+  public get(scope: string, name: string) {
+    const key = this.getKey(scope, name)
+    return this.handlersByKey[key] ?? []
+  }
+
+  public remove(scope: string, name: string, handler: Handler) {
+    const key = this.getKey(scope, name)
+    this.handlersByKey[key] = this.handlersByKey[key].filter((h) => h !== handler)
+  }
+
+  public clear() {
+    this.handlersByKey = {}
+  }
+
+  private getKey(scope: string, name: string) {
+    return `${scope}:${name}`
+  }
+}
+
+export default class EventEmitter<Events extends Event<any, any, any>> {
+  private handlers = new Handlers()
+  private allHandlers: Handler[] = []
+
+  public on<S extends EventScope<Events>, T extends EventName<Events>>(
+    scope: S,
+    eventName: T,
+    handler: (arg: EventPayload<Events, S, T>) => void
+  ) {
+    this.handlers.add(scope, eventName, handler)
+    return () => {
+      this.off(scope, eventName, handler)
     }
+  }
 
-    public onAll(handler: (event: Events) => void) {
-        this.allHandlers.push(handler)
+  public off<S extends EventScope<Events>, T extends EventName<Events>>(
+    scope: S,
+    eventName: T,
+    handler: (arg: EventPayload<Events, S, T>) => void
+  ) {
+    this.handlers.remove(scope, eventName, handler)
+  }
 
-        return () => {
-            this.offAll(handler)
-        }
+  public onAll(handler: Handler) {
+    this.allHandlers.push(handler)
+
+    return () => {
+      this.offAll(handler)
     }
+  }
 
-    public offAll(handler: (Event: Events) => void) {
-        this.allHandlers = this.allHandlers.filter(h => h !== handler)
-    }
+  public offAll(handler: Handler) {
+    this.allHandlers = this.allHandlers.filter((h) => h !== handler)
+  }
 
-    protected emit<T extends EventName<Events>>(eventName: T, state: EventPayload<Events, T>) {
-        const allHandlers = this.allHandlers
-        const namedHandlers = this.handlersByEventName[eventName] ?? []
+  protected emit<S extends EventScope<Events>, T extends EventName<Events>>(
+    scope: S,
+    eventName: T,
+    state: EventPayload<Events, S, T>
+  ) {
+    const allHandlers = this.allHandlers
+    const namedHandlers = this.handlers.get(scope, eventName)
 
-        allHandlers.forEach(allHandler => allHandler({ type: eventName, payload: state } as any))
+    allHandlers.forEach((allHandler) => allHandler({ type: eventName, payload: state } as any))
 
-        namedHandlers.forEach(handler => {
-            handler(state)
-        })
-    }
-    protected emitEvent(event: Events): void {
-        const allHandlers = this.allHandlers
-        const namedHandlers = this.handlersByEventName[event.type] ?? []
+    namedHandlers.forEach((handler) => {
+      handler(state)
+    })
+  }
+  protected emitEvent(event: Events): void {
+    const allHandlers = this.allHandlers
+    const namedHandlers = this.handlers.get(event.scope, event.type)
 
-        allHandlers.forEach(allHandler => allHandler(event))
-        namedHandlers.forEach(namedHandler => namedHandler(event.payload))
-    }
+    allHandlers.forEach((allHandler) => allHandler(event))
+    namedHandlers.forEach((namedHandler) => namedHandler(event.payload))
+  }
 
-    protected removeAllListeners() {
-        this.allHandlers = []
-        this.handlersByEventName = {}
-    }
+  protected removeAllListeners() {
+    this.allHandlers = []
+    this.handlers.clear()
+  }
 }

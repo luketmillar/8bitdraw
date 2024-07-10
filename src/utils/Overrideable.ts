@@ -11,9 +11,9 @@ export default class Overrideable<V> {
 
   constructor(transaction: TransactionManager) {
     this.transaction = transaction
-    this.transaction.on('start', this.start)
-    this.transaction.on('end', this.commit)
-    this.transaction.on('cancel', this.cancel)
+    this.transaction.on('transaction', 'start', this.start)
+    this.transaction.on('transaction', 'end', this.commit)
+    this.transaction.on('transaction', 'cancel', this.cancel)
   }
 
   public set(key: string, value: V) {
