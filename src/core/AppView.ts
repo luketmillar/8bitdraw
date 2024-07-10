@@ -1,4 +1,4 @@
-import AppWorld from '../AppWorld'
+import AppWorld from './AppWorld'
 import { IView } from './BaseController'
 import Model from '../models/Base'
 import Spaces from '../math/Spaces'

@@ -1,9 +1,9 @@
-import TransactionManager from './transactions/TransactionManager'
-import Model from './models/Base'
-import Grid from './models/Grid'
-import Sketch from './models/Sketch'
-import BaseWorld from './core/BaseWorld'
-import { Size } from './utils/types'
+import TransactionManager from '../transactions/TransactionManager'
+import Model from '../models/Base'
+import Grid from '../models/Grid'
+import Sketch from '../models/Sketch'
+import BaseWorld from '../core/BaseWorld'
+import { Size } from '../utils/types'
 
 export default class AppWorld extends BaseWorld {
   public sketch: Sketch
