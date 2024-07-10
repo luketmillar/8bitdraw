@@ -1,4 +1,4 @@
-import AppController from '../AppController'
+import AppController from '../core/AppController'
 
 export default abstract class Undo<C = any> {
   public readonly changes: C[]

@@ -1,7 +1,7 @@
 import EventEmitter from './EventEmitter'
 import { Position } from './types'
 import * as Coordinates from '../math/Coordinates'
-import AppView from '../AppView'
+import AppView from '../core/AppView'
 
 interface DownOptions {
   position: Position

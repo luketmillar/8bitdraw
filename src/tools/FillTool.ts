@@ -1,5 +1,5 @@
 import { vec2 } from 'gl-matrix'
-import AppController from '../AppController'
+import AppController from '../core/AppController'
 import { Color, Position } from '../utils/types'
 import Tool from './Tool'
 

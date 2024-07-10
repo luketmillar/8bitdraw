@@ -1,4 +1,4 @@
-import AppController from '../AppController'
+import AppController from '../core/AppController'
 import Undo from './BaseUndo'
 
 export default class UndoManager {

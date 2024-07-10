@@ -1,12 +1,12 @@
-import BaseController from './mvc/BaseController'
-import AppWorld from './AppWorld'
-import ToolStack from './tools/ToolStack'
-import { Color, Position } from './utils/types'
-import DrawTool from './tools/DrawTool'
+import BaseController from './BaseController'
+import AppWorld from '../AppWorld'
+import ToolStack from '../tools/ToolStack'
+import { Color, Position } from '../utils/types'
+import DrawTool from '../tools/DrawTool'
 import AppView from './AppView'
-import InputHandler, { InputEvent } from './utils/InputHandler'
-import TransactionManager from './transactions/TransactionManager'
-import UndoManager from './undo/UndoManager'
+import InputHandler, { InputEvent } from '../utils/InputHandler'
+import TransactionManager from '../transactions/TransactionManager'
+import UndoManager from '../undo/UndoManager'
 
 export default class AppController extends BaseController<AppWorld, AppView> {
   public readonly toolStack = new ToolStack()

@@ -1,8 +1,8 @@
 import React from 'react'
-import { Position } from './types'
+import { Position } from '../utils/types'
 import styled from 'styled-components'
 import { vec2 } from 'gl-matrix'
-import AppView from '../AppView'
+import AppView from '../core/AppView'
 
 const FullScreen = styled.div`
   position: absolute;

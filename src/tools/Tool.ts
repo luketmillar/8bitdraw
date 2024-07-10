@@ -1,4 +1,4 @@
-import AppController from '../AppController'
+import AppController from '../core/AppController'
 import BaseObject from '../models/Base'
 import { Position } from '../utils/types'
 

@@ -1,8 +1,8 @@
-import AppWorld from './AppWorld'
-import { IView } from './mvc/BaseController'
-import Model from './models/Base'
-import Spaces from './math/Spaces'
-import Transform from './math/Transform'
+import AppWorld from '../AppWorld'
+import { IView } from './BaseController'
+import Model from '../models/Base'
+import Spaces from '../math/Spaces'
+import Transform from '../math/Transform'
 import { vec2 } from 'gl-matrix'
 
 export default class AppView implements IView<AppWorld> {

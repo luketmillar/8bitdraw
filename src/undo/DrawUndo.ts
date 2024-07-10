@@ -1,4 +1,4 @@
-import AppController from '../AppController'
+import AppController from '../core/AppController'
 import { Color, Position } from '../utils/types'
 import Undo from './BaseUndo'
 

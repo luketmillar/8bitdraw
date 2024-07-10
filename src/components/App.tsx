@@ -1,13 +1,13 @@
 import React from 'react'
-import { useSizes } from './math/Coordinates'
-import AppController from './AppController'
-import InputLayer from './utils/InputLayer'
-import FillTool from './tools/FillTool'
-import DrawTool from './tools/DrawTool'
+import { useSizes } from '../math/Coordinates'
+import AppController from '../core/AppController'
+import InputLayer from './InputLayer'
+import FillTool from '../tools/FillTool'
+import DrawTool from '../tools/DrawTool'
 import styled from 'styled-components'
-import EraseTool from './tools/EraseTool'
-import LineTool from './tools/LineTool'
-import RectangleTool from './tools/RectangleTool'
+import EraseTool from '../tools/EraseTool'
+import LineTool from '../tools/LineTool'
+import RectangleTool from '../tools/RectangleTool'
 
 const ToolBar = styled.div`
   position: absolute;
