@@ -7,9 +7,9 @@ export default class Overrideable<V> {
   private isOverriding: boolean = false
 
   constructor() {
-    EventBus.on('transaction', 'start', this.start)
-    EventBus.on('transaction', 'end', this.commit)
-    EventBus.on('transaction', 'cancel', this.cancel)
+    EventBus.on('transaction', 'start', this.start.bind(this))
+    EventBus.on('transaction', 'end', this.commit.bind(this))
+    EventBus.on('transaction', 'cancel', this.cancel.bind(this))
   }
 
   public set(key: string, value: V) {
@@ -33,18 +33,18 @@ export default class Overrideable<V> {
     this.overrides = {}
   }
 
-  public start = () => {
+  public start() {
     this.isOverriding = true
     this.overrides = {}
   }
 
-  public commit = () => {
+  public commit() {
     this.values = { ...this.values, ...this.overrides }
     this.overrides = {}
     this.isOverriding = false
   }
 
-  public cancel = () => {
+  public cancel() {
     this.overrides = {}
     this.isOverriding = false
   }

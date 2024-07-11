@@ -24,7 +24,7 @@ export default class AppController extends BaseController<AppWorld, AppView> {
   public getColor(position: Position) {
     return this.world.sketch.getColor(position)
   }
-  public setColor(position: Position, color: Color | undefined) {
+  public setColor(position: Position, color: Color | undefined | null) {
     if (color === undefined) {
       this.unsetColor(position)
     } else {
@@ -47,11 +47,13 @@ export default class AppController extends BaseController<AppWorld, AppView> {
   protected onStart() {
     this.inputHandler.start()
     this.toolStack.start()
+    this.undoStack.start()
     this.toolStack.push(new DrawTool(this))
   }
 
   protected onStop() {
     this.inputHandler.stop()
     this.toolStack.stop()
+    this.undoStack.stop()
   }
 }

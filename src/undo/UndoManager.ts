@@ -1,4 +1,5 @@
 import AppController from '../core/AppController'
+import EventBus from '../eventbus/EventBus'
 import Undo from './BaseUndo'
 
 export default class UndoManager {
@@ -9,11 +10,20 @@ export default class UndoManager {
     this.controller = controller
   }
 
+  public start() {
+    EventBus.on('undo', 'push', this.push)
+  }
+
+  public stop() {
+    EventBus.off('undo', 'push', this.push)
+  }
+
   public push = (undo: Undo) => {
+    if (undo.changes.length === 0) return
     this.stack = this.stack.slice(0, this.pointer)
     this.stack.push(undo)
     this.pointer = this.stack.length
-    this.notify()
+    EventBus.emit('undo', 'stack-changed', '')
   }
 
   public undo = () => {
@@ -23,7 +33,7 @@ export default class UndoManager {
     this.pointer--
     const undo = this.stack[this.pointer]
     undo.undo(this.controller)
-    this.notify()
+    EventBus.emit('undo', 'stack-changed', '')
   }
 
   public redo = () => {
@@ -33,7 +43,7 @@ export default class UndoManager {
     const undo = this.stack[this.pointer]
     undo.redo(this.controller)
     this.pointer++
-    this.notify()
+    EventBus.emit('undo', 'stack-changed', '')
   }
 
   public canUndo = () => {
@@ -42,16 +52,5 @@ export default class UndoManager {
 
   public canRedo = () => {
     return this.pointer < this.stack.length
-  }
-
-  private subs: Array<() => void> = []
-  public subscribe = (callback: () => void) => {
-    this.subs.push(callback)
-    return () => {
-      this.subs = this.subs.filter((s) => s !== callback)
-    }
-  }
-  private notify = () => {
-    this.subs.forEach((s) => s())
   }
 }

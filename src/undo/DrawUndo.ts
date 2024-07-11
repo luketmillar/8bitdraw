@@ -4,8 +4,8 @@ import Undo from './BaseUndo'
 
 export default class DrawUndo extends Undo<{
   position: Position
-  before: Color | undefined
-  after: Color | undefined
+  before: Color | null
+  after: Color | null
 }> {
   public undo(controller: AppController) {
     this.changes.forEach((change) => {

@@ -4,8 +4,14 @@ import { Color, Position, Size } from '../utils/types'
 import Model from './Base'
 import Pixel from './Pixel'
 import { v4 as uuid } from 'uuid'
+import EventBus from '../eventbus/EventBus'
+import DrawUndo from '../undo/DrawUndo'
 
 const pixelKey = (position: Position) => `${position[0]}:${position[1]}`
+const parsePixelKey = (key: string): Position => {
+  const [x, y] = key.split(':').map((value) => parseInt(value))
+  return vec2.fromValues(x, y)
+}
 
 const createPixels = (pixels: Overrideable<Pixel>, size: Size) => {
   pixels.clear()
@@ -16,13 +22,24 @@ const createPixels = (pixels: Overrideable<Pixel>, size: Size) => {
   }
 }
 
+class PixelMap extends Overrideable<Pixel> {
+  public commit() {
+    const changes = Object.keys(this.overrides).map((key) => {
+      const position = parsePixelKey(key)
+      return { position, before: this.values[key].fill, after: this.overrides[key].fill }
+    })
+    EventBus.emit('undo', 'push', new DrawUndo(changes))
+    super.commit()
+  }
+}
+
 class Layer extends Model {
   public id = uuid()
-  public pixels: Overrideable<Pixel>
+  public pixels: PixelMap
 
   constructor(size: Size) {
     super()
-    this.pixels = new Overrideable<Pixel>()
+    this.pixels = new PixelMap()
     createPixels(this.pixels, size)
   }
 

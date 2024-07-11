@@ -1,3 +1,4 @@
+import Undo from '../undo/BaseUndo'
 import EventEmitter from '../utils/EventEmitter'
 import { Position } from '../utils/types'
 
@@ -34,8 +35,12 @@ type MouseInputEvents =
       payload: MousePayload
     }
 
+type UndoEvents =
+  | { scope: 'undo'; type: 'stack-changed'; payload: '' }
+  | { scope: 'undo'; type: 'push'; payload: Undo }
+
 class EventBus extends EventEmitter<
-  CommandEvents | TransactionEvents | ToolInputEvents | MouseInputEvents
+  CommandEvents | TransactionEvents | ToolInputEvents | MouseInputEvents | UndoEvents
 > {}
 
 export default new EventBus()
