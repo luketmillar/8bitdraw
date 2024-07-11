@@ -59,7 +59,7 @@ const SurfaceApp = () => {
     <>
       <FullScreenCanvas ref={ref} />
       <InputLayer
-        view={controller.view}
+        controller={controller}
         onMouseDown={(position, metaKey) =>
           EventBus.emit('mouse-input', 'down', { position, metaKey })
         }

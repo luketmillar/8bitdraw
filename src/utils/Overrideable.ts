@@ -4,7 +4,7 @@ export default class Overrideable<V> {
   public values: Record<string, V> = {}
   public overrides: Record<string, V> = {}
 
-  private isOverriding: boolean = false
+  protected isOverriding: boolean = false
 
   constructor() {
     EventBus.on('transaction', 'start', this.start.bind(this))

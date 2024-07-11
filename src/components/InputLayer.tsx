@@ -2,7 +2,8 @@ import React from 'react'
 import { Position } from '../utils/types'
 import styled from 'styled-components'
 import { vec2 } from 'gl-matrix'
-import AppView from '../core/AppView'
+import { useKeyboardCommands } from './KeyboardInput'
+import AppController from '../core/AppController'
 
 const FullScreen = styled.div`
   position: absolute;
@@ -13,16 +14,17 @@ const FullScreen = styled.div`
 `
 
 interface IProps {
-  view: AppView
+  controller: AppController
   onClick?: (position: Position, metaKey?: boolean) => void
   onMouseMove?: (position: Position, metaKey?: boolean) => void
   onMouseUp?: (position: Position, metaKey?: boolean) => void
   onMouseDown?: (position: Position, metaKey?: boolean) => void
 }
-const InputLayer = ({ view, onClick, onMouseMove, onMouseUp, onMouseDown }: IProps) => {
+const InputLayer = ({ controller, onClick, onMouseMove, onMouseUp, onMouseDown }: IProps) => {
+  useKeyboardCommands(controller)
   const handleClick = React.useCallback(
     (e: React.MouseEvent) => {
-      const position = view.spaces.screenToCanvas(vec2.fromValues(e.clientX, e.clientY))
+      const position = controller.view.spaces.screenToCanvas(vec2.fromValues(e.clientX, e.clientY))
       onClick?.(position, e.metaKey)
     },
     [onClick]
@@ -30,7 +32,7 @@ const InputLayer = ({ view, onClick, onMouseMove, onMouseUp, onMouseDown }: IPro
   const handleTouchStart = React.useCallback(
     (e: React.TouchEvent) => {
       e.preventDefault()
-      const position = view.spaces.screenToCanvas(
+      const position = controller.view.spaces.screenToCanvas(
         vec2.fromValues(e.touches[0].clientX, e.touches[0].clientY)
       )
       onMouseDown?.(position, e.metaKey)
@@ -42,14 +44,14 @@ const InputLayer = ({ view, onClick, onMouseMove, onMouseUp, onMouseDown }: IPro
       if (e.detail !== 1 || e.button !== 0) {
         return
       }
-      const position = view.spaces.screenToCanvas(vec2.fromValues(e.clientX, e.clientY))
+      const position = controller.view.spaces.screenToCanvas(vec2.fromValues(e.clientX, e.clientY))
       onMouseDown?.(position, e.metaKey)
     },
     [onMouseDown]
   )
   React.useEffect(() => {
     const handleUp = (e: MouseEvent) => {
-      const position = view.spaces.screenToCanvas(vec2.fromValues(e.clientX, e.clientY))
+      const position = controller.view.spaces.screenToCanvas(vec2.fromValues(e.clientX, e.clientY))
       onMouseUp?.(position, e.metaKey)
     }
     window.addEventListener('mouseup', handleUp)
@@ -57,7 +59,7 @@ const InputLayer = ({ view, onClick, onMouseMove, onMouseUp, onMouseDown }: IPro
   }, [onMouseUp])
   React.useEffect(() => {
     const handleMove = (e: MouseEvent) => {
-      const position = view.spaces.screenToCanvas(vec2.fromValues(e.clientX, e.clientY))
+      const position = controller.view.spaces.screenToCanvas(vec2.fromValues(e.clientX, e.clientY))
       onMouseMove?.(position, e.metaKey)
     }
     window.addEventListener('mousemove', handleMove)
@@ -66,7 +68,7 @@ const InputLayer = ({ view, onClick, onMouseMove, onMouseUp, onMouseDown }: IPro
   React.useEffect(() => {
     const handleMove = (e: TouchEvent) => {
       e.preventDefault()
-      const position = view.spaces.screenToCanvas(
+      const position = controller.view.spaces.screenToCanvas(
         vec2.fromValues(e.touches[0].clientX, e.touches[0].clientY)
       )
       onMouseMove?.(position, e.metaKey)

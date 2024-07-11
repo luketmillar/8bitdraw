@@ -7,12 +7,14 @@ import InputHandler from '../utils/InputHandler'
 import TransactionManager from '../transactions/TransactionManager'
 import UndoManager from '../undo/UndoManager'
 import AppWorld from './AppWorld'
+import CommandManager from '../commands/CommandManager'
 
 export default class AppController extends BaseController<AppWorld, AppView> {
   public readonly toolStack = new ToolStack()
   public readonly inputHandler = new InputHandler(this.view)
   public readonly undoStack = new UndoManager(this)
   public readonly transaction = new TransactionManager()
+  public readonly command = new CommandManager(this)
 
   constructor() {
     const world = new AppWorld([40, 30])
