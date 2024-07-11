@@ -6,12 +6,6 @@ export default class ToolStack {
   public readonly stack: Tool[] = []
   public currentColor: Color = '#000'
 
-  constructor() {
-    EventBus.on('tool', 'start', this.onStart)
-    EventBus.on('tool', 'move', this.onMove)
-    EventBus.on('tool', 'end', this.onEnd)
-  }
-
   public replace = (tool: Tool) => {
     this.clearStack()
     this.push(tool)
@@ -31,7 +25,12 @@ export default class ToolStack {
     return this.stack[this.stack.length - 1]
   }
 
-  public teardown() {
+  public start() {
+    EventBus.on('tool', 'start', this.onStart)
+    EventBus.on('tool', 'move', this.onMove)
+    EventBus.on('tool', 'end', this.onEnd)
+  }
+  public stop() {
     EventBus.off('tool', 'start', this.onStart)
     EventBus.off('tool', 'move', this.onMove)
     EventBus.off('tool', 'end', this.onEnd)

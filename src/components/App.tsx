@@ -48,11 +48,6 @@ const useDisableTouch = () => {
 const SurfaceApp = () => {
   useDisableTouch()
   const controller = React.useMemo(() => new AppController(), [])
-  React.useEffect(() => {
-    return () => {
-      controller.teardown()
-    }
-  }, [controller])
   const ref = React.useRef<HTMLCanvasElement>(null)
   React.useEffect(() => {
     controller.view.canvas = ref.current!

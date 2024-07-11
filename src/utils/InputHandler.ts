@@ -24,9 +24,6 @@ export default class InputHandler {
     this.view = view
     this.i = i
     i++
-    EventBus.on('mouse-input', 'down', this.onMouseDown)
-    EventBus.on('mouse-input', 'up', this.onMouseUp)
-    EventBus.on('mouse-input', 'move', this.onMouseMove)
   }
 
   public onMouseDown = ({ position, metaKey }: MouseInputPayload) => {
@@ -52,7 +49,13 @@ export default class InputHandler {
     EventBus.emit('tool', 'end', { position: sketchPosition, metaKey })
   }
 
-  public teardown() {
+  public start() {
+    EventBus.on('mouse-input', 'down', this.onMouseDown)
+    EventBus.on('mouse-input', 'up', this.onMouseUp)
+    EventBus.on('mouse-input', 'move', this.onMouseMove)
+  }
+
+  public stop() {
     EventBus.off('mouse-input', 'down', this.onMouseDown)
     EventBus.off('mouse-input', 'up', this.onMouseUp)
     EventBus.off('mouse-input', 'move', this.onMouseMove)

@@ -44,12 +44,14 @@ export default class AppController extends BaseController<AppWorld, AppView> {
     )
   }
 
-  public teardown() {
-    this.inputHandler.teardown()
-    this.toolStack.teardown()
+  protected onStart() {
+    this.inputHandler.start()
+    this.toolStack.start()
+    this.toolStack.push(new DrawTool(this))
   }
 
-  protected onStart() {
-    this.toolStack.push(new DrawTool(this))
+  protected onStop() {
+    this.inputHandler.stop()
+    this.toolStack.stop()
   }
 }
