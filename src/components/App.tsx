@@ -2,15 +2,11 @@ import React from 'react'
 import { useSizes } from '../math/Coordinates'
 import AppController from '../core/AppController'
 import InputLayer from './InputLayer'
-import FillTool from '../tools/FillTool'
-import DrawTool from '../tools/DrawTool'
 import styled from 'styled-components'
-import EraseTool from '../tools/EraseTool'
-import LineTool from '../tools/LineTool'
-import RectangleTool from '../tools/RectangleTool'
 import EventBus from '../eventbus/EventBus'
+import Toolbar from './Toolbar'
 
-const ToolBar = styled.div`
+const ToolBarPlacer = styled.div`
   position: absolute;
   top: 20px;
   left: 20px;
@@ -68,15 +64,9 @@ const SurfaceApp = () => {
         }
         onMouseUp={(position, metaKey) => EventBus.emit('mouse-input', 'up', { position, metaKey })}
       />
-      <ToolBar>
-        <button onClick={() => controller.toolStack.replace(new FillTool(controller))}>Fill</button>
-        <button onClick={() => controller.toolStack.push(new DrawTool(controller))}>Draw</button>
-        <button onClick={() => controller.toolStack.push(new LineTool(controller))}>Line</button>
-        <button onClick={() => controller.toolStack.push(new EraseTool(controller))}>Erase</button>
-        <button onClick={() => controller.toolStack.push(new RectangleTool(controller))}>
-          Rectangle
-        </button>
-      </ToolBar>
+      <ToolBarPlacer>
+        <Toolbar controller={controller} />
+      </ToolBarPlacer>
       <ColorBar>
         <button onClick={() => (controller.toolStack.currentColor = '#000')}>Black</button>
         <button onClick={() => (controller.toolStack.currentColor = '#0ff')}>Teal</button>

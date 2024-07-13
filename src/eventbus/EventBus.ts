@@ -1,3 +1,4 @@
+import Tool from '../tools/Tool'
 import Undo from '../undo/BaseUndo'
 import EventEmitter from '../utils/EventEmitter'
 import { Position } from '../utils/types'
@@ -16,6 +17,7 @@ type ToolInputEvents =
   | { scope: 'tool'; type: 'start'; payload: ToolPayload }
   | { scope: 'tool'; type: 'move'; payload: ToolPayload }
   | { scope: 'tool'; type: 'end'; payload: ToolPayload }
+  | { scope: 'tool'; type: 'stack-changed'; payload: Tool }
 
 type MousePayload = { position: Position; metaKey?: boolean }
 type MouseInputEvents =

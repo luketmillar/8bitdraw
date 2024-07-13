@@ -27,7 +27,7 @@ export default class AppView implements IView<AppWorld> {
     this.clear()
 
     // draw gutter backgournd
-    ctx.fillStyle = '#eee'
+    ctx.fillStyle = '#F3F5F7'
     ctx.fillRect(0, 0, this.width, this.height)
 
     // transform to world space
@@ -37,7 +37,7 @@ export default class AppView implements IView<AppWorld> {
     this.ctx.scale(transform.scale[0], transform.scale[1])
 
     // // white background
-    ctx.fillStyle = '#fff'
+    ctx.fillStyle = '#F3F5F7'
     ctx.fillRect(0, 0, world.sketch.size[0], world.sketch.size[1])
 
     // // draw everything
@@ -48,7 +48,7 @@ export default class AppView implements IView<AppWorld> {
 
     // draw gutter ghosting
     const gutter = this.spaces.fittedGutter
-    ctx.fillStyle = `rgba(240,240,240,.9)`
+    ctx.fillStyle = 'rgb(243, 245, 247, 0.5)'
     ctx.fillRect(0, 0, gutter.left, this.height)
     ctx.fillRect(this.width - gutter.right, 0, gutter.right, this.height)
     ctx.fillRect(0, 0, this.width, gutter.top)

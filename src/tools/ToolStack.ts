@@ -9,15 +9,18 @@ export default class ToolStack {
   public replace = (tool: Tool) => {
     this.clearStack()
     this.push(tool)
+    EventBus.emit('tool', 'stack-changed', this.tool)
   }
   public push = (tool: Tool) => {
     this.stack.push(tool)
     tool.initialize()
+    EventBus.emit('tool', 'stack-changed', this.tool)
   }
 
   public pop = () => {
     const tool = this.stack.pop()
     tool?.teardown()
+    EventBus.emit('tool', 'stack-changed', this.tool)
     return tool
   }
 
