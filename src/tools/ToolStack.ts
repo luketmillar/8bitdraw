@@ -32,16 +32,19 @@ export default class ToolStack {
     EventBus.on('tool', 'start', this.onStart)
     EventBus.on('tool', 'move', this.onMove)
     EventBus.on('tool', 'end', this.onEnd)
+    EventBus.on('tool', 'color', this.onColor)
   }
   public stop() {
     EventBus.off('tool', 'start', this.onStart)
     EventBus.off('tool', 'move', this.onMove)
     EventBus.off('tool', 'end', this.onEnd)
+    EventBus.off('tool', 'color', this.onColor)
   }
 
   private onStart = ({ position }: ToolPayload) => this.tool?.onStart(position)
   private onMove = ({ position }: ToolPayload) => this.tool?.onMove(position)
   private onEnd = ({ position }: ToolPayload) => this.tool?.onEnd(position)
+  private onColor = (color: string) => (this.currentColor = color)
 
   private clearStack = () => {
     this.stack.forEach((tool) => tool.teardown())

@@ -68,10 +68,10 @@ const SurfaceApp = () => {
         <Toolbar controller={controller} />
       </ToolBarPlacer>
       <ColorBar>
-        <button onClick={() => (controller.toolStack.currentColor = '#000')}>Black</button>
-        <button onClick={() => (controller.toolStack.currentColor = '#0ff')}>Teal</button>
-        <button onClick={() => (controller.toolStack.currentColor = '#f00')}>Red</button>
-        <button onClick={() => (controller.toolStack.currentColor = '#fff')}>White</button>
+        <button onClick={() => EventBus.emit('tool', 'color', '#000')}>Black</button>
+        <button onClick={() => EventBus.emit('tool', 'color', '#0ff')}>Teal</button>
+        <button onClick={() => EventBus.emit('tool', 'color', '#f00')}>Red</button>
+        <button onClick={() => EventBus.emit('tool', 'color', '#fff')}>White</button>
       </ColorBar>
       {/* <LayerBar>
         <button onClick={() => controller.world.sketch.newLayer()}>New</button>

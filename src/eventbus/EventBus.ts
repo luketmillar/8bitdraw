@@ -18,6 +18,7 @@ type ToolInputEvents =
   | { scope: 'tool'; type: 'move'; payload: ToolPayload }
   | { scope: 'tool'; type: 'end'; payload: ToolPayload }
   | { scope: 'tool'; type: 'stack-changed'; payload: Tool }
+  | { scope: 'tool'; type: 'color'; payload: string }
 
 type MousePayload = { position: Position; metaKey?: boolean }
 type MouseInputEvents =

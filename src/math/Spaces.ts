@@ -10,10 +10,20 @@ const DefaultGutter: Gutter = {
   right: 100,
 }
 
+const sketchToWorld = 10
+
 export default class Spaces {
   public screenSize: vec2 = vec2.create()
   public canvasSize: vec2 = vec2.create()
   public worldSize: vec2 = vec2.create()
+  // public get worldSize() {
+  //   return vec2.multiply(
+  //     vec2.create(),
+  //     this.sketchSize,
+  //     vec2.fromValues(sketchToWorld, sketchToWorld)
+  //   )
+  // }
+  public sketchSize: vec2 = vec2.create()
   public camera: mat3 = mat3.create()
 
   public zoom: number = 1
@@ -84,6 +94,18 @@ export default class Spaces {
       .create().matrix
   }
 
+  public get sketchToWorldMatrix() {
+    return Transform.Build().scale(sketchToWorld, sketchToWorld).create().matrix
+  }
+
+  public get sketchToCanvasMatrix() {
+    return mat3.mul(mat3.create(), this.worldToCanvasMatrix, this.sketchToWorldMatrix)
+  }
+
+  public get canvasToSketchMatrix() {
+    return mat3.invert(mat3.create(), this.sketchToCanvasMatrix)!
+  }
+
   public get canvasToWorldMatrix() {
     return mat3.invert(mat3.create(), this.worldToCanvasMatrix)!
   }
@@ -109,6 +131,13 @@ export default class Spaces {
     return vec2.floor(
       vec2.create(),
       vec2.transformMat3(vec2.create(), position, this.canvasToWorldMatrix)
+    )
+  }
+
+  public canvasToSketchSpace(position: vec2) {
+    return vec2.floor(
+      vec2.create(),
+      vec2.transformMat3(vec2.create(), position, this.canvasToSketchMatrix)
     )
   }
 
