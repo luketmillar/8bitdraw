@@ -1,32 +1,23 @@
 import { vec2 } from 'gl-matrix'
 import { Color, Size } from '../utils/types'
-import { Circle } from '../views/Views'
+import { GridLines } from '../views/Views'
 import Model from './Base'
-
-const createGridDots = (size: Size, color: Color) => {
-  const dots: Circle[] = []
-  for (let x = -10; x <= size[0] + 10; x++) {
-    for (let y = -10; y <= size[1] + 10; y++) {
-      dots.push(
-        new Circle(vec2.fromValues(x, y), 1 / 35, {
-          fill: color,
-        })
-      )
-    }
-  }
-  return dots
-}
 
 export default class Grid extends Model {
   public size: Size
-  private gridDots: Circle[] = []
+  private gridLines: GridLines
+
   constructor(size: Size) {
     super()
     this.size = size
-    this.gridDots = createGridDots(size, '#AEBCC9')
+    this.gridLines = new GridLines(
+      vec2.fromValues(size[0], size[1]),
+      vec2.fromValues(1, 1),
+      'rgba(174, 188, 201, 0.3)'
+    )
   }
 
   public getViews() {
-    return this.gridDots
+    return [this.gridLines]
   }
 }

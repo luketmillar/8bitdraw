@@ -1,4 +1,5 @@
 import { Color, Position, Stroke } from '../utils/types'
+import { vec2 } from 'gl-matrix'
 
 type IViewRenderOptions = {
   fill?: Color | null
@@ -83,18 +84,65 @@ export class Line extends View {
     this.b = b
   }
 
-  private getLineWidth() {
-    const setWidth = this.options.stroke?.width ?? 1
-    return this.options.stroke?.canvasSpace ? setWidth / 100 : setWidth
-  }
-
   public draw(ctx: CanvasRenderingContext2D) {
     ctx.beginPath()
-    ctx.lineWidth = this.getLineWidth()
+    ctx.lineWidth = this.options.stroke?.width ?? 1
     ctx.strokeStyle = this.options.stroke?.color ?? '#000'
     ctx.beginPath()
     ctx.moveTo(this.a[0], this.a[1])
     ctx.lineTo(this.b[0], this.b[1])
     ctx.stroke()
+  }
+}
+
+// Gridlines are a special all in canvas space
+export class GridLines extends View {
+  public worldSize: vec2
+  public cellSize: vec2
+  public color: string
+
+  constructor(worldSize: vec2, cellSize: vec2, color: string) {
+    super()
+    this.worldSize = worldSize
+    this.cellSize = cellSize
+    this.color = color
+  }
+
+  public draw(ctx: CanvasRenderingContext2D) {
+    ctx.save()
+
+    // Get the current transform
+    const transform = ctx.getTransform()
+
+    // Draw in canvas space
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
+
+    // Calculate the transformed size
+    const transformedWidth = this.worldSize[0] * transform.a
+    const transformedHeight = this.worldSize[1] * transform.d
+
+    // Calculate the transformed cell size
+    const cellWidth = this.cellSize[0] * transform.a
+    const cellHeight = this.cellSize[1] * transform.d
+
+    // Draw vertical lines
+    ctx.strokeStyle = this.color
+    ctx.lineWidth = 1
+    for (let x = 0; x <= transformedWidth; x += cellWidth) {
+      ctx.beginPath()
+      ctx.moveTo(x + transform.e, transform.f)
+      ctx.lineTo(x + transform.e, transform.f + transformedHeight)
+      ctx.stroke()
+    }
+
+    // Draw horizontal lines
+    for (let y = 0; y <= transformedHeight; y += cellHeight) {
+      ctx.beginPath()
+      ctx.moveTo(transform.e, y + transform.f)
+      ctx.lineTo(transform.e + transformedWidth, y + transform.f)
+      ctx.stroke()
+    }
+
+    ctx.restore()
   }
 }

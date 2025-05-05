@@ -36,12 +36,17 @@ export default class AppView implements IView<AppWorld> {
     this.ctx.translate(transform.translation[0], transform.translation[1])
     this.ctx.scale(transform.scale[0], transform.scale[1])
 
-    // // white background
+    // white background
     ctx.fillStyle = '#F3F5F7'
     ctx.fillRect(0, 0, world.sketch.size[0], world.sketch.size[1])
 
-    // // draw everything
-    this.renderModels(ctx, world.getModels())
+    // draw sketch first
+    this.renderModels(ctx, [world.sketch])
+
+    // draw grid on top
+    if (world.showGrid) {
+      this.renderModels(ctx, [world.grid])
+    }
 
     // transform into canvas space
     ctx.restore()
