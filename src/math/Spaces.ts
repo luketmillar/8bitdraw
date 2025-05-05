@@ -53,10 +53,19 @@ export default class Spaces {
     } else {
       worldInCanvas = vec2.fromValues(height * worldAspectRatio, height)
     }
-    const fitGutter = vec2.fromValues(
-      (width - worldInCanvas[0]) / 2,
-      (height - worldInCanvas[1]) / 2
+
+    // Round the worldInCanvas to ensure clean pixel scaling
+    worldInCanvas = vec2.fromValues(
+      Math.round(worldInCanvas[0] / worldSize[0]) * worldSize[0],
+      Math.round(worldInCanvas[1] / worldSize[1]) * worldSize[1]
     )
+
+    // Calculate and round the fitGutter to ensure pixel-perfect alignment
+    const fitGutter = vec2.fromValues(
+      Math.round((width - worldInCanvas[0]) / 2),
+      Math.round((height - worldInCanvas[1]) / 2)
+    )
+
     return { fitGutter, worldInCanvas }
   }
 
