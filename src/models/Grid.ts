@@ -1,5 +1,5 @@
 import { vec2 } from 'gl-matrix'
-import { Color, Size } from '../utils/types'
+import { Size } from '../utils/types'
 import { GridLines } from '../views/Views'
 import Model from './Base'
 

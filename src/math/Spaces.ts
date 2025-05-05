@@ -4,10 +4,10 @@ import Transform from './Transform'
 
 export type Gutter = { left: number; top: number; bottom: number; right: number }
 const DefaultGutter: Gutter = {
-  left: 100,
-  top: 100,
-  bottom: 100,
-  right: 100,
+  left: 150,
+  top: 150,
+  bottom: 150,
+  right: 150,
 }
 
 const sketchToWorld = 10

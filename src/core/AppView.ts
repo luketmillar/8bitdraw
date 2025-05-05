@@ -27,7 +27,7 @@ export default class AppView implements IView<AppWorld> {
     this.clear()
 
     // draw gutter backgournd
-    ctx.fillStyle = '#FFF'
+    ctx.fillStyle = '#222223'
     ctx.fillRect(0, 0, this.width, this.height)
 
     // transform to world space
@@ -36,8 +36,10 @@ export default class AppView implements IView<AppWorld> {
     this.ctx.translate(transform.translation[0], transform.translation[1])
     this.ctx.scale(transform.scale[0], transform.scale[1])
 
+    clipToWorldSpace(world, transform, ctx)
+
     // white background
-    ctx.fillStyle = '#F3F5F7'
+    ctx.fillStyle = '#F2F2F2'
     ctx.fillRect(0, 0, world.sketch.size[0], world.sketch.size[1])
 
     // draw sketch first
@@ -50,14 +52,6 @@ export default class AppView implements IView<AppWorld> {
 
     // transform into canvas space
     ctx.restore()
-
-    // draw gutter ghosting
-    const gutter = this.spaces.fittedGutter
-    ctx.fillStyle = 'rgb(255, 255, 255, 0.5)'
-    ctx.fillRect(0, 0, gutter.left, this.height)
-    ctx.fillRect(this.width - gutter.right, 0, gutter.right, this.height)
-    ctx.fillRect(0, 0, this.width, gutter.top)
-    ctx.fillRect(0, this.height - gutter.bottom, this.width, gutter.bottom)
   }
 
   private clear() {
@@ -78,4 +72,47 @@ export default class AppView implements IView<AppWorld> {
   private get height() {
     return this.canvas.height
   }
+}
+function clipToWorldSpace(world: AppWorld, transform: Transform, ctx: CanvasRenderingContext2D) {
+  // Calculate the world area in canvas space
+  const canvasRadius = 20 // px
+  const worldWidth = world.sketch.size[0]
+  const worldHeight = world.sketch.size[1]
+  const scaleX = transform.scale[0]
+  const scaleY = transform.scale[1]
+  const widthPx = worldWidth * scaleX
+  const heightPx = worldHeight * scaleY
+  const offsetX = transform.translation[0]
+  const offsetY = transform.translation[1]
+
+  // Save the current transform
+  ctx.save()
+  // Reset transform to identity for clipping in canvas space
+  ctx.setTransform(1, 0, 0, 1, 0, 0)
+  ctx.beginPath()
+  ctx.moveTo(offsetX + canvasRadius, offsetY)
+  ctx.lineTo(offsetX + widthPx - canvasRadius, offsetY)
+  ctx.quadraticCurveTo(offsetX + widthPx, offsetY, offsetX + widthPx, offsetY + canvasRadius)
+  ctx.lineTo(offsetX + widthPx, offsetY + heightPx - canvasRadius)
+  ctx.quadraticCurveTo(
+    offsetX + widthPx,
+    offsetY + heightPx,
+    offsetX + widthPx - canvasRadius,
+    offsetY + heightPx
+  )
+  ctx.lineTo(offsetX + canvasRadius, offsetY + heightPx)
+  ctx.quadraticCurveTo(offsetX, offsetY + heightPx, offsetX, offsetY + heightPx - canvasRadius)
+  ctx.lineTo(offsetX, offsetY + canvasRadius)
+  ctx.quadraticCurveTo(offsetX, offsetY, offsetX + canvasRadius, offsetY)
+  ctx.closePath()
+  ctx.clip()
+  // Restore the world transform for further drawing
+  ctx.setTransform(
+    transform.scale[0],
+    0,
+    0,
+    transform.scale[1],
+    transform.translation[0],
+    transform.translation[1]
+  )
 }
