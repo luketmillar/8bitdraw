@@ -23,28 +23,48 @@ const PickerContainer = styled.div`
   top: 20px;
   right: 20px;
   z-index: 1000;
-  background: #232325;
-  border-radius: 16px;
+  background: #2a2b2c;
+  border: 1px solid #363738;
+  border-radius: 10px;
   box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.18);
-  padding: 20px 20px 16px 20px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   min-width: 180px;
+  gap: 12px;
 `
 
 const Preview = styled.div<{ color: string }>`
-  width: 48px;
+  width: 100%;
   height: 48px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: ${({ color }) => color};
-  border: 2px solid #fff;
-  margin-bottom: 16px;
+  border: 1px solid #363738;
   box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+
   &:hover {
-    transform: scale(1.05);
+    transform: scale(1.02);
+    border-color: #7c3aed;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+    pointer-events: none;
   }
 `
 
@@ -52,7 +72,6 @@ const SwatchGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 28px);
   gap: 10px;
-  margin-bottom: 8px;
 `
 
 const Swatch = styled.button<{ color: string; selected: boolean }>`
@@ -69,11 +88,11 @@ const Swatch = styled.button<{ color: string; selected: boolean }>`
     box-shadow 0.15s;
 `
 
-const Label = styled.div`
-  color: #bfc4cc;
-  font-size: 13px;
-  margin-bottom: 8px;
-  letter-spacing: 0.5px;
+const Divider = styled.div`
+  width: 100%;
+  height: 1px;
+  background: #363738;
+  margin: 4px 0;
 `
 
 const ColorPickerDialog = styled.div`
@@ -81,14 +100,15 @@ const ColorPickerDialog = styled.div`
   top: 0;
   right: 100%;
   margin-right: 8px;
-  background: #232325;
-  border-radius: 16px;
+  background: #2a2b2c;
+  border: 1px solid #363738;
+  border-radius: 10px;
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  min-width: 300px;
+  min-width: 250px;
   box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.18);
   z-index: 1001;
 `
@@ -121,6 +141,8 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
   const [showPicker, setShowPicker] = React.useState(false)
   const [recentColors, setRecentColors] = React.useState<string[]>([])
   const pickerRef = useRef<HTMLDivElement>(null)
+  const clickTimeoutRef = useRef<number>()
+  const previousColorRef = useRef<string>(color)
 
   React.useEffect(() => {
     const colorListener = EventBus.on('tool', 'color', setColor)
@@ -148,22 +170,36 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
     return () => {
       colorListener()
       undoListener()
+      if (clickTimeoutRef.current) {
+        window.clearTimeout(clickTimeoutRef.current)
+      }
     }
   }, [])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
+        // Prevent the click from reaching the canvas
+        event.preventDefault()
+        event.stopPropagation()
         handleClose()
       }
     }
 
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleCancel()
+      }
+    }
+
     if (showPicker) {
-      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('mousedown', handleClickOutside, { capture: true })
+      document.addEventListener('keydown', handleKeyDown)
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('mousedown', handleClickOutside, { capture: true })
+      document.removeEventListener('keydown', handleKeyDown)
     }
   }, [showPicker])
 
@@ -184,7 +220,9 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
     }
   }
 
-  const handlePreviewClick = () => {
+  const handlePreviewClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    previousColorRef.current = color
     setShowPicker(true)
   }
 
@@ -192,13 +230,18 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
     setShowPicker(false)
   }
 
+  const handleCancel = () => {
+    setShowPicker(false)
+    setColor(previousColorRef.current)
+    EventBus.emit('tool', 'color', previousColorRef.current)
+  }
+
   return (
     <PickerContainer>
-      <Label>Color</Label>
       <Preview color={color} onClick={handlePreviewClick} />
       {recentColors.length > 0 && (
         <>
-          <Label>Recent</Label>
+          <Divider />
           <SwatchGrid>
             {recentColors.map((c) => (
               <Swatch
@@ -212,7 +255,7 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
           </SwatchGrid>
         </>
       )}
-      <Label>Colors</Label>
+      <Divider />
       <SwatchGrid>
         {DEFAULT_COLORS.map((c) => (
           <Swatch
