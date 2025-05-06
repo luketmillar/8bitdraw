@@ -17,7 +17,7 @@ export default class AppController extends BaseController<AppWorld, AppView> {
   public readonly command = new CommandManager(this)
 
   constructor() {
-    const world = new AppWorld([20, 20])
+    const world = new AppWorld([30, 30])
     const view = new AppView()
     super(world, view)
   }

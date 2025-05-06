@@ -9,50 +9,40 @@ import React from 'react'
 import { EraseIcon, FillIcon, LineIcon, PencilIcon, RectangleIcon } from './Icons'
 import EventBus from '../eventbus/EventBus'
 
-const ColorPickerContainer = styled.div`
-  position: absolute;
-  top: 38px;
-  padding-top: 15px;
-  width: 100%;
-  border-radius: 0 0 10px 10px;
-  z-index: -1;
-  transition:
-    height 0.3s ease,
-    background-color 0.1s ease;
-  box-shadow:
-    -9px 9px 9px -0.5px rgba(0, 0, 0, 0.1),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.1);
-`
-const ColorPicker = ({ controller }: { controller: AppController }) => {
-  const [isOpen, setIsOpen] = React.useState(false)
-  const [color, setColor] = React.useState(controller.toolStack.currentColor)
-  React.useEffect(() => {
-    return EventBus.on('tool', 'color', setColor)
-  })
-  return (
-    <ColorPickerContainer
-      onClick={() => setIsOpen((v) => !v)}
-      style={{ backgroundColor: isOpen ? '#fff' : color, height: isOpen ? 300 : 25 }}
-    ></ColorPickerContainer>
-  )
-}
-
-const Container = styled.div`
-  position: relative;
+const ToolbarContainer = styled.div`
+  background: #313233;
+  border: 1px solid #414243;
   border-radius: 10px;
-  background-color: #444;
-  color: #333;
+  box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.18);
+  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 56px;
+`
+
+const ToolButton = styled.button<{ selected?: boolean }>`
+  background: ${({ selected }) => (selected ? '#7c3aed' : 'transparent')};
+  border: none;
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
-  padding: 5px;
-  :last-child {
-    margin-right: 0;
-  }
-  box-shadow:
-    0px 0px 2px 2px rgba(70, 70, 70, 0.1),
-    -9px 9px 9px -0.5px rgba(0, 0, 0, 0.1);
-  .selected {
-    background-color: #595959;
+  justify-content: center;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+  transition:
+    background 0.15s,
+    box-shadow 0.15s;
+  box-shadow: ${({ selected }) => (selected ? '0 0 0 2px #7c3aed44' : 'none')};
+
+  svg {
+    color: ${({ selected }) => (selected ? '#fff' : '#bfc4cc')};
+    width: 24px;
+    height: 24px;
   }
 `
 
@@ -67,77 +57,38 @@ const useCurrentTool = (controller: AppController) => {
 const Toolbar = ({ controller }: { controller: AppController }) => {
   const tool = useCurrentTool(controller)
   return (
-    <div style={{ position: 'relative' }}>
-      <Container>
-        <ToolItem
-          onClick={() => controller.toolStack.replace(new DrawTool(controller))}
-          selected={tool instanceof DrawTool}
-        >
-          <PencilIcon />
-        </ToolItem>
-        <ToolItem
-          onClick={() => controller.toolStack.replace(new RectangleTool(controller))}
-          selected={tool instanceof RectangleTool}
-        >
-          <RectangleIcon />
-        </ToolItem>
-        <ToolItem
-          onClick={() => controller.toolStack.replace(new LineTool(controller))}
-          selected={tool instanceof LineTool}
-        >
-          <LineIcon />
-        </ToolItem>
-        <ToolItem
-          onClick={() => controller.toolStack.replace(new FillTool(controller))}
-          selected={tool instanceof FillTool}
-        >
-          <FillIcon />
-        </ToolItem>
-        <ToolItem
-          onClick={() => controller.toolStack.replace(new EraseTool(controller))}
-          selected={tool instanceof EraseTool}
-        >
-          <EraseIcon />
-        </ToolItem>
-      </Container>
-      <ColorPicker controller={controller} />
-    </div>
-  )
-}
-
-const ItemContainer = styled.button`
-  background: none;
-  border: none;
-  padding: 0;
-  margin: 0;
-  font: inherit;
-  color: inherit;
-  outline: none;
-  margin-right: 5px;
-  width: 38px;
-  height: 38px;
-  padding: 4px;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 5px;
-  cursor: pointer;
-`
-
-const ToolItem = ({
-  children,
-  selected,
-  onClick,
-}: {
-  children: React.ReactNode
-  selected?: boolean
-  onClick: React.MouseEventHandler
-}) => {
-  return (
-    <ItemContainer onClick={onClick} className={selected ? 'selected' : ''}>
-      {children}
-    </ItemContainer>
+    <ToolbarContainer>
+      <ToolButton
+        onClick={() => controller.toolStack.replace(new DrawTool(controller))}
+        selected={tool instanceof DrawTool}
+      >
+        <PencilIcon />
+      </ToolButton>
+      <ToolButton
+        onClick={() => controller.toolStack.replace(new RectangleTool(controller))}
+        selected={tool instanceof RectangleTool}
+      >
+        <RectangleIcon />
+      </ToolButton>
+      <ToolButton
+        onClick={() => controller.toolStack.replace(new LineTool(controller))}
+        selected={tool instanceof LineTool}
+      >
+        <LineIcon />
+      </ToolButton>
+      <ToolButton
+        onClick={() => controller.toolStack.replace(new FillTool(controller))}
+        selected={tool instanceof FillTool}
+      >
+        <FillIcon />
+      </ToolButton>
+      <ToolButton
+        onClick={() => controller.toolStack.replace(new EraseTool(controller))}
+        selected={tool instanceof EraseTool}
+      >
+        <EraseIcon />
+      </ToolButton>
+    </ToolbarContainer>
   )
 }
 
