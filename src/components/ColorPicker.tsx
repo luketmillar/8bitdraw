@@ -155,25 +155,26 @@ const HexInput = styled.input`
 `
 
 const SaveButton = styled.button`
-  background: #7c3aed;
-  border: none;
+  background: #2d2d2f;
+  border: 1px solid #414243;
   border-radius: 0 8px 8px 0;
   padding: 8px 12px;
-  color: white;
+  color: #bfc4cc;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s;
+  transition: all 0.2s;
   height: 32px;
   box-sizing: border-box;
 
   &:hover {
-    background: #6d28d9;
+    background: #363738;
+    border-color: #7c3aed;
   }
 
   &:active {
-    background: #5b21b6;
+    background: #2d2d2f;
   }
 `
 
@@ -267,6 +268,12 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
     }
   }
 
+  const handleHexKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleHexSave()
+    }
+  }
+
   const handlePreviewClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     previousColorRef.current = color
@@ -329,6 +336,7 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
                 type='text'
                 value={color.toUpperCase()}
                 onChange={handleHexInput}
+                onKeyDown={handleHexKeyDown}
                 placeholder='#000000'
               />
               <SaveButton onClick={handleHexSave} title='Save color'>
