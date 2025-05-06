@@ -26,7 +26,7 @@ class PixelMap extends Overrideable<Pixel> {
   public commit() {
     const changes = Object.keys(this.overrides).map((key) => {
       const position = parsePixelKey(key)
-      return { position, before: this.values[key].fill, after: this.overrides[key].fill }
+      return { position, before: this.values[key]?.fill, after: this.overrides[key]?.fill }
     })
     EventBus.emit('undo', 'push', new DrawUndo(changes))
     super.commit()
