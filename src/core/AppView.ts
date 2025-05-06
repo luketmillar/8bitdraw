@@ -36,7 +36,7 @@ export default class AppView implements IView<AppWorld> {
     this.ctx.translate(transform.translation[0], transform.translation[1])
     this.ctx.scale(transform.scale[0], transform.scale[1])
 
-    clipToWorldSpace(world, transform, ctx)
+    clipAndShadowWorldSpace(world, transform, ctx)
 
     // white background
     ctx.fillStyle = '#F2F2F2'
@@ -55,6 +55,7 @@ export default class AppView implements IView<AppWorld> {
   }
 
   private clear() {
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0)
     this.ctx.clearRect(0, 0, this.canvas!.width, this.canvas!.height)
   }
 
@@ -76,9 +77,13 @@ export default class AppView implements IView<AppWorld> {
   }
 }
 
-function clipToWorldSpace(world: AppWorld, transform: Transform, ctx: CanvasRenderingContext2D) {
+function clipAndShadowWorldSpace(
+  world: AppWorld,
+  transform: Transform,
+  ctx: CanvasRenderingContext2D,
+  radius: number = 20
+) {
   // Calculate the world area in canvas space
-  const canvasRadius = 20 // px
   const worldWidth = world.sketch.size[0]
   const worldHeight = world.sketch.size[1]
   const scaleX = transform.scale[0]
@@ -92,24 +97,40 @@ function clipToWorldSpace(world: AppWorld, transform: Transform, ctx: CanvasRend
   ctx.save()
   // Reset transform to identity for clipping in canvas space
   ctx.setTransform(1, 0, 0, 1, 0, 0)
+
+  // draw clip path
   ctx.beginPath()
-  ctx.moveTo(offsetX + canvasRadius, offsetY)
-  ctx.lineTo(offsetX + widthPx - canvasRadius, offsetY)
-  ctx.quadraticCurveTo(offsetX + widthPx, offsetY, offsetX + widthPx, offsetY + canvasRadius)
-  ctx.lineTo(offsetX + widthPx, offsetY + heightPx - canvasRadius)
+  ctx.moveTo(offsetX + radius, offsetY)
+  ctx.lineTo(offsetX + widthPx - radius, offsetY)
+  ctx.quadraticCurveTo(offsetX + widthPx, offsetY, offsetX + widthPx, offsetY + radius)
+  ctx.lineTo(offsetX + widthPx, offsetY + heightPx - radius)
   ctx.quadraticCurveTo(
     offsetX + widthPx,
     offsetY + heightPx,
-    offsetX + widthPx - canvasRadius,
+    offsetX + widthPx - radius,
     offsetY + heightPx
   )
-  ctx.lineTo(offsetX + canvasRadius, offsetY + heightPx)
-  ctx.quadraticCurveTo(offsetX, offsetY + heightPx, offsetX, offsetY + heightPx - canvasRadius)
-  ctx.lineTo(offsetX, offsetY + canvasRadius)
-  ctx.quadraticCurveTo(offsetX, offsetY, offsetX + canvasRadius, offsetY)
+  ctx.lineTo(offsetX + radius, offsetY + heightPx)
+  ctx.quadraticCurveTo(offsetX, offsetY + heightPx, offsetX, offsetY + heightPx - radius)
+  ctx.lineTo(offsetX, offsetY + radius)
+  ctx.quadraticCurveTo(offsetX, offsetY, offsetX + radius, offsetY)
   ctx.closePath()
+
+  // draw shadow
+  ctx.save()
+  ctx.globalAlpha = 1
+  ctx.shadowColor = 'rgba(0,0,0,0.48)'
+  ctx.shadowBlur = 50
+  ctx.shadowOffsetX = -10
+  ctx.shadowOffsetY = 10
+  ctx.fillStyle = '#000'
+  ctx.fill()
+  ctx.restore()
+
   ctx.clip()
+
   // Restore the world transform for further drawing
+  // need this instead of ctx.restore() because we need to keep the transform for the next draw
   ctx.setTransform(
     transform.scale[0],
     0,
