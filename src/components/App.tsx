@@ -5,20 +5,12 @@ import InputLayer from './InputLayer'
 import styled from 'styled-components'
 import EventBus from '../eventbus/EventBus'
 import Toolbar from './Toolbar'
+import ColorPicker from './ColorPicker'
 
 const ToolBarPlacer = styled.div`
   position: absolute;
   top: 20px;
   left: 20px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-`
-
-const ColorBar = styled.div`
-  position: absolute;
-  top: 20px;
-  right: 20px;
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -67,12 +59,7 @@ const SurfaceApp = () => {
       <ToolBarPlacer>
         <Toolbar controller={controller} />
       </ToolBarPlacer>
-      <ColorBar>
-        <button onClick={() => EventBus.emit('tool', 'color', '#000')}>Black</button>
-        <button onClick={() => EventBus.emit('tool', 'color', '#0ff')}>Teal</button>
-        <button onClick={() => EventBus.emit('tool', 'color', '#f00')}>Red</button>
-        <button onClick={() => EventBus.emit('tool', 'color', '#fff')}>White</button>
-      </ColorBar>
+      <ColorPicker controller={controller} />
       {/* <LayerBar>
         <button onClick={() => controller.world.sketch.newLayer()}>New</button>
         <button onClick={() => controller.world.sketch.deleteLayer()}>Delete</button>
