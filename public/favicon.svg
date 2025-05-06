@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background -->
+    <rect width="32" height="32" fill="#1A1A1A"/>
+    
+    <!-- Pixel Art Design -->
+    <!-- Top Left Pixel -->
+    <rect x="8" y="8" width="8" height="8" fill="#8A2BE2"/>
+    <!-- Top Right Pixel -->
+    <rect x="16" y="8" width="8" height="8" fill="#FFFFFF"/>
+    <!-- Bottom Left Pixel -->
+    <rect x="8" y="16" width="8" height="8" fill="#FFFFFF"/>
+    <!-- Bottom Right Pixel -->
+    <rect x="16" y="16" width="8" height="8" fill="#8A2BE2"/>
+    
+    <!-- Center Pixel -->
+    <rect x="12" y="12" width="8" height="8" fill="#8A2BE2"/>
+</svg> 
