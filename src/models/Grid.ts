@@ -10,11 +10,7 @@ export default class Grid extends Model {
   constructor(size: Size) {
     super()
     this.size = size
-    this.gridLines = new GridLines(
-      vec2.fromValues(size[0], size[1]),
-      vec2.fromValues(1, 1),
-      'rgba(174, 188, 201, 0.3)'
-    )
+    this.gridLines = new GridLines(vec2.fromValues(size[0], size[1]), vec2.fromValues(1, 1))
   }
 
   public getViews() {

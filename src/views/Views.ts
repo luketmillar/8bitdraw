@@ -99,13 +99,11 @@ export class Line extends View {
 export class GridLines extends View {
   public worldSize: vec2
   public cellSize: vec2
-  public color: string
 
-  constructor(worldSize: vec2, cellSize: vec2, color: string) {
+  constructor(worldSize: vec2, cellSize: vec2) {
     super()
     this.worldSize = worldSize
     this.cellSize = cellSize
-    this.color = color
   }
 
   public draw(ctx: CanvasRenderingContext2D) {
@@ -125,21 +123,54 @@ export class GridLines extends View {
     const cellWidth = this.cellSize[0] * transform.a
     const cellHeight = this.cellSize[1] * transform.d
 
-    // Draw vertical lines
-    ctx.strokeStyle = this.color
+    // Draw vertical lines with two colors for better visibility
     ctx.lineWidth = 1
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.1)'
+    ctx.shadowBlur = 1
+    ctx.shadowOffsetX = 0
+    ctx.shadowOffsetY = 0
+
+    const darkColor = 'rgba(0, 0, 0, 0.25)'
+    const lightColor = 'rgba(255, 255, 255, 0.35)'
+
+    // First set of lines (darker)
+    ctx.strokeStyle = darkColor
     for (let x = 0; x <= transformedWidth; x += cellWidth) {
+      const pixelX = Math.round(x + transform.e)
       ctx.beginPath()
-      ctx.moveTo(x + transform.e, transform.f + 1)
-      ctx.lineTo(x + transform.e, transform.f + transformedHeight - 1)
+      ctx.moveTo(pixelX, Math.round(transform.f + 1))
+      ctx.lineTo(pixelX, Math.round(transform.f + transformedHeight - 1))
       ctx.stroke()
     }
 
-    // Draw horizontal lines
-    for (let y = 0; y <= transformedHeight; y += cellHeight) {
+    // Second set of lines (lighter)
+    ctx.strokeStyle = lightColor
+    for (let x = 0; x <= transformedWidth; x += cellWidth) {
+      const pixelX = Math.round(x + transform.e)
       ctx.beginPath()
-      ctx.moveTo(transform.e + 1, y + transform.f)
-      ctx.lineTo(transform.e + transformedWidth - 1, y + transform.f)
+      ctx.moveTo(pixelX + 1, Math.round(transform.f + 1))
+      ctx.lineTo(pixelX + 1, Math.round(transform.f + transformedHeight - 1))
+      ctx.stroke()
+    }
+
+    // Draw horizontal lines with two colors
+    // First set of lines (darker)
+    ctx.strokeStyle = darkColor
+    for (let y = 0; y <= transformedHeight; y += cellHeight) {
+      const pixelY = Math.round(y + transform.f)
+      ctx.beginPath()
+      ctx.moveTo(Math.round(transform.e + 1), pixelY)
+      ctx.lineTo(Math.round(transform.e + transformedWidth - 1), pixelY)
+      ctx.stroke()
+    }
+
+    // Second set of lines (lighter)
+    ctx.strokeStyle = lightColor
+    for (let y = 0; y <= transformedHeight; y += cellHeight) {
+      const pixelY = Math.round(y + transform.f)
+      ctx.beginPath()
+      ctx.moveTo(Math.round(transform.e + 1), pixelY + 1)
+      ctx.lineTo(Math.round(transform.e + transformedWidth - 1), pixelY + 1)
       ctx.stroke()
     }
 
