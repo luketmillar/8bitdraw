@@ -96,7 +96,8 @@ const Swatch = styled.button<{ color: string; selected: boolean }>`
   background: ${({ color }) => color};
   cursor: pointer;
   outline: none;
-  box-shadow: ${({ selected }) => (selected ? '0 0 0 2px #7c3aed44' : 'none')};
+  box-shadow: ${({ selected }) =>
+    selected ? '0 0 0 2px #7c3aed44, inset 0 0 0 1px #000000' : 'none'};
   transition:
     border 0.15s,
     box-shadow 0.15s;
