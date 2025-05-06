@@ -43,11 +43,11 @@ export default class AppView implements IView<AppWorld> {
     ctx.fillRect(0, 0, world.sketch.size[0], world.sketch.size[1])
 
     // draw sketch first
-    this.renderModels(ctx, [world.sketch])
+    this.renderModel(ctx, world.sketch)
 
     // draw grid on top
     if (world.showGrid) {
-      this.renderModels(ctx, [world.grid])
+      this.renderModel(ctx, world.grid)
     }
 
     // transform into canvas space
@@ -58,6 +58,8 @@ export default class AppView implements IView<AppWorld> {
     this.ctx.clearRect(0, 0, this.canvas!.width, this.canvas!.height)
   }
 
+  private renderModel = (ctx: CanvasRenderingContext2D, model: Model) =>
+    this.renderModels(ctx, [model])
   private renderModels = (ctx: CanvasRenderingContext2D, models: Model[]) =>
     models.forEach((model) => model.getViews().forEach((view) => view.render(ctx)))
 
@@ -73,6 +75,7 @@ export default class AppView implements IView<AppWorld> {
     return this.canvas.height
   }
 }
+
 function clipToWorldSpace(world: AppWorld, transform: Transform, ctx: CanvasRenderingContext2D) {
   // Calculate the world area in canvas space
   const canvasRadius = 20 // px

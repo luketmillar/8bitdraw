@@ -130,16 +130,16 @@ export class GridLines extends View {
     ctx.lineWidth = 1
     for (let x = 0; x <= transformedWidth; x += cellWidth) {
       ctx.beginPath()
-      ctx.moveTo(x + transform.e, transform.f)
-      ctx.lineTo(x + transform.e, transform.f + transformedHeight)
+      ctx.moveTo(x + transform.e, transform.f + 1)
+      ctx.lineTo(x + transform.e, transform.f + transformedHeight - 1)
       ctx.stroke()
     }
 
     // Draw horizontal lines
     for (let y = 0; y <= transformedHeight; y += cellHeight) {
       ctx.beginPath()
-      ctx.moveTo(transform.e, y + transform.f)
-      ctx.lineTo(transform.e + transformedWidth, y + transform.f)
+      ctx.moveTo(transform.e + 1, y + transform.f)
+      ctx.lineTo(transform.e + transformedWidth - 1, y + transform.f)
       ctx.stroke()
     }
 
