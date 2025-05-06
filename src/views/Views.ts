@@ -87,7 +87,7 @@ export class Line extends View {
   public draw(ctx: CanvasRenderingContext2D) {
     ctx.beginPath()
     ctx.lineWidth = this.options.stroke?.width ?? 1
-    ctx.strokeStyle = this.options.stroke?.color ?? '#000'
+    ctx.strokeStyle = this.options.stroke?.color ?? '#000000'
     ctx.beginPath()
     ctx.moveTo(this.a[0], this.a[1])
     ctx.lineTo(this.b[0], this.b[1])

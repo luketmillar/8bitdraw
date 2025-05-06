@@ -123,7 +123,7 @@ function clipAndShadowWorldSpace(
   ctx.shadowBlur = 50
   ctx.shadowOffsetX = -10
   ctx.shadowOffsetY = 10
-  ctx.fillStyle = '#000'
+  ctx.fillStyle = '#000000'
   ctx.fill()
   ctx.restore()
 

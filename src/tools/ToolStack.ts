@@ -4,7 +4,7 @@ import Tool from './Tool'
 
 export default class ToolStack {
   public readonly stack: Tool[] = []
-  public currentColor: Color = '#000'
+  public currentColor: Color = '#000000'
 
   public replace = (tool: Tool) => {
     this.clearStack()

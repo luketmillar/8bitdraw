@@ -46,6 +46,20 @@ const Preview = styled.div<{ color: string }>`
   transition: all 0.2s;
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  font-size: 14px;
+  color: ${({ color }) => {
+    // Calculate if the color is dark enough to need white text
+    const r = parseInt(color.slice(1, 3), 16)
+    const g = parseInt(color.slice(3, 5), 16)
+    const b = parseInt(color.slice(5, 7), 16)
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000
+    return brightness < 128 ? '#ffffff' : '#000000'
+  }};
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 
   &:hover {
     transform: scale(1.02);
@@ -124,16 +138,49 @@ const ColorPickerContent = styled.div`
 const HexInput = styled.input`
   background: #2d2d2f;
   border: 1px solid #414243;
-  border-radius: 8px;
-  padding: 8px 12px;
+  border-radius: 8px 0 0 8px;
+  padding: 7px 12px;
   color: #bfc4cc;
   font-size: 14px;
   width: 100px;
   text-align: center;
   outline: none;
+  font-family: monospace;
+  text-transform: uppercase;
+  height: 32px;
+  box-sizing: border-box;
   &:focus {
     border-color: #7c3aed;
   }
+`
+
+const SaveButton = styled.button`
+  background: #7c3aed;
+  border: none;
+  border-radius: 0 8px 8px 0;
+  padding: 8px 12px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  height: 32px;
+  box-sizing: border-box;
+
+  &:hover {
+    background: #6d28d9;
+  }
+
+  &:active {
+    background: #5b21b6;
+  }
+`
+
+const HexInputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
 `
 
 const ColorPicker = ({ controller }: { controller: AppController }) => {
@@ -236,9 +283,15 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
     EventBus.emit('tool', 'color', previousColorRef.current)
   }
 
+  const handleHexSave = () => {
+    handleClose()
+  }
+
   return (
     <PickerContainer>
-      <Preview color={color} onClick={handlePreviewClick} />
+      <Preview color={color} onClick={handlePreviewClick}>
+        {color.toUpperCase()}
+      </Preview>
       {recentColors.length > 0 && (
         <>
           <Divider />
@@ -271,7 +324,30 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
         <ColorPickerDialog ref={pickerRef}>
           <ColorPickerContent>
             <HexColorPicker color={color} onChange={handleColorChange} />
-            <HexInput type='text' value={color} onChange={handleHexInput} placeholder='#000000' />
+            <HexInputContainer>
+              <HexInput
+                type='text'
+                value={color.toUpperCase()}
+                onChange={handleHexInput}
+                placeholder='#000000'
+              />
+              <SaveButton onClick={handleHexSave} title='Save color'>
+                <svg
+                  width='16'
+                  height='16'
+                  viewBox='0 0 24 24'
+                  fill='none'
+                  stroke='currentColor'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                >
+                  <path d='M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z'></path>
+                  <polyline points='17 21 17 13 7 13 7 21'></polyline>
+                  <polyline points='7 3 7 8 15 8'></polyline>
+                </svg>
+              </SaveButton>
+            </HexInputContainer>
           </ColorPickerContent>
         </ColorPickerDialog>
       )}

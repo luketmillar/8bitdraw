@@ -17,7 +17,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   height: var(--app-height);
 
-  background-color: #000;
+  background-color: #000000;
   color: #fff;
   user-select: none;
   position: fixed;
