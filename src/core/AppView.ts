@@ -38,9 +38,11 @@ export default class AppView implements IView<AppWorld> {
 
     clipAndShadowWorldSpace(world, transform, ctx)
 
-    // white background
-    ctx.fillStyle = '#F2F2F2'
-    ctx.fillRect(0, 0, world.sketch.size[0], world.sketch.size[1])
+    // Draw transparency pattern in screen space
+    ctx.save()
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
+    drawTransparencyPattern(ctx, this.spaces)
+    ctx.restore()
 
     // draw sketch first
     this.renderModel(ctx, world.sketch)
@@ -75,6 +77,65 @@ export default class AppView implements IView<AppWorld> {
   private get height() {
     return this.canvas.height
   }
+}
+
+function drawTransparencyPattern(ctx: CanvasRenderingContext2D, spaces: Spaces) {
+  const matrix = spaces.worldToCanvasMatrix
+  const transform = Transform.fromMatrix(matrix)
+
+  const worldWidth = spaces.worldSize[0]
+  const worldHeight = spaces.worldSize[1]
+
+  // Calculate the world area in canvas space
+  const widthPx = worldWidth * transform.scale[0]
+  const heightPx = worldHeight * transform.scale[1]
+  const offsetX = transform.translation[0]
+  const offsetY = transform.translation[1]
+
+  // Create a subtle diagonal pattern
+  const patternSize = 12
+  const pattern = ctx.createPattern(createDiagonalPattern(patternSize), 'repeat')!
+
+  // Fill with light gray first
+  ctx.fillStyle = '#F0F0F0'
+  ctx.fillRect(offsetX, offsetY, widthPx, heightPx)
+
+  // Then apply the pattern
+  ctx.fillStyle = pattern
+  ctx.fillRect(offsetX, offsetY, widthPx, heightPx)
+}
+
+function createDiagonalPattern(size: number): HTMLCanvasElement {
+  const patternCanvas = document.createElement('canvas')
+  patternCanvas.width = size * 2
+  patternCanvas.height = size * 2
+  const patternCtx = patternCanvas.getContext('2d')!
+
+  // Fill with light gray background
+  patternCtx.fillStyle = '#F0F0F0'
+  patternCtx.fillRect(0, 0, size * 2, size * 2)
+
+  // Draw diagonal lines with darker color
+  patternCtx.strokeStyle = 'rgba(0, 0, 0, 0.15)' // Increased opacity for more contrast
+  patternCtx.lineWidth = 1
+
+  // Draw diagonal lines
+  patternCtx.beginPath()
+  patternCtx.moveTo(0, 0)
+  patternCtx.lineTo(size * 2, size * 2)
+  patternCtx.stroke()
+
+  patternCtx.beginPath()
+  patternCtx.moveTo(size, 0)
+  patternCtx.lineTo(size * 2, size)
+  patternCtx.stroke()
+
+  patternCtx.beginPath()
+  patternCtx.moveTo(0, size)
+  patternCtx.lineTo(size, size * 2)
+  patternCtx.stroke()
+
+  return patternCanvas
 }
 
 function clipAndShadowWorldSpace(
