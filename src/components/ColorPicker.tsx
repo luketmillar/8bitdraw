@@ -4,6 +4,8 @@ import EventBus from '../eventbus/EventBus'
 import AppController from '../core/AppController'
 import { HexColorPicker } from 'react-colorful'
 import DrawUndo from '../undo/DrawUndo'
+import EyedropperTool from '../tools/EyedropperTool'
+import { EyedropperIcon } from './Icons'
 
 const DEFAULT_COLORS = [
   '#000000', // Black
@@ -185,6 +187,37 @@ const HexInputContainer = styled.div`
   margin-top: 8px;
 `
 
+const EyedropperButton = styled.button`
+  background: #2d2d2f;
+  border: 1px solid #414243;
+  border-radius: 8px;
+  padding: 8px;
+  color: #bfc4cc;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  margin-right: 8px;
+  height: 32px;
+  width: 32px;
+  box-sizing: border-box;
+
+  &:hover {
+    background: #363738;
+    border-color: #7c3aed;
+  }
+
+  &:active {
+    background: #2d2d2f;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+`
+
 const ColorPicker = ({ controller }: { controller: AppController }) => {
   const [color, setColor] = React.useState(controller.toolStack.currentColor)
   const [showPicker, setShowPicker] = React.useState(false)
@@ -295,6 +328,11 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
     handleClose()
   }
 
+  const handleEyedropperClick = () => {
+    controller.toolStack.push(new EyedropperTool(controller, true))
+    setShowPicker(false)
+  }
+
   return (
     <PickerContainer>
       <Preview color={color} onClick={handlePreviewClick}>
@@ -333,6 +371,9 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
           <ColorPickerContent>
             <HexColorPicker color={color} onChange={handleColorChange} />
             <HexInputContainer>
+              <EyedropperButton onClick={handleEyedropperClick} title='Pick color from canvas'>
+                <EyedropperIcon />
+              </EyedropperButton>
               <HexInput
                 type='text'
                 value={color.toUpperCase()}

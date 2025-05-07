@@ -6,8 +6,9 @@ import LineTool from '../tools/LineTool'
 import RectangleTool from '../tools/RectangleTool'
 import styled from 'styled-components'
 import React from 'react'
-import { EraseIcon, FillIcon, LineIcon, PencilIcon, RectangleIcon } from './Icons'
+import { EraseIcon, FillIcon, LineIcon, PencilIcon, RectangleIcon, EyedropperIcon } from './Icons'
 import EventBus from '../eventbus/EventBus'
+import EyedropperTool from '../tools/EyedropperTool'
 
 const ToolbarContainer = styled.div`
   background: #313233;
@@ -87,6 +88,12 @@ const Toolbar = ({ controller }: { controller: AppController }) => {
         selected={tool instanceof EraseTool}
       >
         <EraseIcon />
+      </ToolButton>
+      <ToolButton
+        onClick={() => controller.toolStack.replace(new EyedropperTool(controller))}
+        selected={tool instanceof EyedropperTool}
+      >
+        <EyedropperIcon />
       </ToolButton>
     </ToolbarContainer>
   )
