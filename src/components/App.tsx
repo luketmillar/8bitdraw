@@ -27,7 +27,12 @@ const ToolBarPlacer = styled.div`
 
 const useDisableTouch = () => {
   React.useEffect(() => {
-    const handleTouchMove = (e: TouchEvent) => e.preventDefault()
+    const handleTouchMove = (e: TouchEvent) => {
+      // Only prevent default if the touch event is on the canvas
+      if (e.target instanceof HTMLCanvasElement) {
+        e.preventDefault()
+      }
+    }
     document.body.addEventListener('touchmove', handleTouchMove, { passive: false })
     return () => document.body.removeEventListener('touchmove', handleTouchMove)
   }, [])
