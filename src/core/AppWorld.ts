@@ -14,11 +14,11 @@ export default class AppWorld extends BaseWorld {
   constructor(sketchSize: Size) {
     super()
     this.sketchSize = sketchSize
-    this.grid = new Grid(sketchSize)
     this.sketch = new Sketch(sketchSize)
+    this.grid = new Grid(sketchSize)
   }
   protected createWorld(): void {
-    this.sketch = new Sketch(this.sketch.size)
+    this.sketch = new Sketch(this.sketchSize)
     this.grid = new Grid(this.sketch.size)
   }
 

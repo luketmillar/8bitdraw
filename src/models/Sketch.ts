@@ -6,12 +6,7 @@ import Pixel from './Pixel'
 import { v4 as uuid } from 'uuid'
 import EventBus from '../eventbus/EventBus'
 import DrawUndo from '../undo/DrawUndo'
-
-const pixelKey = (position: Position) => `${position[0]}:${position[1]}`
-const parsePixelKey = (key: string): Position => {
-  const [x, y] = key.split(':').map((value) => parseInt(value))
-  return vec2.fromValues(x, y)
-}
+import { parsePixelKey, pixelKey } from './utils'
 
 const createPixels = (pixels: Overrideable<Pixel>, size: Size) => {
   pixels.clear()
