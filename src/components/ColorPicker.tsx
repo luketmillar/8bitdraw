@@ -6,18 +6,19 @@ import { HexColorPicker } from 'react-colorful'
 import DrawUndo from '../undo/DrawUndo'
 import EyedropperTool from '../tools/EyedropperTool'
 import { EyedropperIcon } from './Icons'
+import { Color } from '../models/Color'
 
 const DEFAULT_COLORS = [
-  '#000000', // Black
-  '#ffffff', // White
-  '#e63946', // Red
-  '#2a9d8f', // Teal
-  '#457b9d', // Blue
-  '#f4a261', // Orange
-  '#e9c46a', // Yellow
-  '#8338ec', // Purple
-  '#06d6a0', // Mint
-  '#ff006e', // Pink
+  Color.fromHex('#000000'), // Black
+  Color.fromHex('#ffffff'), // White
+  Color.fromHex('#e63946'), // Red
+  Color.fromHex('#2a9d8f'), // Teal
+  Color.fromHex('#457b9d'), // Blue
+  Color.fromHex('#f4a261'), // Orange
+  Color.fromHex('#e9c46a'), // Yellow
+  Color.fromHex('#8338ec'), // Purple
+  Color.fromHex('#06d6a0'), // Mint
+  Color.fromHex('#ff006e'), // Pink
 ]
 
 const PickerContainer = styled.div`
@@ -37,11 +38,11 @@ const PickerContainer = styled.div`
   gap: 12px;
 `
 
-const Preview = styled.div<{ color: string }>`
+const Preview = styled.div<{ color: Color }>`
   width: 100%;
   height: 48px;
   border-radius: 8px;
-  background: ${({ color }) => color};
+  background: ${({ color }) => color.toRGBA()};
   border: 1px solid #363738;
   box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.1);
   cursor: pointer;
@@ -55,10 +56,7 @@ const Preview = styled.div<{ color: string }>`
   font-size: 14px;
   color: ${({ color }) => {
     // Calculate if the color is dark enough to need white text
-    const r = parseInt(color.slice(1, 3), 16)
-    const g = parseInt(color.slice(3, 5), 16)
-    const b = parseInt(color.slice(5, 7), 16)
-    const brightness = (r * 299 + g * 587 + b * 114) / 1000
+    const brightness = (color.getR() * 299 + color.getG() * 587 + color.getB() * 114) / 1000
     return brightness < 128 ? '#ffffff' : '#000000'
   }};
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
@@ -90,12 +88,12 @@ const SwatchGrid = styled.div`
   gap: 10px;
 `
 
-const Swatch = styled.button<{ color: string; selected: boolean }>`
+const Swatch = styled.button<{ color: Color; selected: boolean }>`
   width: 28px;
   height: 28px;
   border-radius: 6px;
   border: ${({ selected }) => (selected ? '2px solid #7c3aed' : '2px solid #232325')};
-  background: ${({ color }) => color};
+  background: ${({ color }) => color.toRGBA()};
   cursor: pointer;
   outline: none;
   box-shadow: ${({ selected }) =>
@@ -221,10 +219,10 @@ const EyedropperButton = styled.button`
 const ColorPicker = ({ controller }: { controller: AppController }) => {
   const [color, setColor] = React.useState(controller.toolStack.currentColor)
   const [showPicker, setShowPicker] = React.useState(false)
-  const [recentColors, setRecentColors] = React.useState<string[]>([])
+  const [recentColors, setRecentColors] = React.useState<Color[]>([])
   const pickerRef = useRef<HTMLDivElement>(null)
   const clickTimeoutRef = useRef<number>()
-  const previousColorRef = useRef<string>(color)
+  const previousColorRef = useRef<Color>(color)
 
   React.useEffect(() => {
     const colorListener = EventBus.on('tool', 'color', setColor)
@@ -238,10 +236,10 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
         usedColors.forEach((usedColor) => {
           if (usedColor) {
             setRecentColors((prev) => {
-              const newColors = [usedColor, ...prev.filter((color) => color !== usedColor)].slice(
-                0,
-                5
-              )
+              const newColors = [
+                usedColor,
+                ...prev.filter((color) => !color.equals(usedColor)),
+              ].slice(0, 5)
               return newColors
             })
           }
@@ -285,14 +283,15 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
     }
   }, [showPicker])
 
-  const handleSelect = (c: string) => {
+  const handleSelect = (c: Color) => {
     setColor(c)
     EventBus.emit('tool', 'color', c)
   }
 
   const handleColorChange = (newColor: string) => {
-    setColor(newColor)
-    EventBus.emit('tool', 'color', newColor)
+    const color = Color.fromHex(newColor)
+    setColor(color)
+    EventBus.emit('tool', 'color', color)
   }
 
   const handleHexInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -336,7 +335,7 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
   return (
     <PickerContainer>
       <Preview color={color} onClick={handlePreviewClick}>
-        {color.toUpperCase()}
+        {color.toHex().toUpperCase()}
       </Preview>
       {recentColors.length > 0 && (
         <>
@@ -344,11 +343,11 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
           <SwatchGrid>
             {recentColors.map((c) => (
               <Swatch
-                key={c}
+                key={c.toHex()}
                 color={c}
-                selected={c === color}
+                selected={c.equals(color)}
                 onClick={() => handleSelect(c)}
-                aria-label={c}
+                aria-label={c.toHex()}
               />
             ))}
           </SwatchGrid>
@@ -358,25 +357,24 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
       <SwatchGrid>
         {DEFAULT_COLORS.map((c) => (
           <Swatch
-            key={c}
+            key={c.toHex()}
             color={c}
-            selected={c === color}
+            selected={c.equals(color)}
             onClick={() => handleSelect(c)}
-            aria-label={c}
           />
         ))}
       </SwatchGrid>
       {showPicker && (
         <ColorPickerDialog ref={pickerRef}>
           <ColorPickerContent>
-            <HexColorPicker color={color} onChange={handleColorChange} />
+            <HexColorPicker color={color.toHex()} onChange={handleColorChange} />
             <HexInputContainer>
               <EyedropperButton onClick={handleEyedropperClick} title='Pick color from canvas'>
                 <EyedropperIcon />
               </EyedropperButton>
               <HexInput
                 type='text'
-                value={color.toUpperCase()}
+                value={color.toHex().toUpperCase()}
                 onChange={handleHexInput}
                 onKeyDown={handleHexKeyDown}
                 placeholder='#000000'

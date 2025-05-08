@@ -1,3 +1,4 @@
+import { Color } from '../models/Color'
 import Tool from '../tools/Tool'
 import Undo from '../undo/BaseUndo'
 import EventEmitter from '../utils/EventEmitter'
@@ -18,7 +19,7 @@ type ToolInputEvents =
   | { scope: 'tool'; type: 'move'; payload: ToolPayload }
   | { scope: 'tool'; type: 'end'; payload: ToolPayload }
   | { scope: 'tool'; type: 'stack-changed'; payload: Tool }
-  | { scope: 'tool'; type: 'color'; payload: string }
+  | { scope: 'tool'; type: 'color'; payload: Color }
 
 type MousePayload = { position: Position; metaKey?: boolean }
 type MouseInputEvents =

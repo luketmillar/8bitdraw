@@ -1,5 +1,6 @@
-import { Color, Position, Stroke } from '../utils/types'
+import { Position, Stroke } from '../utils/types'
 import { vec2 } from 'gl-matrix'
+import { Color } from '../models/Color'
 
 type IViewRenderOptions = {
   fill?: Color | null
@@ -35,7 +36,7 @@ export class Rectangle extends View {
     const left = this.position[0] - this.width / 2
     const top = this.position[1] - this.height / 2
     if (this.options.fill) {
-      ctx.fillStyle = this.options.fill
+      ctx.fillStyle = this.options.fill.toRGBA()
       ctx.fillRect(left, top, this.width, this.height)
     }
     if (this.options.stroke) {
@@ -44,7 +45,7 @@ export class Rectangle extends View {
       } else {
         ctx.lineWidth = this.options.stroke.width
       }
-      ctx.strokeStyle = this.options.stroke.color
+      ctx.strokeStyle = this.options.stroke.color.toRGBA()
       ctx.strokeRect(left, top, this.width, this.height)
     }
     ctx.restore()
@@ -64,11 +65,11 @@ export class Circle extends View {
     ctx.beginPath()
     ctx.arc(this.position[0], this.position[1], this.radius, 0, 2 * Math.PI)
     if (this.options.fill) {
-      ctx.fillStyle = this.options.fill
+      ctx.fillStyle = this.options.fill.toRGBA()
       ctx.fill()
     }
     if (this.options.stroke) {
-      ctx.strokeStyle = this.options.stroke.color
+      ctx.strokeStyle = this.options.stroke.color.toRGBA()
       ctx.lineWidth = this.options.stroke.width ?? 1
       ctx.stroke()
     }
@@ -87,7 +88,7 @@ export class Line extends View {
   public draw(ctx: CanvasRenderingContext2D) {
     ctx.beginPath()
     ctx.lineWidth = this.options.stroke?.width ?? 1
-    ctx.strokeStyle = this.options.stroke?.color ?? '#000000'
+    ctx.strokeStyle = this.options.stroke?.color?.toRGBA() ?? '#000000'
     ctx.beginPath()
     ctx.moveTo(this.a[0], this.a[1])
     ctx.lineTo(this.b[0], this.b[1])

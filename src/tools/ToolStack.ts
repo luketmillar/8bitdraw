@@ -1,10 +1,10 @@
 import EventBus, { ToolPayload } from '../eventbus/EventBus'
-import { Color } from '../utils/types'
+import { Color } from '../models/Color'
 import Tool from './Tool'
 
 export default class ToolStack {
   public readonly stack: Tool[] = []
-  public currentColor: Color = '#000000'
+  public currentColor: Color = Color.fromHex('#000000')
 
   public replace = (tool: Tool) => {
     this.clearStack()
@@ -44,7 +44,7 @@ export default class ToolStack {
   private onStart = ({ position }: ToolPayload) => this.tool?.onStart(position)
   private onMove = ({ position }: ToolPayload) => this.tool?.onMove(position)
   private onEnd = ({ position }: ToolPayload) => this.tool?.onEnd(position)
-  private onColor = (color: string) => (this.currentColor = color)
+  private onColor = (color: Color) => (this.currentColor = color)
 
   private clearStack = () => {
     this.stack.forEach((tool) => tool.teardown())
