@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import EventBus from '../eventbus/EventBus'
 import AppController from '../core/AppController'
-import { HexColorPicker } from 'react-colorful'
+import { RgbaColorPicker } from 'react-colorful'
 import DrawUndo from '../undo/DrawUndo'
 import EyedropperTool from '../tools/EyedropperTool'
 import { EyedropperIcon } from './Icons'
@@ -38,11 +38,26 @@ const PickerContainer = styled.div`
   gap: 12px;
 `
 
+const TransparencyBackground = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    #bbbbbb 0px,
+    #bbbbbb 1px,
+    #f0f0f0 1px,
+    #f0f0f0 3px
+  );
+  z-index: 1;
+`
+
 const Preview = styled.div<{ color: Color }>`
   width: 100%;
   height: 48px;
   border-radius: 8px;
-  background: ${({ color }) => color.toRGBA()};
   border: 1px solid #363738;
   box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.1);
   cursor: pointer;
@@ -70,6 +85,22 @@ const Preview = styled.div<{ color: Color }>`
     transform: scale(0.98);
   }
 
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: ${({ color }) => {
+      const transparentColor = color.clone()
+      transparentColor.setA(100)
+      return transparentColor.toRGBA()
+    }};
+    clip-path: polygon(0 0, 100% 0, 75% 100%, 0 100%, 0 0);
+    z-index: 2;
+  }
+
   &::after {
     content: '';
     position: absolute;
@@ -77,8 +108,14 @@ const Preview = styled.div<{ color: Color }>`
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
-    pointer-events: none;
+    background: ${({ color }) => color.toRGBA()};
+    // clip-path: polygon(100% 0, 100% 100%, 75% 100%, 100% 0);
+    z-index: 2;
+  }
+
+  > span {
+    position: relative;
+    z-index: 3;
   }
 `
 
@@ -93,7 +130,7 @@ const Swatch = styled.button<{ color: Color; selected: boolean }>`
   height: 28px;
   border-radius: 6px;
   border: ${({ selected }) => (selected ? '2px solid #7c3aed' : '2px solid #232325')};
-  background: ${({ color }) => color.toRGBA()};
+  padding: 0;
   cursor: pointer;
   outline: none;
   box-shadow: ${({ selected }) =>
@@ -101,6 +138,19 @@ const Swatch = styled.button<{ color: Color; selected: boolean }>`
   transition:
     border 0.15s,
     box-shadow 0.15s;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: ${({ color }) => color.toRGBA()};
+    z-index: 2;
+  }
 `
 
 const Divider = styled.div`
@@ -136,6 +186,39 @@ const ColorPickerContent = styled.div`
   width: 100%;
 `
 
+const StyledRgbaColorPicker = styled(RgbaColorPicker)`
+  width: 240px !important;
+  height: 260px !important;
+
+  .react-colorful__saturation {
+    height: 200px !important;
+    border-radius: 10px;
+  }
+
+  .react-colorful__hue {
+    margin-top: 10px;
+    height: 20px !important;
+    border-radius: 10px;
+  }
+
+  .react-colorful__alpha {
+    margin-top: 10px;
+    height: 20px !important;
+    border-radius: 10px;
+  }
+
+  .react-colorful__pointer {
+    width: 20px;
+    height: 20px;
+  }
+`
+
+const HexInputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+`
+
 const HexInput = styled.input`
   background: #2d2d2f;
   border: 1px solid #414243;
@@ -152,6 +235,31 @@ const HexInput = styled.input`
   box-sizing: border-box;
   &:focus {
     border-color: #7c3aed;
+  }
+`
+
+const OpacityInput = styled.input`
+  background: #2d2d2f;
+  border: 1px solid #414243;
+  border-left: none;
+  border-right: none;
+  padding: 7px 12px;
+  color: #bfc4cc;
+  font-size: 14px;
+  width: 60px;
+  text-align: center;
+  outline: none;
+  font-family: monospace;
+  height: 32px;
+  box-sizing: border-box;
+  &:focus {
+    border-color: #7c3aed;
+  }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 `
 
@@ -177,12 +285,6 @@ const SaveButton = styled.button`
   &:active {
     background: #2d2d2f;
   }
-`
-
-const HexInputContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-top: 8px;
 `
 
 const EyedropperButton = styled.button`
@@ -236,11 +338,7 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
         usedColors.forEach((usedColor) => {
           if (usedColor) {
             setRecentColors((prev) => {
-              const newColors = [
-                usedColor,
-                ...prev.filter((color) => !color.equals(usedColor)),
-              ].slice(0, 5)
-              return newColors
+              return [usedColor, ...prev.filter((color) => !color.equals(usedColor))].slice(0, 5)
             })
           }
         })
@@ -288,20 +386,40 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
     EventBus.emit('tool', 'color', c)
   }
 
-  const handleColorChange = (newColor: string) => {
-    const color = Color.fromHex(newColor)
-    setColor(color)
-    EventBus.emit('tool', 'color', color)
+  const handleColorChange = (newColor: { r: number; g: number; b: number; a: number }) => {
+    const newColorObj = Color.fromRGBA(newColor.r, newColor.g, newColor.b, newColor.a)
+    setColor(newColorObj)
+    EventBus.emit('tool', 'color', newColorObj)
+  }
+
+  const handleOpacityInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace('%', '')
+    if (value === '' || /^\d*$/.test(value)) {
+      const opacity = value === '' ? 0 : Math.max(0, Math.min(100, parseInt(value))) / 100
+      const newColor = color.clone()
+      newColor.setA(opacity)
+      setColor(newColor)
+      EventBus.emit('tool', 'color', newColor)
+    }
   }
 
   const handleHexInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     if (value.length <= 7 && /^#[0-9A-Fa-f]*$/.test(value)) {
-      handleColorChange(value)
+      const newColor = Color.fromHex(value)
+      newColor.setA(color.getA())
+      setColor(newColor)
+      EventBus.emit('tool', 'color', newColor)
     }
   }
 
   const handleHexKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleHexSave()
+    }
+  }
+
+  const handleOpacityKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleHexSave()
     }
@@ -335,7 +453,8 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
   return (
     <PickerContainer>
       <Preview color={color} onClick={handlePreviewClick}>
-        {color.toHex().toUpperCase()}
+        <TransparencyBackground />
+        <span>{color.toHex().toUpperCase()}</span>
       </Preview>
       {recentColors.length > 0 && (
         <>
@@ -348,7 +467,9 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
                 selected={c.equals(color)}
                 onClick={() => handleSelect(c)}
                 aria-label={c.toHex()}
-              />
+              >
+                <TransparencyBackground />
+              </Swatch>
             ))}
           </SwatchGrid>
         </>
@@ -361,13 +482,23 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
             color={c}
             selected={c.equals(color)}
             onClick={() => handleSelect(c)}
-          />
+          >
+            <TransparencyBackground />
+          </Swatch>
         ))}
       </SwatchGrid>
       {showPicker && (
         <ColorPickerDialog ref={pickerRef}>
           <ColorPickerContent>
-            <HexColorPicker color={color.toHex()} onChange={handleColorChange} />
+            <StyledRgbaColorPicker
+              color={{
+                r: color.getR(),
+                g: color.getG(),
+                b: color.getB(),
+                a: color.getA(),
+              }}
+              onChange={handleColorChange}
+            />
             <HexInputContainer>
               <EyedropperButton onClick={handleEyedropperClick} title='Pick color from canvas'>
                 <EyedropperIcon />
@@ -378,6 +509,13 @@ const ColorPicker = ({ controller }: { controller: AppController }) => {
                 onChange={handleHexInput}
                 onKeyDown={handleHexKeyDown}
                 placeholder='#000000'
+              />
+              <OpacityInput
+                type='text'
+                value={`${Math.round(color.getA() * 100)}%`}
+                onChange={handleOpacityInput}
+                onKeyDown={handleOpacityKeyDown}
+                placeholder='100%'
               />
               <SaveButton onClick={handleHexSave} title='Save color'>
                 <svg
