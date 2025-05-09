@@ -1,0 +1,206 @@
+import React, { useRef, useEffect } from 'react'
+import styled from 'styled-components'
+import EventBus from '../../eventbus/EventBus'
+import AppController from '../../core/AppController'
+import DrawUndo from '../../undo/DrawUndo'
+import EyedropperTool from '../../tools/EyedropperTool'
+import { Color } from '../../models/Color'
+import { ColorPreview } from './ColorPreview'
+import { ColorSwatches } from './ColorSwatches'
+import { ColorPickerDialogComponent } from './ColorPickerDialog'
+import { Divider } from './shared'
+
+const DEFAULT_COLORS = [
+  Color.fromHex('#000000'), // Black
+  Color.fromHex('#ffffff'), // White
+  Color.fromHex('#e63946'), // Red
+  Color.fromHex('#2a9d8f'), // Teal
+  Color.fromHex('#457b9d'), // Blue
+  Color.fromHex('#f4a261'), // Orange
+  Color.fromHex('#e9c46a'), // Yellow
+  Color.fromHex('#8338ec'), // Purple
+  Color.fromHex('#06d6a0'), // Mint
+  Color.fromHex('#ff006e'), // Pink
+]
+
+const PickerContainer = styled.div`
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: #2a2b2c;
+  border: 1px solid #363738;
+  border-radius: 10px;
+  box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.18);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 180px;
+  gap: 12px;
+`
+
+interface ColorPickerProps {
+  controller: AppController
+}
+
+export const ColorPicker: React.FC<ColorPickerProps> = ({ controller }) => {
+  const [color, setColor] = React.useState(controller.toolStack.currentColor)
+  const [showPicker, setShowPicker] = React.useState(false)
+  const [recentColors, setRecentColors] = React.useState<Color[]>([])
+  const pickerRef = useRef<HTMLDivElement>(null)
+  const clickTimeoutRef = useRef<number>()
+  const previousColorRef = useRef<Color>(color)
+
+  React.useEffect(() => {
+    const colorListener = EventBus.on('tool', 'color', setColor)
+    const undoListener = EventBus.on('undo', 'push', (undo) => {
+      if (undo instanceof DrawUndo) {
+        // Only add colors that were actually used (not erased)
+        const usedColors = new Set(
+          undo.changes.filter((change) => change.after !== null).map((change) => change.after)
+        )
+
+        usedColors.forEach((usedColor) => {
+          if (usedColor) {
+            setRecentColors((prev) => {
+              return [usedColor, ...prev.filter((color) => !color.equals(usedColor))].slice(0, 5)
+            })
+          }
+        })
+      }
+    })
+
+    return () => {
+      colorListener()
+      undoListener()
+      if (clickTimeoutRef.current) {
+        window.clearTimeout(clickTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
+        // Prevent the click from reaching the canvas
+        event.preventDefault()
+        event.stopPropagation()
+        handleClose()
+      }
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleCancel()
+      }
+    }
+
+    if (showPicker) {
+      document.addEventListener('mousedown', handleClickOutside, { capture: true })
+      document.addEventListener('keydown', handleKeyDown)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside, { capture: true })
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [showPicker])
+
+  const handleSelect = (c: Color) => {
+    setColor(c)
+    EventBus.emit('tool', 'color', c)
+  }
+
+  const handleColorChange = (newColor: { r: number; g: number; b: number; a: number }) => {
+    const newColorObj = Color.fromRGBA(newColor.r, newColor.g, newColor.b, newColor.a)
+    setColor(newColorObj)
+    EventBus.emit('tool', 'color', newColorObj)
+  }
+
+  const handleOpacityInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace('%', '')
+    if (value === '' || /^\d*$/.test(value)) {
+      const opacity = value === '' ? 0 : Math.max(0, Math.min(100, parseInt(value))) / 100
+      const newColor = color.clone()
+      newColor.setA(opacity)
+      setColor(newColor)
+      EventBus.emit('tool', 'color', newColor)
+    }
+  }
+
+  const handleHexInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    if (value.length <= 7 && /^#[0-9A-Fa-f]*$/.test(value)) {
+      const newColor = Color.fromHex(value)
+      newColor.setA(color.getA())
+      setColor(newColor)
+      EventBus.emit('tool', 'color', newColor)
+    }
+  }
+
+  const handleHexKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleHexSave()
+    }
+  }
+
+  const handleOpacityKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleHexSave()
+    }
+  }
+
+  const handlePreviewClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    previousColorRef.current = color
+    setShowPicker(true)
+  }
+
+  const handleClose = () => {
+    setShowPicker(false)
+  }
+
+  const handleCancel = () => {
+    setShowPicker(false)
+    setColor(previousColorRef.current)
+    EventBus.emit('tool', 'color', previousColorRef.current)
+  }
+
+  const handleHexSave = () => {
+    handleClose()
+  }
+
+  const handleEyedropperClick = () => {
+    controller.toolStack.push(new EyedropperTool(controller, true))
+    setShowPicker(false)
+  }
+
+  return (
+    <PickerContainer ref={pickerRef}>
+      <ColorPreview color={color} onClick={handlePreviewClick} />
+      {recentColors.length > 0 && (
+        <>
+          <Divider />
+          <ColorSwatches colors={recentColors} selectedColor={color} onSelect={handleSelect} />
+        </>
+      )}
+      <Divider />
+      <ColorSwatches colors={DEFAULT_COLORS} selectedColor={color} onSelect={handleSelect} />
+      {showPicker && (
+        <ColorPickerDialogComponent
+          color={color}
+          onColorChange={handleColorChange}
+          onHexInput={handleHexInput}
+          onOpacityInput={handleOpacityInput}
+          onHexKeyDown={handleHexKeyDown}
+          onOpacityKeyDown={handleOpacityKeyDown}
+          onSave={handleHexSave}
+          onEyedropperClick={handleEyedropperClick}
+        />
+      )}
+    </PickerContainer>
+  )
+}
+
+export default ColorPicker
