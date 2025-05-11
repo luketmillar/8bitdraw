@@ -95,6 +95,17 @@ export default class Sketch extends Model {
   public getColor(position: Position): Color | null {
     return this.activeLayer.pixels.get(pixelKey(position))?.fill ?? null
   }
+  public getColors(): Color[] {
+    return this.layers
+      .map((layer) => layer.pixels.getAll().map((pixel) => pixel.fill))
+      .flat()
+      .reduce((result: Color[], color) => {
+        if (color && !result.find((c) => c.equals(color))) {
+          result.push(color)
+        }
+        return result
+      }, [] as Color[])
+  }
 
   // model to views
   public getViews() {

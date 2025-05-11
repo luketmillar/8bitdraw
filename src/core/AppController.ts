@@ -23,6 +23,9 @@ export default class AppController extends BaseController<AppWorld, AppView> {
   }
 
   // draw
+  public getColors() {
+    return this.world.sketch.getColors()
+  }
   public getColor(position: Position) {
     return this.world.sketch.getColor(position)
   }

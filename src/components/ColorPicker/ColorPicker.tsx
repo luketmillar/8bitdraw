@@ -47,36 +47,24 @@ interface ColorPickerProps {
 export const ColorPicker: React.FC<ColorPickerProps> = ({ controller }) => {
   const [color, setColor] = React.useState(controller.toolStack.currentColor)
   const [showPicker, setShowPicker] = React.useState(false)
-  const [recentColors, setRecentColors] = React.useState<Color[]>([])
+  const [imageColors, setImageColors] = React.useState<Color[]>([])
   const pickerRef = useRef<HTMLDivElement>(null)
-  const clickTimeoutRef = useRef<number>()
   const previousColorRef = useRef<Color>(color)
+
+  const updateImageColors = () => {
+    setImageColors(controller.getColors())
+  }
 
   React.useEffect(() => {
     const colorListener = EventBus.on('tool', 'color', setColor)
-    const undoListener = EventBus.on('undo', 'push', (undo) => {
-      if (undo instanceof DrawUndo) {
-        // Only add colors that were actually used (not erased)
-        const usedColors = new Set(
-          undo.changes.filter((change) => change.after !== null).map((change) => change.after)
-        )
+    const undoListener = EventBus.on('undo', 'stack-changed', () => updateImageColors())
 
-        usedColors.forEach((usedColor) => {
-          if (usedColor) {
-            setRecentColors((prev) => {
-              return [usedColor, ...prev.filter((color) => !color.equals(usedColor))].slice(0, 5)
-            })
-          }
-        })
-      }
-    })
+    // Initial update of image colors
+    updateImageColors()
 
     return () => {
       colorListener()
       undoListener()
-      if (clickTimeoutRef.current) {
-        window.clearTimeout(clickTimeoutRef.current)
-      }
     }
   }, [])
 
@@ -179,10 +167,10 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ controller }) => {
   return (
     <PickerContainer ref={pickerRef}>
       <ColorPreview color={color} onClick={handlePreviewClick} />
-      {recentColors.length > 0 && (
+      {imageColors.length > 0 && (
         <>
           <Divider />
-          <ColorSwatches colors={recentColors} selectedColor={color} onSelect={handleSelect} />
+          <ColorSwatches colors={imageColors} selectedColor={color} onSelect={handleSelect} />
         </>
       )}
       <Divider />
