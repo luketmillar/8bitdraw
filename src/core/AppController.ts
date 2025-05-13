@@ -49,6 +49,27 @@ export default class AppController extends BaseController<AppWorld, AppView> {
     )
   }
 
+  // layer management
+  public getLayers() {
+    return this.world.sketch.layers
+  }
+
+  public getActiveLayerId() {
+    return this.world.sketch.activeLayerId
+  }
+
+  public setActiveLayer(id: string) {
+    this.world.sketch.activeLayerId = id
+  }
+
+  public addLayer(title?: string) {
+    this.world.sketch.newLayer(title)
+  }
+
+  public deleteLayer(id: string) {
+    this.world.sketch.deleteLayer(id)
+  }
+
   protected onStart() {
     this.inputHandler.start()
     this.toolStack.start()

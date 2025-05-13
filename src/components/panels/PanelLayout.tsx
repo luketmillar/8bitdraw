@@ -40,7 +40,7 @@ export const PanelLayout: React.FC<PanelLayoutProps> = ({ controller }) => {
       <ColorPickerPlacer>
         <ColorPicker controller={controller} />
         <Spacer />
-        <LayerPanel />
+        <LayerPanel controller={controller} />
       </ColorPickerPlacer>
     </>
   )

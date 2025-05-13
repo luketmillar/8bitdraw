@@ -28,14 +28,22 @@ class PixelMap extends Overrideable<Pixel> {
   }
 }
 
+interface LayerMetadata {
+  title: string
+}
+
 class Layer extends Model {
   public id = uuid()
   public pixels: PixelMap
+  public metadata: LayerMetadata
 
-  constructor(size: Size) {
+  constructor(size: Size, title?: string) {
     super()
     this.pixels = new PixelMap()
     createPixels(this.pixels, size)
+    this.metadata = {
+      title: title ?? `Layer ${uuid().slice(0, 4)}`,
+    }
   }
 
   public getViews() {
@@ -52,7 +60,7 @@ export default class Sketch extends Model {
   constructor(size: Size) {
     super()
     this.size = size
-    this.layers = [new Layer(size)]
+    this.layers = [new Layer(size, 'Background')]
     this.activeLayerId = this.layers[0].id
   }
 
@@ -65,8 +73,8 @@ export default class Sketch extends Model {
   public get activeLayerIndex() {
     return this.layers.findIndex((layer) => layer.id === this.activeLayerId)
   }
-  public newLayer() {
-    const layer = new Layer(this.size)
+  public newLayer(title?: string) {
+    const layer = new Layer(this.size, title)
     this.layers.push(layer)
     this.activeLayerId = layer.id
   }
