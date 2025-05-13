@@ -2,6 +2,7 @@ import { vec2 } from 'gl-matrix'
 import Sketch from './Sketch'
 import { pixelKey } from './utils'
 import Pixel from './Pixel'
+import { Color } from './Color'
 
 export type SketchJSON = {
   layer: string[][]
@@ -14,7 +15,7 @@ export const toSketch = (sketchJSON: SketchJSON): Sketch => {
     for (let j = 0; j < sketchJSON.size.h; j++) {
       const position = vec2.fromValues(j, i)
       const key = pixelKey(position)
-      sketch.layers[0].pixels.set(key, new Pixel(position, sketchJSON.layer[i][j]))
+      sketch.layers[0].pixels.set(key, new Pixel(position, Color.fromHex(sketchJSON.layer[i][j])))
     }
   }
   return sketch
