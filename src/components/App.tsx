@@ -2,19 +2,8 @@ import React from 'react'
 import { useSizes } from '../math/Coordinates'
 import AppController from '../core/AppController'
 import InputLayer from './InputLayer'
-import styled from 'styled-components'
 import EventBus from '../eventbus/EventBus'
-import Toolbar from './Toolbar'
-import ColorPicker from './ColorPicker'
-
-const ToolBarPlacer = styled.div`
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-`
+import { PanelLayout } from './panels/PanelLayout'
 
 // const LayerBar = styled.div`
 //   position: absolute;
@@ -61,15 +50,7 @@ const SurfaceApp = () => {
         }
         onMouseUp={(position, metaKey) => EventBus.emit('mouse-input', 'up', { position, metaKey })}
       />
-      <ToolBarPlacer>
-        <Toolbar controller={controller} />
-      </ToolBarPlacer>
-      <ColorPicker controller={controller} />
-      {/* <LayerBar>
-        <button onClick={() => controller.world.sketch.newLayer()}>New</button>
-        <button onClick={() => controller.world.sketch.deleteLayer()}>Delete</button>
-        <button onClick={() => controller.world.sketch.flipLayers()}>Flip</button>
-      </LayerBar> */}
+      <PanelLayout controller={controller} />
     </>
   )
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { RgbaColorPicker } from 'react-colorful'
-import { Color } from '../../models/Color'
+import { Color } from '../../../models/Color'
 import { EyedropperIcon } from '../Icons'
 import { HexInputContainer, HexInput, OpacityInput, SaveButton, EyedropperButton } from './shared'
 

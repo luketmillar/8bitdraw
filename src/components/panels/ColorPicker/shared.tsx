@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Color } from '../../models/Color'
+import { Color } from '../../../models/Color'
 
 export const TransparencyBackground = styled.div`
   position: absolute;

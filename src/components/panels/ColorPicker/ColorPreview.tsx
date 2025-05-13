@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Color } from '../../models/Color'
+import { Color } from '../../../models/Color'
 import { TransparencyBackground } from './shared'
 
 const Preview = styled.div<{ color: Color }>`

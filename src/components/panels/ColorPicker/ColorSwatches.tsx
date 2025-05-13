@@ -1,5 +1,5 @@
 import React from 'react'
-import { Color } from '../../models/Color'
+import { Color } from '../../../models/Color'
 import { SwatchGrid, Swatch, TransparencyBackground } from './shared'
 
 interface ColorSwatchesProps {

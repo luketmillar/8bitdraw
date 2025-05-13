@@ -1,27 +1,15 @@
-import AppController from '../core/AppController'
-import FillTool from '../tools/FillTool'
-import DrawTool from '../tools/DrawTool'
-import EraseTool from '../tools/EraseTool'
-import LineTool from '../tools/LineTool'
-import RectangleTool from '../tools/RectangleTool'
+import AppController from '../../core/AppController'
+import FillTool from '../../tools/FillTool'
+import DrawTool from '../../tools/DrawTool'
+import EraseTool from '../../tools/EraseTool'
+import LineTool from '../../tools/LineTool'
+import RectangleTool from '../../tools/RectangleTool'
 import styled from 'styled-components'
 import React from 'react'
 import { EraseIcon, FillIcon, LineIcon, PencilIcon, RectangleIcon, EyedropperIcon } from './Icons'
-import EventBus from '../eventbus/EventBus'
-import EyedropperTool from '../tools/EyedropperTool'
-
-const ToolbarContainer = styled.div`
-  background: #313233;
-  border: 1px solid #414243;
-  border-radius: 10px;
-  box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.18);
-  padding: 8px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  width: 56px;
-`
+import EventBus from '../../eventbus/EventBus'
+import EyedropperTool from '../../tools/EyedropperTool'
+import { PanelContainer } from './Panel'
 
 const ToolButton = styled.button<{ selected?: boolean }>`
   background: ${({ selected }) => (selected ? '#7c3aed' : 'transparent')};
@@ -58,7 +46,7 @@ const useCurrentTool = (controller: AppController) => {
 const Toolbar = ({ controller }: { controller: AppController }) => {
   const tool = useCurrentTool(controller)
   return (
-    <ToolbarContainer>
+    <PanelContainer>
       <ToolButton
         onClick={() => controller.toolStack.replace(new DrawTool(controller))}
         selected={tool instanceof DrawTool}
@@ -95,7 +83,7 @@ const Toolbar = ({ controller }: { controller: AppController }) => {
       >
         <EyedropperIcon />
       </ToolButton>
-    </ToolbarContainer>
+    </PanelContainer>
   )
 }
 

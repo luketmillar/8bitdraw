@@ -1,13 +1,13 @@
 import React, { useRef, useEffect } from 'react'
-import styled from 'styled-components'
-import EventBus from '../../eventbus/EventBus'
-import AppController from '../../core/AppController'
-import EyedropperTool from '../../tools/EyedropperTool'
-import { Color } from '../../models/Color'
+import EventBus from '../../../eventbus/EventBus'
+import AppController from '../../../core/AppController'
+import EyedropperTool from '../../../tools/EyedropperTool'
+import { Color } from '../../../models/Color'
 import { ColorPreview } from './ColorPreview'
 import { ColorSwatches } from './ColorSwatches'
 import { ColorPickerDialogComponent } from './ColorPickerDialog'
 import { Divider } from './shared'
+import { PanelContainer } from '../Panel'
 
 const DEFAULT_COLORS = [
   Color.fromHex('#000000'), // Black
@@ -21,23 +21,6 @@ const DEFAULT_COLORS = [
   Color.fromHex('#06d6a0'), // Mint
   Color.fromHex('#ff006e'), // Pink
 ]
-
-const PickerContainer = styled.div`
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-  background: #2a2b2c;
-  border: 1px solid #363738;
-  border-radius: 10px;
-  box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.18);
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 180px;
-  gap: 12px;
-`
 
 interface ColorPickerProps {
   controller: AppController
@@ -164,7 +147,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ controller }) => {
   }
 
   return (
-    <PickerContainer ref={pickerRef}>
+    <PanelContainer ref={pickerRef}>
       <ColorPreview color={color} onClick={handlePreviewClick} />
       {imageColors.length > 0 && (
         <>
@@ -186,7 +169,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ controller }) => {
           onEyedropperClick={handleEyedropperClick}
         />
       )}
-    </PickerContainer>
+    </PanelContainer>
   )
 }
 
