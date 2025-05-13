@@ -3,6 +3,7 @@ import AppController from '../../core/AppController'
 import styled from 'styled-components'
 import Toolbar from './Toolbar'
 import ColorPicker from './ColorPicker'
+import { LayerPanel } from './LayerPanel'
 
 const ToolBarPlacer = styled.div`
   position: absolute;
@@ -22,6 +23,10 @@ const ColorPickerPlacer = styled.div`
   flex-direction: column;
 `
 
+const Spacer = styled.div`
+  height: 10px;
+`
+
 interface PanelLayoutProps {
   controller: AppController
 }
@@ -34,6 +39,8 @@ export const PanelLayout: React.FC<PanelLayoutProps> = ({ controller }) => {
       </ToolBarPlacer>
       <ColorPickerPlacer>
         <ColorPicker controller={controller} />
+        <Spacer />
+        <LayerPanel />
       </ColorPickerPlacer>
     </>
   )
