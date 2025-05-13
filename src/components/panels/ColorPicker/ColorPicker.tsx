@@ -80,6 +80,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ controller }) => {
   const handleSelect = (c: Color) => {
     setColor(c)
     EventBus.emit('tool', 'color', c)
+    setShowPicker(false)
   }
 
   const handleColorChange = (newColor: { r: number; g: number; b: number; a: number }) => {
@@ -124,7 +125,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ controller }) => {
   const handlePreviewClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     previousColorRef.current = color
-    setShowPicker(true)
+    setShowPicker((v) => !v)
   }
 
   const handleClose = () => {
