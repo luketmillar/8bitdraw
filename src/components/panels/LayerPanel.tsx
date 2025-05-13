@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { PanelContainer } from './Panel'
 import AppController from '../../core/AppController'
@@ -126,6 +126,24 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({ controller }) => {
   const [layers, setLayers] = React.useState(controller.getLayers())
   const [activeLayerId, setActiveLayerId] = React.useState(controller.getActiveLayerId())
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownOpen &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setDropdownOpen(null)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [dropdownOpen])
 
   React.useEffect(() => {
     const updateLayers = () => {
@@ -208,7 +226,7 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({ controller }) => {
               ⋮
             </DropdownButton>
             {dropdownOpen === layer.id && (
-              <DropdownMenu onClick={(e) => e.stopPropagation()}>
+              <DropdownMenu ref={dropdownRef} onClick={(e) => e.stopPropagation()}>
                 <DropdownItem onClick={() => handleRenameLayer(layer.id)}>Rename</DropdownItem>
                 <DropdownItem onClick={() => handleDuplicateLayer(layer.id)}>
                   Duplicate
