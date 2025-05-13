@@ -81,14 +81,6 @@ const DropdownItem = styled.button`
   }
 `
 
-const TopBar = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  width: 100%;
-  padding: 8px 8px 0 8px;
-`
-
 const AddLayerIconButton = styled.button`
   background: transparent;
   border: none;
