@@ -146,9 +146,16 @@ interface SortableLayerItemProps {
   isActive: boolean
   children: React.ReactNode
   onLayerClick: (id: string) => void
+  onRename: (id: string) => void
 }
 
-const SortableLayerItem = ({ id, isActive, children, onLayerClick }: SortableLayerItemProps) => {
+const SortableLayerItem = ({
+  id,
+  isActive,
+  children,
+  onLayerClick,
+  onRename,
+}: SortableLayerItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id,
     data: {
@@ -168,6 +175,10 @@ const SortableLayerItem = ({ id, isActive, children, onLayerClick }: SortableLay
       style={style}
       isActive={isActive}
       onClick={() => onLayerClick(id)}
+      onDoubleClick={(e) => {
+        e.stopPropagation()
+        onRename(id)
+      }}
       {...attributes}
       {...listeners}
     >
@@ -304,6 +315,7 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({ controller }) => {
                 id={layer.id}
                 isActive={layer.id === activeLayerId}
                 onLayerClick={handleLayerClick}
+                onRename={handleRenameLayer}
               >
                 <LayerName>{layer.metadata.title}</LayerName>
                 <DropdownButton
