@@ -1,5 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers'
+import { CSS } from '@dnd-kit/utilities'
 import { PanelContainer } from './Panel'
 import AppController from '../../core/AppController'
 import EventBus from '../../eventbus/EventBus'
@@ -22,6 +40,7 @@ const LayerItem = styled.div<{ isActive: boolean }>`
   cursor: pointer;
   position: relative;
   transition: background 0.15s;
+  touch-action: none;
   &:hover {
     background: ${({ isActive }) => (isActive ? '#7c3aed' : '#28282f')};
   }
@@ -122,11 +141,58 @@ export interface LayerPanelProps {
   controller: AppController
 }
 
+interface SortableLayerItemProps {
+  id: string
+  isActive: boolean
+  children: React.ReactNode
+  onLayerClick: (id: string) => void
+}
+
+const SortableLayerItem = ({ id, isActive, children, onLayerClick }: SortableLayerItemProps) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id,
+    data: {
+      type: 'layer',
+    },
+  })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  }
+
+  return (
+    <LayerItem
+      ref={setNodeRef}
+      style={style}
+      isActive={isActive}
+      onClick={() => onLayerClick(id)}
+      {...attributes}
+      {...listeners}
+    >
+      {children}
+    </LayerItem>
+  )
+}
+
 export const LayerPanel: React.FC<LayerPanelProps> = ({ controller }) => {
   const [layers, setLayers] = React.useState(controller.getLayers())
   const [activeLayerId, setActiveLayerId] = React.useState(controller.getActiveLayerId())
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        delay: 100,
+        tolerance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -190,6 +256,19 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({ controller }) => {
     setDropdownOpen(null)
   }
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+
+    if (over && active.id !== over.id) {
+      const oldIndex = layers.findIndex((layer) => layer.id === active.id)
+      const newIndex = layers.findIndex((layer) => layer.id === over.id)
+
+      const newLayers = arrayMove(layers, oldIndex, newIndex)
+      setLayers(newLayers)
+      controller.reorderLayers(newLayers.map((layer) => layer.id))
+    }
+  }
+
   // Show layers from top to bottom (last is topmost)
   const orderedLayers = [...layers].reverse()
 
@@ -208,42 +287,55 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({ controller }) => {
           +
         </AddLayerIconButton>
       </PanelHeader>
-      <LayerList>
-        {orderedLayers.map((layer) => (
-          <LayerItem
-            key={layer.id}
-            isActive={layer.id === activeLayerId}
-            onClick={() => handleLayerClick(layer.id)}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+        modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+      >
+        <LayerList>
+          <SortableContext
+            items={orderedLayers.map((layer) => layer.id)}
+            strategy={verticalListSortingStrategy}
           >
-            <LayerName>{layer.metadata.title}</LayerName>
-            <DropdownButton
-              onClick={(e) => {
-                e.stopPropagation()
-                setDropdownOpen(dropdownOpen === layer.id ? null : layer.id)
-              }}
-              aria-label='Layer options'
-            >
-              ⋮
-            </DropdownButton>
-            {dropdownOpen === layer.id && (
-              <DropdownMenu ref={dropdownRef} onClick={(e) => e.stopPropagation()}>
-                <DropdownItem onClick={() => handleRenameLayer(layer.id)}>Rename</DropdownItem>
-                <DropdownItem onClick={() => handleDuplicateLayer(layer.id)}>
-                  Duplicate
-                </DropdownItem>
-                {layers.length > 1 && (
-                  <DropdownItem
-                    onClick={() => handleDeleteLayer(layer.id)}
-                    style={{ color: '#ff4444' }}
-                  >
-                    Delete
-                  </DropdownItem>
+            {orderedLayers.map((layer) => (
+              <SortableLayerItem
+                key={layer.id}
+                id={layer.id}
+                isActive={layer.id === activeLayerId}
+                onLayerClick={handleLayerClick}
+              >
+                <LayerName>{layer.metadata.title}</LayerName>
+                <DropdownButton
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setDropdownOpen(dropdownOpen === layer.id ? null : layer.id)
+                  }}
+                  aria-label='Layer options'
+                >
+                  ⋮
+                </DropdownButton>
+                {dropdownOpen === layer.id && (
+                  <DropdownMenu ref={dropdownRef} onClick={(e) => e.stopPropagation()}>
+                    <DropdownItem onClick={() => handleRenameLayer(layer.id)}>Rename</DropdownItem>
+                    <DropdownItem onClick={() => handleDuplicateLayer(layer.id)}>
+                      Duplicate
+                    </DropdownItem>
+                    {layers.length > 1 && (
+                      <DropdownItem
+                        onClick={() => handleDeleteLayer(layer.id)}
+                        style={{ color: '#ff4444' }}
+                      >
+                        Delete
+                      </DropdownItem>
+                    )}
+                  </DropdownMenu>
                 )}
-              </DropdownMenu>
-            )}
-          </LayerItem>
-        ))}
-      </LayerList>
+              </SortableLayerItem>
+            ))}
+          </SortableContext>
+        </LayerList>
+      </DndContext>
     </PanelContainer>
   )
 }

@@ -96,6 +96,17 @@ export default class Sketch extends Model {
     }
   }
 
+  public reorderLayers(layerIds: string[]) {
+    const newLayers: Layer[] = []
+    for (const id of layerIds) {
+      const layer = this.layers.find((l) => l.id === id)
+      if (layer) {
+        newLayers.push(layer)
+      }
+    }
+    this.layers = newLayers
+  }
+
   // mutations
   public setColor(position: Position, color: Color | null) {
     this.activeLayer.pixels.set(pixelKey(position), new Pixel(position, color))

@@ -70,6 +70,10 @@ export default class AppController extends BaseController<AppWorld, AppView> {
     this.world.sketch.deleteLayer(id)
   }
 
+  public reorderLayers(layerIds: string[]) {
+    this.world.sketch.reorderLayers(layerIds)
+  }
+
   protected onStart() {
     this.inputHandler.start()
     this.toolStack.start()
