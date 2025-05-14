@@ -30,10 +30,20 @@ const LayerList = styled.div`
   width: 100%;
 `
 
+const LayerPreview = styled.div<{ color: string | null }>`
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  background: ${({ color }) => color ?? 'transparent'};
+  border: 1px solid
+    ${({ color }) => (color ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.2)')};
+  flex-shrink: 0;
+`
+
 const LayerItem = styled.div<{ isActive: boolean }>`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   padding: 4px 8px;
   border-radius: 4px;
   background: ${({ isActive }) => (isActive ? '#7c3aed' : 'transparent')};
@@ -317,6 +327,7 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({ controller }) => {
                 onLayerClick={handleLayerClick}
                 onRename={handleRenameLayer}
               >
+                <LayerPreview color={layer.getMostUsedColor()?.toRGBA() ?? null} />
                 <LayerName>{layer.metadata.title}</LayerName>
                 <DropdownButton
                   onClick={(e) => {

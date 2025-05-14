@@ -52,6 +52,35 @@ class Layer extends Model {
       .map((pixel) => pixel.getViews())
       .flat()
   }
+
+  public getMostUsedColor(): Color | null {
+    const colorCounts = new Map<string, { color: Color; count: number }>()
+
+    this.pixels.getAll().forEach((pixel) => {
+      if (pixel.fill) {
+        const key = pixel.fill.toRGBA()
+        const existing = colorCounts.get(key)
+        if (existing) {
+          existing.count++
+        } else {
+          colorCounts.set(key, { color: pixel.fill, count: 1 })
+        }
+      }
+    })
+
+    let maxCount = 0
+    let mostUsedColor: Color | null = null
+
+    console.log(colorCounts)
+    colorCounts.forEach(({ color, count }) => {
+      if (count > maxCount) {
+        maxCount = count
+        mostUsedColor = color
+      }
+    })
+
+    return mostUsedColor
+  }
 }
 
 export default class Sketch extends Model {
