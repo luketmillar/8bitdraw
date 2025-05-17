@@ -15,12 +15,19 @@ const SketchesGrid = styled.div`
   gap: 2rem;
 `
 
-const SketchCard = styled.div`
+const SketchCard = styled.a`
   overflow: hidden;
+  cursor: pointer;
+  border-radius: 8px;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 `
 
 const SketchSVG = styled.svg`
   height: 200px;
+  width: 100%;
+  display: block;
 `
 
 function GalleryPage() {
@@ -48,7 +55,7 @@ function GalleryPage() {
     <GalleryContainer>
       <SketchesGrid>
         {sketches.map((sketch) => (
-          <SketchCard key={sketch.id}>
+          <SketchCard key={sketch.id} href={`/draw/${sketch.id}`}>
             <SketchSVG
               viewBox={`0 0 ${sketch.size[0]} ${sketch.size[1]}`}
               width='200'

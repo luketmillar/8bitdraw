@@ -4,6 +4,7 @@ import AppController from '../core/AppController'
 import InputLayer from './InputLayer'
 import EventBus from '../eventbus/EventBus'
 import { PanelLayout } from './panels/PanelLayout'
+import Sketch from '../models/Sketch'
 
 // const LayerBar = styled.div`
 //   position: absolute;
@@ -27,15 +28,26 @@ const useDisableTouch = () => {
   }, [])
 }
 
-const SurfaceApp = () => {
+interface SurfaceAppProps {
+  initialSketch?: Sketch
+}
+
+const SurfaceApp = ({ initialSketch }: SurfaceAppProps) => {
   useDisableTouch()
   const controller = React.useMemo(() => new AppController(), [])
   const ref = React.useRef<HTMLCanvasElement>(null)
+
   React.useEffect(() => {
     controller.view.canvas = ref.current!
     controller.start()
     return () => controller.stop()
   }, [controller.view, ref.current, controller])
+
+  React.useEffect(() => {
+    if (initialSketch) {
+      controller.loadSketch(initialSketch)
+    }
+  }, [initialSketch, controller])
 
   return (
     <>

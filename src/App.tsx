@@ -6,6 +6,7 @@ function App() {
   return (
     <>
       <Routes>
+        <Route path='/draw/:sketchId' element={<DrawPage />} />
         <Route path='/draw' element={<DrawPage />} />
         <Route path='/' element={<GalleryPage />} />
       </Routes>
