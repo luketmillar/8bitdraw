@@ -1,7 +1,8 @@
 import { vec2 } from 'gl-matrix'
 import AppController from '../core/AppController'
-import { Color, Position } from '../utils/types'
+import { Position } from '../utils/types'
 import Tool from './Tool'
+import { Color } from '../models/Color'
 
 export default class FillTool extends Tool {
   public static type = 'fill'
