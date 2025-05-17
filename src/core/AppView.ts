@@ -8,6 +8,7 @@ import { vec2 } from 'gl-matrix'
 export default class AppView implements IView<AppWorld> {
   private _canvas: HTMLCanvasElement | undefined
   public spaces = new Spaces()
+  private _showGrid = true
 
   public get canvas() {
     return this._canvas!
@@ -16,6 +17,13 @@ export default class AppView implements IView<AppWorld> {
     this._canvas = value
   }
   public gutter: { left: number; top: number } = { left: 0, top: 0 }
+
+  public toggleGrid() {
+    this._showGrid = !this._showGrid
+  }
+  public get isGridVisible() {
+    return this._showGrid
+  }
 
   public render = (world: AppWorld) => {
     this.spaces.canvasSize = vec2.fromValues(this.canvas.width, this.canvas.height)
@@ -48,7 +56,7 @@ export default class AppView implements IView<AppWorld> {
     this.renderModel(ctx, world.sketch)
 
     // draw grid on top
-    if (world.showGrid) {
+    if (this._showGrid) {
       this.renderModel(ctx, world.grid)
     }
 

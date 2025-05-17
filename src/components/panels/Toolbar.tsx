@@ -56,18 +56,6 @@ const useCurrentTool = (controller: AppController) => {
 const Toolbar = ({ controller }: { controller: AppController }) => {
   const tool = useCurrentTool(controller)
 
-  const handlePublish = async () => {
-    await publishSketch(controller.getCurrentSketch())
-  }
-
-  const handleLoadPublished = async () => {
-    const sketches = await getPublishedSketches()
-    if (sketches.length === 0) {
-      return
-    }
-    controller.loadSketch(sketches[0])
-  }
-
   return (
     <PanelContainer>
       <ToolButton
@@ -105,12 +93,6 @@ const Toolbar = ({ controller }: { controller: AppController }) => {
         selected={tool instanceof EyedropperTool}
       >
         <EyedropperIcon />
-      </ToolButton>
-      <ToolButton onClick={handlePublish}>
-        <PublishIcon />
-      </ToolButton>
-      <ToolButton onClick={handleLoadPublished}>
-        <LoadPublishedIcon />
       </ToolButton>
     </PanelContainer>
   )

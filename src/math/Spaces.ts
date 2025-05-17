@@ -5,7 +5,7 @@ import Transform from './Transform'
 export type Gutter = { left: number; top: number; bottom: number; right: number }
 const DefaultGutter: Gutter = {
   left: 100,
-  top: 50,
+  top: 100,
   bottom: 50,
   right: 250,
 }

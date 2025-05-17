@@ -84,6 +84,46 @@ export default class AppController extends BaseController<AppWorld, AppView> {
     return this.world.sketch
   }
 
+  public setSketchTitle(title: string) {
+    this.world.sketch.title = title
+  }
+
+  public undo() {
+    this.undoStack.undo()
+  }
+
+  public redo() {
+    this.undoStack.redo()
+  }
+
+  public canUndo() {
+    return this.undoStack.canUndo()
+  }
+
+  public canRedo() {
+    return this.undoStack.canRedo()
+  }
+
+  public toggleGrid() {
+    this.view.toggleGrid()
+  }
+
+  public get isGridVisible() {
+    return this.view.isGridVisible
+  }
+
+  public resizeSketch(size: [number, number]) {
+    const currentSketch = this.world.sketch
+    const newSketch = new Sketch({
+      id: currentSketch.id,
+      title: currentSketch.title,
+      artist: currentSketch.artist,
+      size,
+      layers: currentSketch.layers,
+    })
+    this.world.loadSketch(newSketch)
+  }
+
   protected onStart() {
     this.inputHandler.start()
     this.toolStack.start()

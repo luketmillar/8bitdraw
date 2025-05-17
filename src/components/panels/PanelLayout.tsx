@@ -4,10 +4,18 @@ import styled from 'styled-components'
 import Toolbar from './Toolbar'
 import ColorPicker from './ColorPicker'
 import { LayerPanel } from './LayerPanel'
+import { FileManagementPanel } from './FileManagementPanel'
+
+const FileManagementPlacer = styled.div`
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 2000;
+`
 
 const ToolBarPlacer = styled.div`
   position: absolute;
-  top: 20px;
+  top: 80px;
   left: 20px;
   z-index: 1000;
   display: flex;
@@ -34,6 +42,9 @@ interface PanelLayoutProps {
 export const PanelLayout: React.FC<PanelLayoutProps> = ({ controller }) => {
   return (
     <>
+      <FileManagementPlacer>
+        <FileManagementPanel controller={controller} />
+      </FileManagementPlacer>
       <ToolBarPlacer>
         <Toolbar controller={controller} />
       </ToolBarPlacer>
