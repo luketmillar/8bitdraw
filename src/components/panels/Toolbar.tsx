@@ -6,10 +6,19 @@ import LineTool from '../../tools/LineTool'
 import RectangleTool from '../../tools/RectangleTool'
 import styled from 'styled-components'
 import React from 'react'
-import { EraseIcon, FillIcon, LineIcon, PencilIcon, RectangleIcon, EyedropperIcon } from './Icons'
+import {
+  EraseIcon,
+  FillIcon,
+  LineIcon,
+  PencilIcon,
+  RectangleIcon,
+  EyedropperIcon,
+  PublishIcon,
+} from './Icons'
 import EventBus from '../../eventbus/EventBus'
 import EyedropperTool from '../../tools/EyedropperTool'
 import { PanelContainer } from './Panel'
+import { publishSketch } from '../../api/SketchAPI'
 
 const ToolButton = styled.button<{ selected?: boolean }>`
   background: ${({ selected }) => (selected ? '#7c3aed' : 'transparent')};
@@ -45,6 +54,17 @@ const useCurrentTool = (controller: AppController) => {
 
 const Toolbar = ({ controller }: { controller: AppController }) => {
   const tool = useCurrentTool(controller)
+
+  const handlePublish = async () => {
+    try {
+      await publishSketch(controller.getCurrentSketch())
+      alert('Sketch published successfully!')
+    } catch (error) {
+      console.error('Failed to publish sketch:', error)
+      alert('Failed to publish sketch. Please try again.')
+    }
+  }
+
   return (
     <PanelContainer>
       <ToolButton
@@ -82,6 +102,9 @@ const Toolbar = ({ controller }: { controller: AppController }) => {
         selected={tool instanceof EyedropperTool}
       >
         <EyedropperIcon />
+      </ToolButton>
+      <ToolButton onClick={handlePublish}>
+        <PublishIcon />
       </ToolButton>
     </PanelContainer>
   )

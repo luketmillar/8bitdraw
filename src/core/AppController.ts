@@ -74,6 +74,10 @@ export default class AppController extends BaseController<AppWorld, AppView> {
     this.world.sketch.reorderLayers(layerIds)
   }
 
+  public getCurrentSketch() {
+    return this.world.sketch
+  }
+
   protected onStart() {
     this.inputHandler.start()
     this.toolStack.start()
