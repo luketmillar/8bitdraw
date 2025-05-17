@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently \"vite\" \"tsc -b --watch\"",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\""
@@ -29,6 +29,7 @@
     "@types/react-dom": "^18.3.0",
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "concurrently": "^9.1.2",
     "globals": "^15.6.0",
     "prettier": "^3.3.2",
     "typescript": "^5.2.2",

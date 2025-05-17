@@ -6,20 +6,10 @@ import LineTool from '../../tools/LineTool'
 import RectangleTool from '../../tools/RectangleTool'
 import styled from 'styled-components'
 import React from 'react'
-import {
-  EraseIcon,
-  FillIcon,
-  LineIcon,
-  PencilIcon,
-  RectangleIcon,
-  EyedropperIcon,
-  PublishIcon,
-  LoadPublishedIcon,
-} from './Icons'
+import { EraseIcon, FillIcon, LineIcon, PencilIcon, RectangleIcon, EyedropperIcon } from './Icons'
 import EventBus from '../../eventbus/EventBus'
 import EyedropperTool from '../../tools/EyedropperTool'
 import { PanelContainer } from './Panel'
-import { publishSketch, getPublishedSketches } from '../../api/SketchAPI'
 
 const ToolButton = styled.button<{ selected?: boolean }>`
   background: ${({ selected }) => (selected ? '#7c3aed' : 'transparent')};
