@@ -2,17 +2,37 @@ import { useEffect, useState } from 'react'
 import Sketch from '../models/Sketch'
 import { getPublishedSketches } from '../api/SketchAPI'
 import styled from 'styled-components'
+import { Link } from 'react-router-dom'
 
 const GalleryContainer = styled.div`
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+`
+
+const NewSketchButton = styled(Link)`
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  background: #7c3aed;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: #6d28d9;
+  }
 `
 
 const SketchesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 2rem;
+  margin-top: 4rem;
 `
 
 const SketchCard = styled.a`
@@ -53,6 +73,7 @@ function GalleryPage() {
 
   return (
     <GalleryContainer>
+      <NewSketchButton to='/draw'>New sketch</NewSketchButton>
       <SketchesGrid>
         {sketches.map((sketch) => (
           <SketchCard key={sketch.id} href={`/draw/${sketch.id}`}>
