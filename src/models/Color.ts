@@ -1,3 +1,5 @@
+import { ColorJSON } from '../api/JSON'
+
 export class Color {
   private r: number
   private g: number
@@ -92,5 +94,16 @@ export class Color {
   // Check if two colors have the same RGB values, ignoring opacity
   equalsRGB(other: Color): boolean {
     return this.r === other.r && this.g === other.g && this.b === other.b
+  }
+
+  static fromJSON(json: ColorJSON): Color {
+    return Color.fromHex(json.hex, json.opacity)
+  }
+
+  toJSON(): ColorJSON {
+    return {
+      hex: this.toHex(),
+      opacity: this.a,
+    }
   }
 }

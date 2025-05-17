@@ -7,6 +7,5 @@ export enum Direction {
   NS,
   EW,
 }
-export type Color = ColorClass
-export type Stroke = { width: number; color: Color; canvasSpace?: boolean }
+export type Stroke = { width: number; color: ColorClass; canvasSpace?: boolean }
 export type Size = vec2

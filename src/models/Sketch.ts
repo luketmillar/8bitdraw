@@ -1,95 +1,34 @@
-import { vec2 } from 'gl-matrix'
-import Overrideable from '../utils/Overrideable'
-import { Color, Position, Size } from '../utils/types'
+import { Position, Size } from '../utils/types'
 import Model from './Base'
 import Pixel from './Pixel'
+import { pixelKey } from './utils'
+import { Layer } from './Layer'
+import { Color } from './Color'
+import { SketchJSON } from '../api/JSON'
 import { v4 as uuid } from 'uuid'
-import EventBus from '../eventbus/EventBus'
-import DrawUndo from '../undo/DrawUndo'
-import { parsePixelKey, pixelKey } from './utils'
+import { vec2 } from 'gl-matrix'
 
-const createPixels = (pixels: Overrideable<Pixel>, size: Size) => {
-  pixels.clear()
-  for (let x = 0; x < size[0]; x++) {
-    for (let y = 0; y < size[1]; y++) {
-      pixels.set(pixelKey(vec2.fromValues(x, y)), new Pixel(vec2.fromValues(x, y), null))
-    }
-  }
-}
-
-class PixelMap extends Overrideable<Pixel> {
-  public commit() {
-    const changes = Object.keys(this.overrides).map((key) => {
-      const position = parsePixelKey(key)
-      return { position, before: this.values[key]?.fill, after: this.overrides[key]?.fill }
-    })
-    EventBus.emit('undo', 'push', new DrawUndo(changes))
-    super.commit()
-  }
-}
-
-interface LayerMetadata {
-  title: string
-}
-
-class Layer extends Model {
-  public id = uuid()
-  public pixels: PixelMap
-  public metadata: LayerMetadata
-
-  constructor(size: Size, title?: string) {
-    super()
-    this.pixels = new PixelMap()
-    createPixels(this.pixels, size)
-    this.metadata = {
-      title: title ?? `Layer ${uuid().slice(0, 4)}`,
-    }
-  }
-
-  public getViews() {
-    return this.pixels
-      .getAll()
-      .map((pixel) => pixel.getViews())
-      .flat()
-  }
-
-  public getMostUsedColor(): Color | null {
-    const colorCounts = new Map<string, { color: Color; count: number }>()
-
-    this.pixels.getAll().forEach((pixel) => {
-      if (pixel.fill) {
-        const key = pixel.fill.toRGBA()
-        const existing = colorCounts.get(key)
-        if (existing) {
-          existing.count++
-        } else {
-          colorCounts.set(key, { color: pixel.fill, count: 1 })
-        }
-      }
-    })
-
-    let maxCount = 0
-    let mostUsedColor: Color | null = null
-
-    console.log(colorCounts)
-    colorCounts.forEach(({ color, count }) => {
-      if (count > maxCount) {
-        maxCount = count
-        mostUsedColor = color
-      }
-    })
-
-    return mostUsedColor
-  }
+type SketchOptions = {
+  id?: string
+  title?: string
+  artist?: string
+  layers?: Layer[]
+  size: Size
 }
 
 export default class Sketch extends Model {
   public size: Size
+  public id: string
+  public title: string
+  public artist: string
 
-  constructor(size: Size) {
+  constructor(options: SketchOptions) {
     super()
-    this.size = size
-    this.layers = [new Layer(size, 'Background')]
+    this.id = options.id ?? uuid()
+    this.title = options.title ?? 'Untitled'
+    this.artist = options.artist ?? 'Anonymous'
+    this.size = options.size
+    this.layers = options.layers ?? [new Layer('Background')]
     this.activeLayerId = this.layers[0].id
   }
 
@@ -103,7 +42,7 @@ export default class Sketch extends Model {
     return this.layers.findIndex((layer) => layer.id === this.activeLayerId)
   }
   public newLayer(title?: string) {
-    const layer = new Layer(this.size, title)
+    const layer = new Layer(title)
     this.layers.push(layer)
     this.activeLayerId = layer.id
   }
@@ -158,5 +97,29 @@ export default class Sketch extends Model {
   // model to views
   public getViews() {
     return this.layers.map((layer) => layer.getViews()).flat()
+  }
+
+  public toJSON(): SketchJSON {
+    return {
+      id: this.id,
+      title: this.title,
+      artist: this.artist,
+      size: {
+        w: this.size[0],
+        h: this.size[1],
+      },
+      layers: this.layers.map((layer) => layer.toJSON()),
+    }
+  }
+
+  public static fromJSON(json: SketchJSON): Sketch {
+    const sketch = new Sketch({
+      id: json.id,
+      title: json.title,
+      artist: json.artist,
+      size: vec2.fromValues(json.size.w, json.size.h),
+      layers: json.layers.map((layer) => Layer.fromJSON(layer)),
+    })
+    return sketch
   }
 }
