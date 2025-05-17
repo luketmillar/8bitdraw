@@ -237,8 +237,7 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({ controller }) => {
       setLayers(controller.getLayers())
       setActiveLayerId(controller.getActiveLayerId())
     }
-    const listener = EventBus.on('undo', 'stack-changed', updateLayers)
-    return () => listener()
+    return EventBus.on('sketch', 'changed', updateLayers)
   }, [])
 
   const handleLayerClick = (layerId: string) => {

@@ -76,3 +76,15 @@ export const PublishIcon = () => (
     <path d='M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z'></path>
   </svg>
 )
+
+export const LoadPublishedIcon = () => (
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    width='20'
+    height='20'
+    fill='currentcolor'
+    viewBox='0 0 256 256'
+  >
+    <path d='M232,128a8,8,0,0,1-8,8H128v96a8,8,0,0,1-16,0V136H32a8,8,0,0,1,0-16h80V24a8,8,0,0,1,16,0v96h96A8,8,0,0,1,232,128Z'></path>
+  </svg>
+)

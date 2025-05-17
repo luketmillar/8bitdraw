@@ -1,6 +1,6 @@
 import BaseController from './BaseController'
 import ToolStack from '../tools/ToolStack'
-import { Color, Position } from '../utils/types'
+import { Position } from '../utils/types'
 import DrawTool from '../tools/DrawTool'
 import AppView from './AppView'
 import InputHandler from '../utils/InputHandler'
@@ -8,6 +8,8 @@ import TransactionManager from '../transactions/TransactionManager'
 import UndoManager from '../undo/UndoManager'
 import AppWorld from './AppWorld'
 import CommandManager from '../commands/CommandManager'
+import Sketch from '../models/Sketch'
+import { Color } from '../models/Color'
 
 export default class AppController extends BaseController<AppWorld, AppView> {
   public readonly toolStack = new ToolStack()
@@ -20,6 +22,10 @@ export default class AppController extends BaseController<AppWorld, AppView> {
     const world = new AppWorld([30, 30])
     const view = new AppView()
     super(world, view)
+  }
+
+  public loadSketch(sketch: Sketch) {
+    this.world.loadSketch(sketch)
   }
 
   // draw

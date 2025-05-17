@@ -14,11 +14,12 @@ import {
   RectangleIcon,
   EyedropperIcon,
   PublishIcon,
+  LoadPublishedIcon,
 } from './Icons'
 import EventBus from '../../eventbus/EventBus'
 import EyedropperTool from '../../tools/EyedropperTool'
 import { PanelContainer } from './Panel'
-import { publishSketch } from '../../api/SketchAPI'
+import { publishSketch, getPublishedSketches } from '../../api/SketchAPI'
 
 const ToolButton = styled.button<{ selected?: boolean }>`
   background: ${({ selected }) => (selected ? '#7c3aed' : 'transparent')};
@@ -56,13 +57,15 @@ const Toolbar = ({ controller }: { controller: AppController }) => {
   const tool = useCurrentTool(controller)
 
   const handlePublish = async () => {
-    try {
-      await publishSketch(controller.getCurrentSketch())
-      alert('Sketch published successfully!')
-    } catch (error) {
-      console.error('Failed to publish sketch:', error)
-      alert('Failed to publish sketch. Please try again.')
+    await publishSketch(controller.getCurrentSketch())
+  }
+
+  const handleLoadPublished = async () => {
+    const sketches = await getPublishedSketches()
+    if (sketches.length === 0) {
+      return
     }
+    controller.loadSketch(sketches[0])
   }
 
   return (
@@ -105,6 +108,9 @@ const Toolbar = ({ controller }: { controller: AppController }) => {
       </ToolButton>
       <ToolButton onClick={handlePublish}>
         <PublishIcon />
+      </ToolButton>
+      <ToolButton onClick={handleLoadPublished}>
+        <LoadPublishedIcon />
       </ToolButton>
     </PanelContainer>
   )

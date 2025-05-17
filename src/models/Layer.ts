@@ -20,6 +20,7 @@ class PixelMap extends Overrideable<Pixel> {
       return { position, before: this.values[key]?.fill, after: this.overrides[key]?.fill }
     })
     EventBus.emit('undo', 'push', new DrawUndo(changes))
+    EventBus.emit('sketch', 'changed', '')
     super.commit()
   }
 }

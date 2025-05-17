@@ -1,5 +1,6 @@
 import AppController from '../core/AppController'
-import { Color, Position } from '../utils/types'
+import { Color } from '../models/Color'
+import { Position } from '../utils/types'
 import Undo from './BaseUndo'
 
 export default class DrawUndo extends Undo<{
