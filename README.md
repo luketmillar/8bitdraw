@@ -28,3 +28,22 @@ export default {
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+## Git Hooks
+
+This project includes Git hooks to ensure code quality. The pre-push hook runs TypeScript type checking before allowing pushes to prevent build errors from being committed.
+
+To install the Git hooks:
+
+```bash
+# Run the installation script
+./scripts/install-hooks.sh
+```
+
+After installation, Git will automatically run TypeScript type checking before each push. If there are any type errors, the push will be blocked until they are fixed.
+
+To temporarily bypass the pre-push hook (not recommended):
+
+```bash
+git push --no-verify
+```

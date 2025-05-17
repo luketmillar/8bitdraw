@@ -1,0 +1,12 @@
+#!/bin/sh
+
+echo "Running TypeScript type check..."
+npx tsc -b
+
+if [ $? -eq 0 ]; then
+    echo "TypeScript check passed, proceeding with push..."
+    exit 0
+else
+    echo "TypeScript check failed, push aborted."
+    exit 1
+fi 
