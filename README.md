@@ -47,3 +47,46 @@ To temporarily bypass the pre-push hook (not recommended):
 ```bash
 git push --no-verify
 ```
+
+## Supabase Setup
+
+This project uses Supabase for authentication and database functionality. Follow these steps to set up Supabase for this project:
+
+1. Create a Supabase account and project at [supabase.com](https://supabase.com)
+2. Create a `.env` file in the project root with the following variables:
+   ```
+   VITE_SUPABASE_URL=your_supabase_project_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+3. In your Supabase project, enable Email authentication in the Authentication settings
+4. Create a `profiles` table in the Supabase database with the following schema:
+
+   ```sql
+   create table public.profiles (
+     id uuid not null primary key default uuid_generate_v4(),
+     user_id uuid references auth.users not null,
+     username text unique not null,
+     avatar_url text,
+     created_at timestamp with time zone default now() not null,
+
+     constraint username_length check (char_length(username) >= 3)
+   );
+
+   -- Set up Row Level Security
+   alter table public.profiles enable row level security;
+
+   -- Create policies for profiles
+   create policy "Public profiles are viewable by everyone."
+     on profiles for select
+     using ( true );
+
+   create policy "Users can insert their own profile."
+     on profiles for insert
+     with check ( auth.uid() = user_id );
+
+   create policy "Users can update their own profile."
+     on profiles for update
+     using ( auth.uid() = user_id );
+   ```
+
+5. After signing up, users will be prompted to create a profile with a unique username before they can access protected features.
