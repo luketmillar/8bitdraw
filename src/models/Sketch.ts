@@ -46,6 +46,20 @@ export default class Sketch extends Model {
     this.layers.push(layer)
     this.activeLayerId = layer.id
   }
+
+  public addLayer(layer: Layer) {
+    this.layers.push(layer)
+    this.activeLayerId = layer.id
+  }
+
+  public addLayerAt(layer: Layer, index: number) {
+    if (index < 0) index = 0
+    if (index > this.layers.length) index = this.layers.length
+
+    this.layers.splice(index, 0, layer)
+    this.activeLayerId = layer.id
+  }
+
   public deleteLayer(id?: string) {
     if (!id) {
       id = this.activeLayerId

@@ -10,6 +10,9 @@ import AppWorld from './AppWorld'
 import CommandManager from '../commands/CommandManager'
 import Sketch from '../models/Sketch'
 import { Color } from '../models/Color'
+import EventBus from '../eventbus/EventBus'
+import { DeleteLayerUndo, NewLayerUndo, ReorderLayersUndo } from '../undo/LayerUndo'
+import { Layer } from '../models/Layer'
 
 export default class AppController extends BaseController<AppWorld, AppView> {
   public readonly toolStack = new ToolStack()
@@ -64,19 +67,69 @@ export default class AppController extends BaseController<AppWorld, AppView> {
     return this.world.sketch.activeLayerId
   }
 
+  public getBaseLayerId() {
+    return this.world.sketch.layers[0].id
+  }
+
   public setActiveLayer(id: string) {
     this.world.sketch.activeLayerId = id
   }
 
-  public addLayer(title?: string) {
-    this.world.sketch.newLayer(title)
+  public createLayer(title?: string, createUndo = true) {
+    const layer = new Layer(title)
+    return this.addLayer(layer, createUndo)
   }
 
-  public deleteLayer(id: string) {
-    this.world.sketch.deleteLayer(id)
+  public addLayer(layer: Layer, createUndo = true) {
+    this.world.sketch.addLayer(layer)
+
+    if (createUndo) {
+      EventBus.emit('undo', 'push', new NewLayerUndo([{ layer }]))
+    }
+    return layer
   }
 
-  public reorderLayers(layerIds: string[]) {
+  public addLayerAt(layer: Layer, index: number, createUndo = true) {
+    this.world.sketch.addLayerAt(layer, index)
+
+    if (createUndo) {
+      EventBus.emit('undo', 'push', new NewLayerUndo([{ layer, index }]))
+    }
+    return layer
+  }
+
+  public deleteLayer(id: string, createUndo = true) {
+    return this.deleteLayerById(id, createUndo)
+  }
+
+  public deleteLayerById(id: string, createUndo = true) {
+    const layerIndex = this.world.sketch.layers.findIndex((l) => l.id === id)
+
+    if (layerIndex !== -1) {
+      const layer = this.world.sketch.layers[layerIndex]
+
+      if (createUndo) {
+        EventBus.emit('undo', 'push', new DeleteLayerUndo([{ layer, index: layerIndex }]))
+      }
+
+      this.world.sketch.deleteLayer(id)
+      return true
+    }
+
+    return false
+  }
+
+  public reorderLayers(layerIds: string[], createUndo = true) {
+    const currentOrder = this.world.sketch.layers.map((layer) => layer.id)
+
+    if (createUndo) {
+      EventBus.emit(
+        'undo',
+        'push',
+        new ReorderLayersUndo([{ before: currentOrder, after: layerIds }])
+      )
+    }
+
     this.world.sketch.reorderLayers(layerIds)
   }
 

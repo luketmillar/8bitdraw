@@ -2,6 +2,7 @@ import AppController from '../core/AppController'
 
 export default abstract class Undo<C = any> {
   public readonly changes: C[]
+  public activeLayerId: string | null = null
 
   constructor(changes: C[]) {
     this.changes = changes

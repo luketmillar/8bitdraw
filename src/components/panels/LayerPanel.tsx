@@ -256,7 +256,7 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({ controller }) => {
     // TODO: Implement real duplication logic
     const layer = layers.find((l) => l.id === layerId)
     if (layer) {
-      controller.addLayer(layer.metadata.title + ' Copy')
+      controller.createLayer(layer.metadata.title + ' Copy')
       setLayers(controller.getLayers())
       setActiveLayerId(controller.getActiveLayerId())
     }
@@ -299,7 +299,7 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({ controller }) => {
         <AddLayerIconButton
           title='Add Layer'
           onClick={() => {
-            controller.addLayer()
+            controller.createLayer()
             setLayers(controller.getLayers())
             setActiveLayerId(controller.getActiveLayerId())
           }}

@@ -14,12 +14,23 @@ const createPixels = (pixels: Overrideable<Pixel>) => {
 }
 
 class PixelMap extends Overrideable<Pixel> {
+  private layerId: string | null = null
+
+  constructor(layerId?: string) {
+    super()
+    this.layerId = layerId || null
+  }
+
+  setLayerId(layerId: string) {
+    this.layerId = layerId
+  }
+
   public commit() {
     const changes = Object.keys(this.overrides).map((key) => {
       const position = parsePixelKey(key)
       return { position, before: this.values[key]?.fill, after: this.overrides[key]?.fill }
     })
-    EventBus.emit('undo', 'push', new DrawUndo(changes))
+    EventBus.emit('undo', 'push', new DrawUndo(changes, this.layerId || ''))
     EventBus.emit('sketch', 'changed', '')
     super.commit()
   }
@@ -36,7 +47,7 @@ export class Layer extends Model {
 
   constructor(title?: string) {
     super()
-    this.pixels = new PixelMap()
+    this.pixels = new PixelMap(this.id)
     createPixels(this.pixels)
     this.metadata = {
       title: title ?? `Layer ${uuid().slice(0, 4)}`,
