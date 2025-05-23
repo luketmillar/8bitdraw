@@ -1,0 +1,8 @@
+# Supabase project configuration for 8bitdraw
+PROJECT_REF="jpmrtxoqiiiboprntuon"
+PROJECT_NAME="8bitdraw"
+
+# Optional: Add your Supabase URLs and keys here if you want to
+# load them when switching projects
+SUPABASE_URL="https://jpmrtxoqiiiboprntuon.supabase.co"
+SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpwbXJ0eG9xaWlpYm9wcm50dW9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc0MzY5OTAsImV4cCI6MjA2MzAxMjk5MH0.3MbW51-_oPnefzclScGYJqnwlxPOF7zeG4yzxstyAdA" 
