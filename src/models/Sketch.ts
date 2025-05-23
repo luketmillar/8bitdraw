@@ -46,6 +46,7 @@ export default class Sketch extends Model {
     const layer = new Layer(title)
     this.layers.push(layer)
     this.activeLayerId = layer.id
+    EventBus.emit('sketch', 'changed', '')
   }
 
   public addLayer(layer: Layer) {
@@ -80,6 +81,7 @@ export default class Sketch extends Model {
       this.layers[i] = this.layers[this.layers.length - i - 1]
       this.layers[this.layers.length - i - 1] = temp
     }
+    EventBus.emit('sketch', 'changed', '')
   }
 
   public reorderLayers(layerIds: string[]) {
@@ -91,6 +93,7 @@ export default class Sketch extends Model {
       }
     }
     this.layers = newLayers
+    EventBus.emit('sketch', 'changed', '')
   }
 
   // mutations
