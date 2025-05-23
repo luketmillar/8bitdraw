@@ -6,6 +6,8 @@ import { Position } from '../utils/types'
 
 type SketchEvents = { scope: 'sketch'; type: 'changed'; payload: '' }
 
+type SelectionEvents = { scope: 'selection'; type: 'changed'; payload: '' }
+
 type CommandEvents =
   | { scope: 'command'; type: 'undo'; payload: '' }
   | { scope: 'command'; type: 'redo'; payload: '' }
@@ -46,7 +48,13 @@ type UndoEvents =
   | { scope: 'undo'; type: 'push'; payload: Undo }
 
 class EventBus extends EventEmitter<
-  CommandEvents | TransactionEvents | ToolInputEvents | MouseInputEvents | UndoEvents | SketchEvents
+  | CommandEvents
+  | SelectionEvents
+  | TransactionEvents
+  | ToolInputEvents
+  | MouseInputEvents
+  | UndoEvents
+  | SketchEvents
 > {}
 
 export default new EventBus()

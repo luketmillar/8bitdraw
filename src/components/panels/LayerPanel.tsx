@@ -237,7 +237,12 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({ controller }) => {
       setLayers(controller.getLayers())
       setActiveLayerId(controller.getActiveLayerId())
     }
-    return EventBus.on('sketch', 'changed', updateLayers)
+    const unsubscribe = EventBus.on('sketch', 'changed', updateLayers)
+    const unsubscribe2 = EventBus.on('selection', 'changed', updateLayers)
+    return () => {
+      unsubscribe()
+      unsubscribe2()
+    }
   }, [])
 
   const handleLayerClick = (layerId: string) => {

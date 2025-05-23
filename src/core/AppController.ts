@@ -73,6 +73,7 @@ export default class AppController extends BaseController<AppWorld, AppView> {
 
   public setActiveLayer(id: string) {
     this.world.sketch.activeLayerId = id
+    EventBus.emit('selection', 'changed', '')
   }
 
   public createLayer(title?: string, createUndo = true) {
