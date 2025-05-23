@@ -81,12 +81,7 @@ export default class AppController extends BaseController<AppWorld, AppView> {
   }
 
   public addLayer(layer: Layer, createUndo = true) {
-    this.world.sketch.addLayer(layer)
-
-    if (createUndo) {
-      EventBus.emit('undo', 'push', new NewLayerUndo([{ layer }]))
-    }
-    return layer
+    return this.addLayerAt(layer, this.world.sketch.layers.length, createUndo)
   }
 
   public addLayerAt(layer: Layer, index: number, createUndo = true) {
@@ -106,9 +101,8 @@ export default class AppController extends BaseController<AppWorld, AppView> {
     const layerIndex = this.world.sketch.layers.findIndex((l) => l.id === id)
 
     if (layerIndex !== -1) {
-      const layer = this.world.sketch.layers[layerIndex]
-
       if (createUndo) {
+        const layer = this.world.sketch.layers[layerIndex]
         EventBus.emit('undo', 'push', new DeleteLayerUndo([{ layer, index: layerIndex }]))
       }
 

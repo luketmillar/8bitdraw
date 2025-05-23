@@ -7,6 +7,7 @@ import { Color } from './Color'
 import { SketchJSON } from '../api/JSON'
 import { v4 as uuid } from 'uuid'
 import { vec2 } from 'gl-matrix'
+import EventBus from '../eventbus/EventBus'
 
 type SketchOptions = {
   id?: string
@@ -50,6 +51,7 @@ export default class Sketch extends Model {
   public addLayer(layer: Layer) {
     this.layers.push(layer)
     this.activeLayerId = layer.id
+    EventBus.emit('sketch', 'changed', '')
   }
 
   public addLayerAt(layer: Layer, index: number) {
@@ -58,6 +60,7 @@ export default class Sketch extends Model {
 
     this.layers.splice(index, 0, layer)
     this.activeLayerId = layer.id
+    EventBus.emit('sketch', 'changed', '')
   }
 
   public deleteLayer(id?: string) {
@@ -69,6 +72,7 @@ export default class Sketch extends Model {
       const newIndex = Math.max(this.activeLayerIndex - 1, 0)
       this.activeLayerId = this.layers[newIndex].id
     }
+    EventBus.emit('sketch', 'changed', '')
   }
   public flipLayers() {
     for (let i = 0; i < this.layers.length / 2; i++) {
