@@ -7,17 +7,6 @@ abstract class LayerUndoWithActive<C> extends Undo<C> {
   constructor(changes: C[]) {
     super(changes)
   }
-
-  protected saveAndRestoreActiveLayer(controller: AppController, operation: () => void) {
-    // Save current active layer
-    const currentActiveLayer = controller.getActiveLayerId()
-
-    // Perform the operation
-    operation()
-
-    // Restore original active layer
-    controller.setActiveLayer(currentActiveLayer)
-  }
 }
 
 export class NewLayerUndo extends LayerUndoWithActive<{
@@ -40,17 +29,13 @@ export class DeleteLayerUndo extends LayerUndoWithActive<{
   index: number
 }> {
   public undo(controller: AppController) {
-    this.saveAndRestoreActiveLayer(controller, () => {
-      const change = this.changes[0]
-      controller.addLayerAt(change.layer, change.index, false) // Add the layer back at its original position
-    })
+    const change = this.changes[0]
+    controller.addLayerAt(change.layer, change.index, false)
   }
 
   public redo(controller: AppController) {
-    this.saveAndRestoreActiveLayer(controller, () => {
-      const change = this.changes[0]
-      controller.deleteLayerById(change.layer.id, false) // Delete without creating an undo entry
-    })
+    const change = this.changes[0]
+    controller.deleteLayerById(change.layer.id, false)
   }
 }
 
@@ -59,16 +44,12 @@ export class ReorderLayersUndo extends LayerUndoWithActive<{
   after: string[]
 }> {
   public undo(controller: AppController) {
-    this.saveAndRestoreActiveLayer(controller, () => {
-      const change = this.changes[0]
-      controller.reorderLayers(change.before, false) // Restore previous order
-    })
+    const change = this.changes[0]
+    controller.reorderLayers(change.before, false)
   }
 
   public redo(controller: AppController) {
-    this.saveAndRestoreActiveLayer(controller, () => {
-      const change = this.changes[0]
-      controller.reorderLayers(change.after, false) // Apply new order
-    })
+    const change = this.changes[0]
+    controller.reorderLayers(change.after, false)
   }
 }
